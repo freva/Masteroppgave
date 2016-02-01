@@ -41,7 +41,7 @@ def main():
     start_time = time.time()
 
     print "Reading...",
-    tweets = io.open(gate_tagger_path + "2m.txt", "r", encoding="utf-8").read().split("\n")[:50000]
+    tweets = io.open(gate_tagger_path + "2m.txt", "r", encoding="utf-8").read().split("\n")[:200000]
     print "done"
 
     print "Filtering...",
