@@ -15,9 +15,6 @@ regex = re.compile('[^a-zA-Z]')
 
 
 def main():
-    original = open('gate_pos_tagger/2m.txt', "r").read().split("\n")
-    # print original[0]
-    # file = io.open('gate_pos_tagger/tagged.txt', "r").read().split("\n")
     file = open('gate_pos_tagger/tagged.txt', 'r').read().split("\n")
     for j in range(len(file)):
         list = file[j].split(" ")
@@ -28,10 +25,8 @@ def main():
 
     sorted_phrases = sorted(phrases.items(), key=operator.itemgetter(1), reverse=True)
     for sorted_phrase in sorted_phrases:
-        if len(sorted_phrase[1]) == 25:
+        if len(sorted_phrase[1]) >= 50:
             print sorted_phrase[0]
-            for tweet in sorted_phrase[1]:
-                print file[tweet]
 
 
 def check_consecutive_words(sentence, index, tag, tweet_nr):
