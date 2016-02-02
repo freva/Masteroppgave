@@ -39,7 +39,7 @@ characters_limit_RE = re.compile(r"[^a-zA-Z ]")
 punctuation = {',', '.', ':', ';', '!', '?'}
 word_finder = re.compile(r'(\S+)')
 
-non_splitting_chars = re.compile(r'[\'`´]')
+non_splitting_chars = re.compile(r'[\'`´’]')
 non_regular_text = re.compile(r'[^a-zA-Z.,!?]')
 fix_spaces = re.compile(r'\s*([?!.,]+(?:\s+[?!.,]+)*)\s*')
 

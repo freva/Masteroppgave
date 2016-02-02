@@ -1,5 +1,4 @@
 import filters as f
-from unicodefixer import fix_bad_unicode
 import io
 import re
 import os
