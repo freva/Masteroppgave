@@ -38,6 +38,9 @@ characters_limit_RE = re.compile(r"[^a-zA-Z ]")
 punctuation = {',', '.', ':', ';', '!', '?'}
 word_finder = re.compile(r'(\S+)')
 
+non_regular_text = re.compile(r'[^a-zA-Z.,!?]')
+fix_spaces = re.compile(r'\s*([?!.,]+(?:\s+[?!.,]+)*)\s*')
+
 
 def html_decode(tweet_text):
     h = HTMLParser.HTMLParser()
@@ -98,3 +101,9 @@ def reduce_letter_duplicates(tweet_text):
 
 def hash_as_normal(tweet_text):
     return re.sub(r'#([a-zA-Z]+[a-zA-Z0-9_]*)', "\\1", tweet_text)
+
+
+def regular_text_only(tweet_text):
+    tweet = non_regular_text.sub(' ', tweet_text)
+    tweet = fix_spaces.sub(lambda x: "{} ".format(x.group(1).replace(" ", "")), tweet)
+    return ' '.join(tweet.split())
