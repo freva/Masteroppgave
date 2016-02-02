@@ -1,3 +1,4 @@
+# coding=utf-8
 """
     A collection of different filter methods for the tweets.
 """
@@ -38,6 +39,7 @@ characters_limit_RE = re.compile(r"[^a-zA-Z ]")
 punctuation = {',', '.', ':', ';', '!', '?'}
 word_finder = re.compile(r'(\S+)')
 
+non_splitting_chars = re.compile(r'[\'`´]')
 non_regular_text = re.compile(r'[^a-zA-Z.,!?]')
 fix_spaces = re.compile(r'\s*([?!.,]+(?:\s+[?!.,]+)*)\s*')
 
@@ -103,7 +105,8 @@ def hash_as_normal(tweet_text):
     return re.sub(r'#([a-zA-Z]+[a-zA-Z0-9_]*)', "\\1", tweet_text)
 
 
-def regular_text_only(tweet_text):
-    tweet = non_regular_text.sub(' ', tweet_text)
+def regular_text_only(tweet):
+    tweet = non_splitting_chars.sub('', tweet)
+    tweet = non_regular_text.sub(' ', tweet)
     tweet = fix_spaces.sub(lambda x: "{} ".format(x.group(1).replace(" ", "")), tweet)
     return ' '.join(tweet.split())
