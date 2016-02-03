@@ -1,9 +1,11 @@
+package com.freva.masteroppgave.graph;
+
 import java.util.ArrayList;
 
 public class Node {
     private String phrase;
     private String[] phraseVector;
-    private ArrayList<Edge> neighbors = new ArrayList<Edge>();
+    private ArrayList<Edge> neighbors = new ArrayList<>();
     private double posScore = 0;
     private double negScore = 0;
 
