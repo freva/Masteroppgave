@@ -5,7 +5,8 @@ import os
 import time
 
 pos_tags_RE = re.compile(ur'_([A-Z]+)\s')
-gate_tagger_path = "gate_pos_tagger/"
+gate_tagger_path = "../res/gate_pos_tagger/"
+twitter_data_path = "../tweets/"
 
 
 def filter_tweets(input_name, output_name):
@@ -21,6 +22,7 @@ def filter_tweets(input_name, output_name):
 def run_tagger(input_name, output_name):
     old_dir = os.getcwd()
     os.chdir(gate_tagger_path)
+    print os.getcwd()
     os.system('java -Xmx1024m -jar twitie_tag.jar models/gate-EN-twitter-fast.model ' +
               input_name + ' > ' + output_name)
     os.chdir(old_dir)
@@ -29,8 +31,8 @@ def run_tagger(input_name, output_name):
 def main():
     start_time = time.time()
 
-    filter_tweets(gate_tagger_path + "200k.txt", gate_tagger_path + "filtered.txt")
-    run_tagger("filtered.txt", "tagged.txt")
+    #filter_tweets(gate_tagger_path + "200k.txt", gate_tagger_path + "filtered.txt")
+    run_tagger(twitter_data_path + "10k.txt", twitter_data_path + "tagged.txt")
 
     print "Finished in", "%.2f" % (time.time()-start_time), "sec"
 
