@@ -1,3 +1,5 @@
+package com.freva.masteroppgave.graph;
+
 import java.util.ArrayList;
 
 public class Node {
