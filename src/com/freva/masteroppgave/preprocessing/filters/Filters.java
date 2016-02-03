@@ -1,6 +1,9 @@
 package com.freva.masteroppgave.preprocessing.filters;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import java.text.Normalizer;
 
 public class Filters {
     public static final String USERNAME_PLACEHOLDER = "||U||";
@@ -13,6 +16,22 @@ public class Filters {
         return StringEscapeUtils.unescapeHtml4(text);
     }
 
+    public static String normalizeForm(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD);
+    }
+
+    public static String removeRepeatedWhitespace(String text) {
+        return RegexFilters.replaceWhitespace(text, " ");
+    }
+
+
+    public static String parseUnicodeEmoticons(String text) {
+        return EmojiParser.parseToAliases(text);
+    }
+
+    public static String removeUnicodeEmoticons(String text) {
+        return EmojiParser.removeAllEmojis(text);
+    }
 
     public static String removeEmoticons(String text) {
         return RegexFilters.replaceEmoticons(text, "");

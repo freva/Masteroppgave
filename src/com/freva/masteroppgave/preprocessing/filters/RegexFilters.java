@@ -23,7 +23,8 @@ public class RegexFilters {
     public static final Pattern TWITTER_RT_TAG = Pattern.compile("(^RT\\s+|\\s+RT\\s+)");
     public static final Pattern TWITTER_URL = Pattern.compile("(https?:\\/\\/\\S+)");
 
-    public static final Pattern non_splitting_chars = Pattern.compile("['`´’]");
+    public static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    public static final Pattern non_splitting_chars = Pattern.compile("['`Â´]");
     public static final Pattern non_regular_text = Pattern.compile("[^a-zA-Z.,!?]");
     public static final Pattern fix_spaces = Pattern.compile("\\s*([?!.,]+(?:\\s+[?!.,]+)*)\\s*");
 
@@ -47,5 +48,9 @@ public class RegexFilters {
 
     public static String replaceURL(String text, String replace) {
         return TWITTER_URL.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceWhitespace(String text, String replace) {
+        return WHITESPACE.matcher(text).replaceAll(replace);
     }
 }
