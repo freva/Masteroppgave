@@ -1,4 +1,3 @@
-package com.freva.masteroppgave.graph;
 
 public class Edge {
 
