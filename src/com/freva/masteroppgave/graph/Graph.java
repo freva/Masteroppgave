@@ -1,5 +1,3 @@
-package com.freva.masteroppgave.graph;
-
 import java.util.*;
 
 public class Graph {
