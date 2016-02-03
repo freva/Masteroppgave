@@ -14,7 +14,7 @@ public class TweetsTagger {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for(String line; (line = br.readLine()) != null; ) {
                     line = filter(line);
-                    line = tagger.tagSentence(line);
+                    if(line.length() > 0) line = tagger.tagSentence(line);
 
                     writer.write(line + "\n");
                 }
