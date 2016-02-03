@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.cleaner;
+package com.freva.masteroppgave.preprocessing;
 
 import java.io.*;
 import java.util.HashMap;

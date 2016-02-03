@@ -1,9 +1,9 @@
-package com.freva.masteroppgave.cleaner;
+package com.freva.masteroppgave.preprocessing;
 
-
+import com.freva.masteroppgave.preprocessing.utils.GatePosTagger;
 import java.io.*;
 
-public class Filter {
+public class TweetsTagger {
     public static void main(String[] args) throws Exception {
         GatePosTagger tagger = new GatePosTagger("models/gate-EN-twitter-fast.model");
         String input_filename = "res/tweets/10k.txt";
