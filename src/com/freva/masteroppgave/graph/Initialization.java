@@ -5,17 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Initialization {
-
     private HashMap<String, int[]> phraseOccurrences = new HashMap<>();
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
 
-    private String posTagPattern = "_([A-Z$]*)\\s";
-
-    private int phraseFrequencyThreshold = 25;
-    private int phraseVectorSize = 10;
+    private static final Pattern posTagPattern = Pattern.compile("_([A-Z$]*)\\s");
+    private static final int phraseFrequencyThreshold = 25;
+    private static final int phraseVectorSize = 10;
 
 
     public Initialization() throws IOException{
@@ -48,7 +47,7 @@ public class Initialization {
         BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/tagged.txt")));
         String line = "";
         while((line = reader.readLine()) != null) {
-            String newLine = line.replaceAll(posTagPattern, " ");
+            String newLine = posTagPattern.matcher(line).replaceAll(" ");
             newLine = newLine.replaceAll("'", "");
             newLine = newLine.replaceAll("[^A-Za-z]", " ");
             newLine = newLine.replaceAll("\\s+", " ");
@@ -63,8 +62,8 @@ public class Initialization {
             if (tweetIDs.length > phraseFrequencyThreshold) {
                 String[] relatedWords = new String[phraseVectorSize];
                 HashMap<String, Integer> wordFrequency = new HashMap<>();
-                for (int i = 0; i < tweetIDs.length; i++) {
-                    String phraseWindow = constructPhraseWindow(tweets.get(tweetIDs[i]), key);
+                for (int tweetID : tweetIDs) {
+                    String phraseWindow = constructPhraseWindow(tweets.get(tweetID), key);
                     for (String word : phraseWindow.split(" ")) {
                         int count = wordFrequency.containsKey(word) ? wordFrequency.get(word) : 0;
                         wordFrequency.put(word, count + 1);
@@ -126,8 +125,8 @@ public class Initialization {
         // Here I am copying the sorted list in HashMap
         // using LinkedHashMap to preserve the insertion order
         HashMap sortedHashMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        for (Object aList : list) {
+            Map.Entry entry = (Map.Entry) aList;
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
         return sortedHashMap;
@@ -153,6 +152,6 @@ public class Initialization {
 
 
     public static void main(String args[]) throws IOException{
-        Initialization init = new Initialization();
+        new Initialization();
     }
 }

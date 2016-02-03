@@ -1,7 +1,6 @@
 package com.freva.masteroppgave.graph;
 
 public class Edge {
-
     private Node neighbor;
     private double weight;
 
