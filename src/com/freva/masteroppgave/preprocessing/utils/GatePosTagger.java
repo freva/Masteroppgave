@@ -1,12 +1,12 @@
-package com.freva.masteroppgave.cleaner;
+package com.freva.masteroppgave.preprocessing.utils;
 
-import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
@@ -28,6 +28,12 @@ public class GatePosTagger {
     }
 
     public GatePosTagger(String model, boolean do_correction, boolean do_entities, boolean do_interjections, boolean label_fixed) throws Exception {
+        this.tagger = new MaxentTagger(model);
+        this.do_correction = do_correction;
+        this.do_entities = do_entities;
+        this.do_interjections = do_interjections;
+        this.label_fixed = label_fixed;
+
         if (do_correction) {
             for (String line : Files.readAllLines(Paths.get("res/gate_pos_tagger/orth.en.csv"))) {
                 String[] br = line.trim().split(",");
@@ -40,16 +46,10 @@ public class GatePosTagger {
         }
 
         if (do_interjections) {
-            for (String line : Files.readAllLines(Paths.get("res/gate_pos_tagger/interjections.regex"))) {
-                interjections.add(Pattern.compile("^" + line.trim() + "$"));
-            }
+            interjections.addAll(Files.readAllLines(Paths.get("res/gate_pos_tagger/interjections.regex")).stream()
+                    .map(line -> Pattern.compile("^" + line.trim() + "$"))
+                    .collect(Collectors.toList()));
         }
-
-        this.tagger = new MaxentTagger(model);
-        this.do_correction = do_correction;
-        this.do_entities = do_entities;
-        this.do_interjections = do_interjections;
-        this.label_fixed = label_fixed;
     }
 
     public String tagSentence(String sentence) {
