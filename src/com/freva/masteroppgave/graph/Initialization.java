@@ -15,7 +15,7 @@ public class Initialization {
     private String posTagPattern = "_([A-Z$]*)\\s";
 
     private int phraseFrequencyThreshold = 25;
-    private int phraseVectorSize = 10;
+    private int phraseVectorSize = 15;
 
 
     public Initialization() throws IOException{
