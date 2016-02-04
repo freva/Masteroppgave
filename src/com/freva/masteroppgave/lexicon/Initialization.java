@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.lexicon;
 
+import com.freva.masteroppgave.lexicon.graph.Edge;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
@@ -163,13 +164,13 @@ public class Initialization {
         System.out.println("Printing similarities....");
         for(Node node : nodes) {
             if(polarityLexicon.containsKey(node.getPhrase())) {
-                System.out.println(node.getPhrase());
-//                for (Edge edge : node.getNeighbors()) {
-//                    System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
-//                }
+                for (Edge edge : node.getNeighbors()) {
+                    System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
+                }
             }
         }
     }
+
 
 
     public static void main(String args[]) throws IOException{
