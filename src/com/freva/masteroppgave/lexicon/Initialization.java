@@ -1,4 +1,9 @@
-package com.freva.masteroppgave.graph;
+package com.freva.masteroppgave.lexicon;
+
+import com.freva.masteroppgave.lexicon.graph.Edge;
+import com.freva.masteroppgave.lexicon.graph.Graph;
+import com.freva.masteroppgave.lexicon.graph.Node;
+import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +13,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class Initialization {
-    private HashMap<String, int[]> phraseOccurrences = new HashMap<>();
+    private PhraseCreator phraseCreator = new PhraseCreator();
+    private HashMap<String, ArrayList<Integer>> phraseOccurrences = new HashMap<>();
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
     private HashMap<String, Integer> priorPolarityLexicon = new HashMap<>();
@@ -19,8 +25,6 @@ public class Initialization {
 
 
     public Initialization() throws IOException{
-        System.out.println("Dictionary to HashMap...");
-        dictToHashmap();
         System.out.println("Reading tweets...");
         readTweets();
         readPriorPolarityLexicon();
@@ -30,32 +34,22 @@ public class Initialization {
         createGraph();
     }
 
-    private void dictToHashmap() throws IOException{
-        BufferedReader reader = new BufferedReader(new FileReader (new File("res/tweets/phraseDict.txt")));
-        String[] entries = reader.readLine().replace("}", "").split("]");
-        for (String entry : entries) {
-            String[] parts = entry.split("\\[");
-            String key = parts[0].split("\"")[1];
-            String[] textValues = parts[1].split(", ");
-            int[] values = new int[textValues.length];
-            for (int i = 0; i < textValues.length; i++) {
-                values[i] = Integer.valueOf(textValues[i]);
-            }
-            phraseOccurrences.put(key, values);
-        }
-    }
 
     private void readTweets() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/tagged.txt")));
         String line = "";
         while((line = reader.readLine()) != null) {
+            phraseCreator.detectPhrases(line);
             String newLine = posTagPattern.matcher(line).replaceAll(" ");
             newLine = newLine.replaceAll("'", "");
             newLine = newLine.replaceAll("[^A-Za-z]", " ");
             newLine = newLine.replaceAll("\\s+", " ");
             tweets.add(newLine.substring(0, newLine.length()-3).trim().toLowerCase());
         }
+
+        phraseOccurrences = phraseCreator.getPhrases();
     }
+
 
     private void readPriorPolarityLexicon() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/AFINN111.txt")));
@@ -73,8 +67,8 @@ public class Initialization {
 //    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
     private void createFinalHashMap() {
         for(String key : phraseOccurrences.keySet()) {
-            int[] tweetIDs = phraseOccurrences.get(key);;
-            if (tweetIDs.length > phraseFrequencyThreshold) {
+            ArrayList<Integer> tweetIDs = phraseOccurrences.get(key);;
+            if (tweetIDs.size() > phraseFrequencyThreshold) {
                 String[] relatedWords = new String[phraseVectorSize];
                 HashMap<String, Integer> wordFrequency = new HashMap<>();
                 for (int tweetID : tweetIDs) {
