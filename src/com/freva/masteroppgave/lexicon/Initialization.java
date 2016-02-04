@@ -1,17 +1,17 @@
 package com.freva.masteroppgave.lexicon;
 
-import com.freva.masteroppgave.lexicon.graph.Edge;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
 import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
+import com.freva.masteroppgave.preprocessing.filters.Filters;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+
 
 public class Initialization {
     private PhraseCreator phraseCreator = new PhraseCreator();
@@ -23,7 +23,6 @@ public class Initialization {
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
     private HashMap<String, Integer> polarityLexicon = new HashMap<>();
 
-    private static final Pattern posTagPattern = Pattern.compile("_([A-Z$]*)\\s");
     private static final int phraseFrequencyThreshold = 25;
     private static final int phraseVectorSize = 8;
 
@@ -41,10 +40,10 @@ public class Initialization {
         String line = "";
         while((line = reader.readLine()) != null) {
             phraseCreator.detectPhrases(line);
-            polarityWordsDetector.detectPolarityWords(line);
-//            The code line below does not remove all HashTags. It needs to.
-            String newLine = posTagPattern.matcher(line).replaceAll(" ");
-            tweets.add(newLine.substring(0, newLine.length()-3).trim().toLowerCase());
+
+            String newLine = Filters.removePosTags(line).toLowerCase();
+            polarityWordsDetector.detectPolarityWords(newLine);
+            tweets.add(newLine);
         }
         phraseOccurrences = phraseCreator.getPhrases();
         polarityWordOccurences = polarityWordsDetector.getWordOccurences();
@@ -65,7 +64,7 @@ public class Initialization {
                 polarityLexicon.put(key.trim().toLowerCase(), Integer.valueOf(wordAndScore[wordAndScore.length - 1]));
             }
         } catch (IOException exception) {
-            System.out.println(exception.getStackTrace());
+            exception.printStackTrace();
         }
         polarityWordsDetector = new PolarityWordsDetector(polarityLexicon);
     }
