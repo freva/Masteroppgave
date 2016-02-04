@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.graph;
+package com.freva.masteroppgave.lexicon.graph;
 
 import java.util.*;
 
