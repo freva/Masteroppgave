@@ -1,5 +1,7 @@
 package com.freva.masteroppgave.lexicon.utils;
 
+import com.freva.masteroppgave.preprocessing.filters.Filters;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +10,6 @@ public class PhraseCreator {
     private static final HashMap<String, String[][]> descriptivePhrases = new HashMap<>();
     private static final Pattern startTags = Pattern.compile("\\S+_(JJ|NN|RB)");
     private static final Pattern nonAlphabetic = Pattern.compile("[^a-z ]");
-    private static final Pattern posTag = Pattern.compile("_[A-Z]+\\b");
 
     private HashMap<String, ArrayList<Integer>> phrasesAndWords = new HashMap<>();
     private int sentenceCounter = 0;
@@ -56,7 +57,7 @@ public class PhraseCreator {
     }
 
     private void createAndAddPhrase(String[] phrase) {
-        String finalPhrase = posTag.matcher(phrase[0] + " " + phrase[1]).replaceAll("");
+        String finalPhrase = Filters.removePosTags(phrase[0] + " " + phrase[1]);
         finalPhrase = finalPhrase.toLowerCase();
         finalPhrase = nonAlphabetic.matcher(finalPhrase).replaceAll("");
         if(!phrasesAndWords.containsKey(finalPhrase))
