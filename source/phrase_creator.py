@@ -21,7 +21,7 @@ def main():
         for wordIndex in range(len(words)-1):
             tag = start_tags.findall(words[wordIndex])
             if tag:
-                check_consecutive_words(words[wordIndex: wordIndex+2], tag[0], tweetID)
+                check_consecutive_words(words[wordIndex: wordIndex+3], tag[0], tweetID)
 
     filtered_phrases = {key: len(value) for key, value in phrases.items() if len(value) >= 100}
     sorted_phrases = sorted(filtered_phrases.items(), key=lambda k: k[1], reverse=True)

@@ -1,11 +1,7 @@
 package com.freva.masteroppgave.graph.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,19 +39,18 @@ public class PhraseCreator {
         String possibleTags[][] = descriptivePhrases.get(tag);
         if(phrase.length == 3) {
             for(String[] possibleTag : possibleTags) {
-                if(phrase[1].endsWith(possibleTag[0])) {
+                if(phrase[1].contains(possibleTag[0])) {
                     if(possibleTag.length > 1) {
-                        if(phrase[2].matches(possibleTag[1])) {
+                        if(phrase[2].contains(possibleTag[1])) {
                             continue;
                         }
                     }
                     createAndAddPhrase(phrase, index);
                 }
             }
-        }
-        else {
+        } else {
             for(String[] possibleTag : possibleTags) {
-                if (phrase[1].matches(possibleTag[0])) {
+                if (phrase[1].contains(possibleTag[0])) {
                     createAndAddPhrase(phrase, index);
                     break;
                 }
@@ -76,8 +71,20 @@ public class PhraseCreator {
 
     public static void main(String[] args) throws IOException{
         createPhraseAndWordHashMap();
-        for(String key : phrasesAndWords.keySet()) {
-            System.out.println(key + "\t" + phrasesAndWords.get(key).size());
+
+        HashMap<String, Integer> counter = new HashMap<>();
+        for(String element: phrasesAndWords.keySet()) {
+            if(phrasesAndWords.get(element).size() > 100) {
+                counter.put(element, phrasesAndWords.get(element).size());
+            }
+        }
+
+        Map.Entry<String, Integer>[] sortedMap = counter.entrySet().toArray(new Map.Entry[counter.size()]);
+        Arrays.sort(sortedMap, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+
+
+        for (Map.Entry<String, Integer> e : sortedMap) {
+            System.out.println(e.getKey() + "\t" + e.getValue());
         }
     }
 }
