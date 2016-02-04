@@ -11,10 +11,11 @@ public class Initialization {
     private HashMap<String, int[]> phraseOccurrences = new HashMap<>();
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
+    private HashMap<String, Integer> priorPolarityLexicon = new HashMap<>();
 
     private static final Pattern posTagPattern = Pattern.compile("_([A-Z$]*)\\s");
     private static final int phraseFrequencyThreshold = 25;
-    private static final int phraseVectorSize = 10;
+    private static final int phraseVectorSize = 20;
 
 
     public Initialization() throws IOException{
@@ -22,6 +23,7 @@ public class Initialization {
         dictToHashmap();
         System.out.println("Reading tweets...");
         readTweets();
+        readPriorPolarityLexicon();
         System.out.println("Creating final HashMap...");
         createFinalHashMap();
         System.out.println("Creating graph...");
@@ -52,6 +54,19 @@ public class Initialization {
             newLine = newLine.replaceAll("[^A-Za-z]", " ");
             newLine = newLine.replaceAll("\\s+", " ");
             tweets.add(newLine.substring(0, newLine.length()-3).trim().toLowerCase());
+        }
+    }
+
+    private void readPriorPolarityLexicon() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/AFINN111.txt")));
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            String[] wordAndScore = line.split("\\s+");
+            String key = "";
+            for(int i = 0; i < wordAndScore.length-1; i++) {
+                key += wordAndScore[i] + " ";
+            }
+            priorPolarityLexicon.put(key.trim(), Integer.valueOf(wordAndScore[wordAndScore.length-1]));
         }
     }
 
