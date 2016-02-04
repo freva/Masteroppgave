@@ -25,7 +25,7 @@ public class RegexFilters {
     public static final Pattern TWITTER_URL = Pattern.compile("(https?:\\/\\/\\S+)");
 
     public static final Pattern WHITESPACE = Pattern.compile("\\s+");
-    public static final Pattern POS_TAG = Pattern.compile("_[A-Z]+\\b");
+    public static final Pattern POS_TAG = Pattern.compile("_[A-Z$]+");
     public static final Pattern INNER_WORD_CHAR = Pattern.compile("['`´]");
     public static final Pattern NON_SYNTACTICAL_TEXT = Pattern.compile("[^a-zA-Z.,!?]");
     public static final Pattern NON_POS_TAGGED_ALPHABETICAL_TEXT = Pattern.compile("[^a-zA-Z_ ]");
