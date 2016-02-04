@@ -15,7 +15,7 @@ non_alphabetic = re.compile(r'[^a-z ]')
 
 
 def main():
-    tweets = open('gate_pos_tagger/tagged.txt', 'r').read().split("\n")
+    tweets = open('../res/tweets/tagged.txt', 'r').read().split("\n")
     for tweetID, tweet in enumerate(tweets):
         words = tweet.split()
         for wordIndex in range(len(words)-1):
