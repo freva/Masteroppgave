@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.preprocessing.filters;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -24,9 +25,13 @@ public class RegexFilters {
     public static final Pattern TWITTER_URL = Pattern.compile("(https?:\\/\\/\\S+)");
 
     public static final Pattern WHITESPACE = Pattern.compile("\\s+");
-    public static final Pattern non_splitting_chars = Pattern.compile("['`´]");
-    public static final Pattern non_regular_text = Pattern.compile("[^a-zA-Z.,!?]");
-    public static final Pattern fix_spaces = Pattern.compile("\\s*([?!.,]+(?:\\s+[?!.,]+)*)\\s*");
+    public static final Pattern POS_TAG = Pattern.compile("_[A-Z]+\b");
+    public static final Pattern INNER_WORD_CHAR = Pattern.compile("['`´]");
+    public static final Pattern NON_SYNTACTICAL_TEXT = Pattern.compile("[^a-zA-Z.,!?]");
+    public static final Pattern NON_POS_TAGGED_ALPHABETICAL_TEXT = Pattern.compile("[^a-zA-Z_ ]");
+
+    private static final Pattern freeUnderscores = Pattern.compile(" _|_ ");
+    private static final Pattern fixSyntacticalGrammar = Pattern.compile("\\s*([?!.,]+(?:\\s+[?!.,]+)*)\\s*");
 
 
     public static String replaceEmoticons(String text, String replace) {
@@ -52,5 +57,35 @@ public class RegexFilters {
 
     public static String replaceWhitespace(String text, String replace) {
         return WHITESPACE.matcher(text).replaceAll(replace);
+    }
+
+    public static String replacePosTag(String text, String replace) {
+        return POS_TAG.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceInnerWordCharacters(String text, String replace) {
+        return INNER_WORD_CHAR.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceNonSyntacticalText(String text, String replace) {
+        return NON_SYNTACTICAL_TEXT.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceNonPosTaggedAlphabeticalText(String text, String replace) {
+        text = NON_POS_TAGGED_ALPHABETICAL_TEXT.matcher(text).replaceAll(replace);
+        return freeUnderscores.matcher(text).replaceAll("");
+    }
+
+
+    public static String fixSyntacticalPunctuationGrammar(String text) {
+        StringBuffer resultString = new StringBuffer();
+        Matcher matcher = fixSyntacticalGrammar.matcher(text);
+        if(matcher.find()) {
+            do {
+                matcher.appendReplacement(resultString, RegexFilters.replaceWhitespace(matcher.group(1), "") + " ");
+            } while (matcher.find());
+            return resultString.toString();
+        }
+        return text;
     }
 }

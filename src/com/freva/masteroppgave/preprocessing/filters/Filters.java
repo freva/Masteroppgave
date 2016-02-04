@@ -76,4 +76,26 @@ public class Filters {
     public static String placeholderURL(String text) {
         return RegexFilters.replaceURL(text, URL_PLACEHOLDER);
     }
+
+
+    public static String removePosTags(String text) {
+        return RegexFilters.replacePosTag(text, "");
+    }
+
+    public static String removeInnerWordCharacters(String text) {
+        return RegexFilters.replaceInnerWordCharacters(text, "");
+    }
+
+    public static String removeNonSyntacticalText(String text) {
+        return RegexFilters.replaceNonSyntacticalText(text, " ");
+    }
+
+    public static String removeNonPosTaggedAlphabeticalText(String text) {
+        return RegexFilters.replaceNonPosTaggedAlphabeticalText(text, "");
+    }
+
+
+    public static String fixSyntacticalPunctuationGrammar(String text) {
+        return RegexFilters.fixSyntacticalPunctuationGrammar(text);
+    }
 }
