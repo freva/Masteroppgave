@@ -4,6 +4,7 @@ import com.freva.masteroppgave.lexicon.graph.Edge;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
+import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,23 +15,23 @@ import java.util.regex.Pattern;
 
 public class Initialization {
     private PhraseCreator phraseCreator = new PhraseCreator();
+    private PolarityWordsDetector polarityWordsDetector;
     private HashMap<String, ArrayList<Integer>> phraseOccurrences = new HashMap<>();
+    private HashMap<String, ArrayList<Integer>> polarityWordOccurences = new HashMap<>();
+    private HashMap<String, ArrayList<Integer>> wordAndPhraseOccurences = new HashMap<>();
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
-    private HashMap<String, Integer> priorPolarityLexicon = new HashMap<>();
+    private HashMap<String, Integer> polarityLexicon = new HashMap<>();
 
     private static final Pattern posTagPattern = Pattern.compile("_([A-Z$]*)\\s");
     private static final int phraseFrequencyThreshold = 25;
-    private static final int phraseVectorSize = 20;
+    private static final int phraseVectorSize = 8;
 
 
     public Initialization() throws IOException{
-        System.out.println("Reading tweets...");
+        readPolarityLexicon();
         readTweets();
-        readPriorPolarityLexicon();
-        System.out.println("Creating final HashMap...");
         createFinalHashMap();
-        System.out.println("Creating graph...");
         createGraph();
     }
 
@@ -40,34 +41,43 @@ public class Initialization {
         String line = "";
         while((line = reader.readLine()) != null) {
             phraseCreator.detectPhrases(line);
+            polarityWordsDetector.detectPolarityWords(line);
+//            The code line below does not remove all HashTags. It needs to.
             String newLine = posTagPattern.matcher(line).replaceAll(" ");
-            newLine = newLine.replaceAll("'", "");
-            newLine = newLine.replaceAll("[^A-Za-z]", " ");
-            newLine = newLine.replaceAll("\\s+", " ");
             tweets.add(newLine.substring(0, newLine.length()-3).trim().toLowerCase());
         }
-
         phraseOccurrences = phraseCreator.getPhrases();
+        polarityWordOccurences = polarityWordsDetector.getWordOccurences();
+        System.out.println(polarityWordOccurences);
     }
 
 
-    private void readPriorPolarityLexicon() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/AFINN111.txt")));
-        String line = "";
-        while ((line = reader.readLine()) != null) {
-            String[] wordAndScore = line.split("\\s+");
-            String key = "";
-            for(int i = 0; i < wordAndScore.length-1; i++) {
-                key += wordAndScore[i] + " ";
+    private void readPolarityLexicon() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/AFINN111.txt")));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                String[] wordAndScore = line.split("\\s+");
+                String key = "";
+                for (int i = 0; i < wordAndScore.length - 1; i++) {
+                    key += wordAndScore[i] + " ";
+                }
+                polarityLexicon.put(key.trim().toLowerCase(), Integer.valueOf(wordAndScore[wordAndScore.length - 1]));
             }
-            priorPolarityLexicon.put(key.trim(), Integer.valueOf(wordAndScore[wordAndScore.length-1]));
+        } catch (IOException exception) {
+            System.out.println(exception.getStackTrace());
         }
+        polarityWordsDetector = new PolarityWordsDetector(polarityLexicon);
     }
+
+
 
 //    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
     private void createFinalHashMap() {
-        for(String key : phraseOccurrences.keySet()) {
-            ArrayList<Integer> tweetIDs = phraseOccurrences.get(key);;
+        wordAndPhraseOccurences.putAll(phraseOccurrences);
+        wordAndPhraseOccurences.putAll(polarityWordOccurences);
+        for(String key : wordAndPhraseOccurences.keySet()) {
+            ArrayList<Integer> tweetIDs = wordAndPhraseOccurences.get(key);;
             if (tweetIDs.size() > phraseFrequencyThreshold) {
                 String[] relatedWords = new String[phraseVectorSize];
                 HashMap<String, Integer> wordFrequency = new HashMap<>();
@@ -153,8 +163,11 @@ public class Initialization {
         ArrayList<Node> nodes = graph.getNodes();
         System.out.println("Printing similarities....");
         for(Node node : nodes) {
-            for(Edge edge : node.getNeighbors()) {
-                System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
+            if(polarityLexicon.containsKey(node.getPhrase())) {
+                System.out.println(node.getPhrase());
+//                for (Edge edge : node.getNeighbors()) {
+//                    System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
+//                }
             }
         }
     }
