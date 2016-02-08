@@ -19,11 +19,11 @@ public class Combiner {
                 if(line.contains("https://") || line.contains("http://")) continue;
                 if(line.startsWith("Get Weather Updates from The Weather Channel")) continue;
 
-                if(counter.containsKey(line)) {
-                    counter.put(line, counter.get(line) + 1);
+                if(counter.containsKey(line.toLowerCase())) {
+                    counter.put(line, counter.get(line.toLowerCase()) + 1);
                 } else {
-                    counter.put(line, 1);
-                    output.write(line);
+                    counter.put(line.toLowerCase(), 1);
+                    output.write(line + "\n");
                 }
             }
         } catch (IOException e) {
