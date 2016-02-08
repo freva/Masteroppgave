@@ -5,6 +5,7 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
 import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
+import com.freva.masteroppgave.preprocessing.filters.FilterStopWords;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 
 import java.io.BufferedReader;
@@ -23,6 +24,7 @@ public class Initialization {
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[]> phraseInTweets = new HashMap<>();
     private HashMap<String, Integer> polarityLexicon = new HashMap<>();
+    private HashMap<String, HashMap<String, Integer>> wordsAndPhrases = new HashMap<>();
 
     private static final int phraseFrequencyThreshold = 25;
     private static final int phraseVectorSize = 8;
@@ -30,6 +32,8 @@ public class Initialization {
 
     public Initialization() throws IOException{
         readPolarityLexicon();
+        readNGrams();
+        mergePolarityAndNGrams();
         readTweets();
         createFinalHashMap();
         createGraph();
@@ -37,18 +41,17 @@ public class Initialization {
 
 
     private void readTweets() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/tagged.txt")));
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
         String line = "";
         while((line = reader.readLine()) != null) {
-            phraseCreator.detectPhrases(line);
-
-            String newLine = Filters.removePosTags(line).toLowerCase();
-            polarityWordsDetector.detectPolarityWords(newLine);
-            tweets.add(newLine);
+//            phraseCreator.detectPhrases(line);
+//
+//            String newLine = Filters.removePosTags(line).toLowerCase();
+//            polarityWordsDetector.detectPolarityWords(newLine);
+            tweets.add(line);
         }
-        phraseOccurrences = phraseCreator.getPhrases();
-        polarityWordOccurences = polarityWordsDetector.getWordOccurences();
-        System.out.println(polarityWordOccurences);
+//        phraseOccurrences = phraseCreator.getPhrases();
+//        polarityWordOccurences = polarityWordsDetector.getWordOccurences();
     }
 
 
@@ -71,63 +74,90 @@ public class Initialization {
     }
 
 
+    private void readNGrams() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/ngrams.txt")));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                String key = line.split(":")[0];
+                wordsAndPhrases.put(key.trim().toLowerCase(), new HashMap<>());
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
 
-//    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
-    private void createFinalHashMap() {
-        wordAndPhraseOccurences.putAll(phraseOccurrences);
-        wordAndPhraseOccurences.putAll(polarityWordOccurences);
-        for(String key : wordAndPhraseOccurences.keySet()) {
-            ArrayList<Integer> tweetIDs = wordAndPhraseOccurences.get(key);;
-            if (tweetIDs.size() > phraseFrequencyThreshold) {
-                String[] relatedWords = new String[phraseVectorSize];
-                HashMap<String, Integer> wordFrequency = new HashMap<>();
-                for (int tweetID : tweetIDs) {
-                    String phraseWindow = constructPhraseWindow(tweets.get(tweetID), key);
-                    for (String word : phraseWindow.split(" ")) {
-                        int count = wordFrequency.containsKey(word) ? wordFrequency.get(word) : 0;
-                        wordFrequency.put(word, count + 1);
-                    }
-                }
-                HashMap<String, Integer> sortedWordFrequency = sortByValues(wordFrequency);
-                int counter = 0;
-                for (String sortedKey : sortedWordFrequency.keySet()) {
-                    if (counter < phraseVectorSize) {
-                        relatedWords[counter] = sortedKey;
-                    } else {
-                        break;
-                    }
-                    counter++;
-                }
-                phraseInTweets.put(key, relatedWords);
+    private void mergePolarityAndNGrams() {
+        for(String polarityWord : polarityLexicon.keySet()) {
+            if(!wordsAndPhrases.containsKey(polarityWord)) {
+                wordsAndPhrases.put(polarityWord, new HashMap<>());
             }
         }
     }
 
+
+
+//    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
+    private void createFinalHashMap() {
+        int phraseNr = 0;
+        for(String phrase : wordsAndPhrases.keySet()) {
+            System.out.print("\r " +phraseNr++);
+            HashMap<String, Integer> wordFrequency = wordsAndPhrases.get(phrase);
+            for(String tweet : tweets) {
+                String filteredTweet = FilterStopWords.replaceStopWords(tweet, "_");
+                if(filteredTweet.contains(phrase)) {
+                    String phraseWindow = constructPhraseWindow(filteredTweet, phrase);
+                    for(String word : phraseWindow.split(" ")) {
+                        int count = wordFrequency.containsKey(word) ? wordFrequency.get(word) : 0;
+                        wordFrequency.put(word, count + 1);
+                    }
+                }
+            }
+            HashMap<String, Integer> sortedWordFrequency = sortByValues(wordFrequency);
+            int counter = 0;
+            String[] relatedWords = new String[phraseVectorSize];
+            for (String sortedKey : sortedWordFrequency.keySet()) {
+                if (counter < phraseVectorSize) {
+                    relatedWords[counter] = sortedKey;
+                } else {
+                    break;
+                }
+                counter++;
+            }
+            phraseInTweets.put(phrase, relatedWords);
+        }
+    }
+
+
     //Finds where the phrase starts and then creates a String phraseWindow containing the 2 words in front of the phrase,
     //the phrase, and then the 2 following words. Ugly code needs cleanup
-    private String constructPhraseWindow(String tweet, String key) {
+    private String constructPhraseWindow(String filteredTweet, String key) {
         String phraseWindow = "";
-        String[] wordsInTweet = tweet.split(" ");
+        String[] wordsInTweet = filteredTweet.split(" ");
         String[] keyWords = key.split(" ");
         int index = 0;
         for(int i = 0; i < wordsInTweet.length; i++) {
-            if(keyWords.length > 1 && i != wordsInTweet.length-1) {
-                if (wordsInTweet[i].equalsIgnoreCase(keyWords[0]) && wordsInTweet[i + 1].equalsIgnoreCase(keyWords[1])) {
-                    index = i;
-                    break;
-                }
-            } else if (wordsInTweet[i].equalsIgnoreCase(keyWords[0])) {
+            if(matchesAtIndex(wordsInTweet, keyWords, i)) {
                 index = i;
                 break;
             }
         }
         for(int j = index-2; j <= index+3; j++) {
-            if(j >= 0 && j < wordsInTweet.length) {
+            if(j >= 0 && j < wordsInTweet.length && !wordsInTweet[j].equals("_")) {
                 phraseWindow += wordsInTweet[j] + " ";
             }
         }
         return phraseWindow.trim();
 
+    }
+
+    private boolean matchesAtIndex(String[] search, String[] needle, int index) {
+        for(int j = 0 ; j < needle.length && index+j < search.length; j++) {
+            if(!search[index+j].equals(needle[j])) {
+                return false;
+            }
+        }
+        return true;
     }
 
 //    Directly from internet:
