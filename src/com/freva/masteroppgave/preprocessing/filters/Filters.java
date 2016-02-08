@@ -12,14 +12,30 @@ public class Filters {
     public static final String URL_PLACEHOLDER = "||URL||";
 
 
+    /**
+     * Returns HTML unescaped string
+     * @param text String to format (f.ex. "&lt;3")
+     * @return The formatted String (f.ex. "<3")
+     */
     public static String HTMLUnescape(String text) {
         return StringEscapeUtils.unescapeHtml4(text);
     }
 
+
+    /**
+     * Normalizes String to Latin characters if possible
+     * @param text String to format (f.ex. "A strîng wìth fúnny chäracters")
+     * @return The formatted String (f.ex. "A strîng wìth fúnny chäracters")
+     */
     public static String normalizeForm(String text) {
-        return Normalizer.normalize(text, Normalizer.Form.NFD);
+        return Normalizer.normalize(text, Normalizer.Form.NFKD);
     }
 
+    /**
+     * Removes repeated whitespace
+     * @param text String to format (f.ex. "A string    with maany   spaces  ")
+     * @return The formatted String (f.ex. "A string with many spaces ")
+     */
     public static String removeRepeatedWhitespace(String text) {
         return RegexFilters.replaceWhitespace(text, " ");
     }
@@ -118,8 +134,17 @@ public class Filters {
 
 
     /**
+     * Removes non alphabetic characters
+     * @param text String to format (f.ex "Hey, m8!")
+     * @return The formatted String (f.ex. "Hey m")
+     */
+    public static String removeNonAlphabeticText(String text) {
+        return RegexFilters.replaceNonAlphabeticText(text, " ");
+    }
+
+    /**
      * Removes non-alphabetical symbols from PoS tagged sentence
-     * @param text String to format (f.ex. "That_TAG was_TAG ***_TAG cool_TAG m8_TAG")
+     * @param text String to format (f.ex. "That_TAG was_TAG ***_TAG ._. cool_TAG m8_TAG")
      * @return The formatted String (f.ex "That_TAG was_TAG cool_TAG m_TAG")
      */
     public static String removeNonPosTaggedAlphabeticalText(String text) {
@@ -133,7 +158,7 @@ public class Filters {
      * @return The formatted String (f.ex. "Only 90s kids will get this m8")
      */
     public static String removeFreeDigits(String text) {
-        return RegexFilters.replaceFreeDigits(text, "");
+        return RegexFilters.replaceFreeDigits(text, " ");
     }
 
 
@@ -144,5 +169,15 @@ public class Filters {
      */
     public static String fixSyntacticalPunctuationGrammar(String text) {
         return RegexFilters.fixSyntacticalPunctuationGrammar(text);
+    }
+
+
+    /**
+     * Removes English stop words, replacing them with "_"
+     * @param text String to format (f.ex. "This is a sentence with many stop words")
+     * @return The formatted String (f.ex. "_ _ _ sentence _ many stop words")
+     */
+    public static String removeStopWords(String text) {
+        return FilterStopWords.replaceStopWords(text, "_");
     }
 }
