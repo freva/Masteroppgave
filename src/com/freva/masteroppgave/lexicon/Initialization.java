@@ -103,7 +103,8 @@ public class Initialization {
         }
     }
 
-//    Finds where the phrase starts and then creates a String phraseWindow containing the 2 words in front of the phrase, the phrase, and then the 2 following words. Ugly code needs cleanup
+    //Finds where the phrase starts and then creates a String phraseWindow containing the 2 words in front of the phrase,
+    //the phrase, and then the 2 following words. Ugly code needs cleanup
     private String constructPhraseWindow(String tweet, String key) {
         String phraseWindow = "";
         String[] wordsInTweet = tweet.split(" ");
@@ -115,10 +116,9 @@ public class Initialization {
                     index = i;
                     break;
                 }
-            else if (wordsInTweet[i].equalsIgnoreCase(keyWords[0])) {
+            } else if (wordsInTweet[i].equalsIgnoreCase(keyWords[0])) {
                 index = i;
                 break;
-                }
             }
         }
         for(int j = index-2; j <= index+3; j++) {
