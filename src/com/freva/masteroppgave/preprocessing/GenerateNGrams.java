@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.preprocessing;
 
-
 import com.freva.masteroppgave.preprocessing.filters.FilterStopWords;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
@@ -12,19 +11,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+
 public class GenerateNGrams {
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
-        String input_filename = "res/tweets/200k.txt";
-        String output_filename = "res/tweets/ngrams.txt";
-        HashMap<String, Integer> nGramsCounter = new HashMap<>();
-        Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
+        final long startTime = System.currentTimeMillis();
+        final String input_filename = "res/tweets/200k.txt";
+        final String output_filename = "res/tweets/ngrams.txt";
+        final HashMap<String, Integer> nGramsCounter = new HashMap<>();
+        final Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
 
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "utf-8"))) {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for(String line; (line = br.readLine()) != null; ) {
                     line = filter(line);
-                    line = FilterStopWords.replaceStopWords(line, "_");
 
                     for(String nGram: NGrams.getNGrams(line, 6)) {
                         if(! containsAlphabet.matcher(nGram).find()) continue;
@@ -70,6 +69,7 @@ public class GenerateNGrams {
         text = Filters.removeInnerWordCharacters(text);
         text = Filters.removeNonAlphanumericalText(text);
         text = Filters.removeFreeDigits(text);
+        text = Filters.removeStopWords(text);
         text = Filters.removeRepeatedWhitespace(text);
         return text.trim();
     }
