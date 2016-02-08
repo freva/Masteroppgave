@@ -90,6 +90,10 @@ public class Filters {
         return RegexFilters.replaceNonSyntacticalText(text, " ");
     }
 
+    public static String removeNonAlphabeticalText(String text) {
+        return RegexFilters.replaceNonAlphabeticalText(text, "");
+    }
+
     public static String removeNonPosTaggedAlphabeticalText(String text) {
         return RegexFilters.replaceNonPosTaggedAlphabeticalText(text, "");
     }
