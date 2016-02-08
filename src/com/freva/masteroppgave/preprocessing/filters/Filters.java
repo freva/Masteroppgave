@@ -178,6 +178,6 @@ public class Filters {
      * @return The formatted String (f.ex. "_ _ _ sentence _ many stop words")
      */
     public static String removeStopWords(String text) {
-        return FilterStopWords.replaceStopWords(text, "_");
+        return WordFilters.replaceStopWords(text, "_");
     }
 }

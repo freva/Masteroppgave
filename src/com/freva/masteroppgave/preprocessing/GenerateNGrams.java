@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.preprocessing;
 
-import com.freva.masteroppgave.preprocessing.filters.FilterStopWords;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
 
