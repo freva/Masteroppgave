@@ -4,6 +4,7 @@ import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.GatePosTagger;
 import java.io.*;
 
+
 public class TweetsTagger {
     public static void main(String[] args) throws Exception {
         GatePosTagger tagger = new GatePosTagger("res/gate_pos_tagger/models/gate-EN-twitter-fast.model");
@@ -15,6 +16,9 @@ public class TweetsTagger {
                 for(String line; (line = br.readLine()) != null; ) {
                     line = filter(line);
                     if(line.length() > 0) line = tagger.tagSentence(line);
+                    line = Filters.removeNonPosTaggedAlphabeticalText(line);
+                    line = Filters.removeRepeatedWhitespace(line);
+                    line = line.trim();
 
                     writer.write(line + "\n");
                 }
@@ -31,6 +35,9 @@ public class TweetsTagger {
         text = Filters.removeHashtag(text);
         text = Filters.removeUsername(text);
         text = Filters.removeEmoticons(text);
+        text = Filters.removeInnerWordCharacters(text);
+        text = Filters.removeNonSyntacticalText(text);
+        text = Filters.fixSyntacticalPunctuationGrammar(text);
         text = Filters.removeRepeatedWhitespace(text);
         return text.trim();
     }

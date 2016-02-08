@@ -76,4 +76,73 @@ public class Filters {
     public static String placeholderURL(String text) {
         return RegexFilters.replaceURL(text, URL_PLACEHOLDER);
     }
+
+
+    /**
+     * Removes PoS tags (Assumed immediately after a word connected by an underscore)
+     * @param text String to format (f.ex "A_TAG PoS_TAG tagged_TAG sentence_TAG")
+     * @return The formatted String (f.ex. "A PoS tagged sentence")
+     */
+    public static String removePosTags(String text) {
+        return RegexFilters.replacePosTag(text, "");
+    }
+
+
+    /**
+     * Removes characters which are often part of a word (mostly apostrophes)
+     * @param text String to format (f.ex. "Here's a sentence!")
+     * @return The formatted String (f.ex. "Heres a sentence!")
+     */
+    public static String removeInnerWordCharacters(String text) {
+        return RegexFilters.replaceInnerWordCharacters(text, "");
+    }
+
+
+    /**
+     * Removes all non-alphabetic or basic punctuation characters (!?,. )
+     * @param text String to format (f.ex. "This is' a #crazy tæst")
+     * @return The formatted String (f.ex. "This is a crazy tst")
+     */
+    public static String removeNonSyntacticalText(String text) {
+        return RegexFilters.replaceNonSyntacticalText(text, " ");
+    }
+
+    /**
+     * Removes non-alphanumerical characters
+     * @param text String to format (f.ex "It's very nice!")
+     * @return The formatted String (f.ex "It s very nice ")
+     */
+    public static String removeNonAlphanumericalText(String text) {
+        return RegexFilters.replaceNonAlphanumericalText(text, " ");
+    }
+
+
+    /**
+     * Removes non-alphabetical symbols from PoS tagged sentence
+     * @param text String to format (f.ex. "That_TAG was_TAG ***_TAG cool_TAG m8_TAG")
+     * @return The formatted String (f.ex "That_TAG was_TAG cool_TAG m_TAG")
+     */
+    public static String removeNonPosTaggedAlphabeticalText(String text) {
+        return RegexFilters.replaceNonPosTaggedAlphabeticalText(text, "");
+    }
+
+
+    /**
+     * Removes free standing digits (digits not part of a word)
+     * @param text String to format (f.ex. "Only 90s kids will get this 1337 m8")
+     * @return The formatted String (f.ex. "Only 90s kids will get this m8")
+     */
+    public static String removeFreeDigits(String text) {
+        return RegexFilters.replaceFreeDigits(text, "");
+    }
+
+
+    /**
+     * Formats punctuation signs to be syntactically correctly placed (immediately following a word, followed by a space)
+     * @param text String to format (f.ex. "This sentence ,has oddly.placed signs ! ! !"
+     * @return The formatted String (f.ex. "This sentence, has oddly. placed signs!!!")
+     */
+    public static String fixSyntacticalPunctuationGrammar(String text) {
+        return RegexFilters.fixSyntacticalPunctuationGrammar(text);
+    }
 }

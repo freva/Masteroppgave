@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
@@ -24,7 +25,7 @@ public class GatePosTagger {
     private boolean label_fixed;
 
     public GatePosTagger(String model) throws Exception {
-        this(model, true, true, true, true);
+        this(model, true, true, true, false);
     }
 
     public GatePosTagger(String model, boolean do_correction, boolean do_entities, boolean do_interjections, boolean label_fixed) throws Exception {
@@ -53,20 +54,19 @@ public class GatePosTagger {
     }
 
     public String tagSentence(String sentence) {
-        String[] input_tokens = sentence.split("\\s+");
-        ArrayList<String> tokens = new ArrayList<>(Arrays.asList(input_tokens));
+        String[] input_tokens = RegexFilters.WHITESPACE.split(sentence);
+        List<String> tokens = Arrays.asList(input_tokens);
 
         List<TaggedWord> taggedWords = tagSentence(tokens);
-        String taggedSentence = "";
-
+        StringBuilder taggedSentence = new StringBuilder();
         for (int i = 0; i < taggedWords.size(); i++) {
-            taggedSentence = taggedSentence + input_tokens[i] + "_" + taggedWords.get(i).tag() + " ";
+            taggedSentence.append(input_tokens[i]).append("_").append(taggedWords.get(i).tag()).append(" ");
         }
 
-        return taggedSentence.trim();
+        return taggedSentence.toString().trim();
     }
 
-    private List<TaggedWord> tagSentence(ArrayList<String> tokens) {
+    private List<TaggedWord> tagSentence(List<String> tokens) {
         ArrayList<TaggedWord> untagged_string = new ArrayList<>();
 
         TaggedWord to_label;
