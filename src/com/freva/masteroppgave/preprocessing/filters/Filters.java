@@ -90,12 +90,16 @@ public class Filters {
         return RegexFilters.replaceNonSyntacticalText(text, " ");
     }
 
-    public static String removeNonAlphabeticalText(String text) {
-        return RegexFilters.replaceNonAlphabeticalText(text, "");
+    public static String removeNonAlphanumericalText(String text) {
+        return RegexFilters.replaceNonAlphanumericalText(text, " ");
     }
 
     public static String removeNonPosTaggedAlphabeticalText(String text) {
         return RegexFilters.replaceNonPosTaggedAlphabeticalText(text, "");
+    }
+
+    public static String removeFreeDigits(String text) {
+        return RegexFilters.replaceFreeDigits(text, "");
     }
 
 
