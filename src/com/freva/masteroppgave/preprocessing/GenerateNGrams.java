@@ -1,8 +1,9 @@
 package com.freva.masteroppgave.preprocessing;
 
 
-import com.freva.masteroppgave.preprocessing.filters.FilterStopWords;
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
 
 import java.io.*;
@@ -23,7 +24,7 @@ public class GenerateNGrams {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for(String line; (line = br.readLine()) != null; ) {
                     line = filter(line);
-                    line = FilterStopWords.replaceStopWords(line, "_");
+                    line = WordFilters.replaceStopWords(line, "_");
 
                     for(String nGram: NGrams.getNGrams(line, 6)) {
                         if(! containsAlphabet.matcher(nGram).find()) continue;
