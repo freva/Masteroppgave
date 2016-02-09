@@ -5,8 +5,7 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
 import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
-import com.freva.masteroppgave.preprocessing.GenerateNGrams;
-import com.freva.masteroppgave.preprocessing.filters.FilterStopWords;
+import com.freva.masteroppgave.preprocessing.preprocessors.GenerateNGrams;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 
 import java.io.BufferedReader;
@@ -118,7 +117,7 @@ public class Initialization {
             System.out.print("\r " +phraseNr++);
             HashMap<String, Integer> wordFrequency = new HashMap<>();
             for(Integer tweetID : wordAndPhraseOccurences.get(phrase)) {
-                String filteredTweet = FilterStopWords.replaceStopWords(tweets.get(tweetID), "_");
+                String filteredTweet = Filters.removeStopWords(tweets.get(tweetID));
                 if(filteredTweet.contains(phrase)) {
                     String phraseWindow = constructPhraseWindow(filteredTweet, phrase);
                     for(String word : phraseWindow.split(" ")) {
