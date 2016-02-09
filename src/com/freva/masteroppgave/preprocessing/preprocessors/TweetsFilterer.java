@@ -3,7 +3,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import java.io.*;
 import java.util.HashSet;
 
-public class Combiner {
+public class TweetsFilterer {
     public static void rawTweetCleaner(String input_filename, String output_filename) throws IOException {
         final HashSet<String> unique = new HashSet<>();
         int lineCounter = 0;

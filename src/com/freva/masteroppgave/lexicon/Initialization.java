@@ -5,7 +5,7 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PhraseCreator;
 import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
-import com.freva.masteroppgave.preprocessing.preprocessors.GenerateNGrams;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetsNGrams;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 
 import java.io.BufferedReader;
@@ -87,7 +87,7 @@ public class Initialization {
     }
 
     private void generateNGrams() {
-        nGramOccurrences = GenerateNGrams.createNGrams();
+        nGramOccurrences = TweetsNGrams.createNGrams();
     }
 
     private void mergePolarityAndNGrams() {

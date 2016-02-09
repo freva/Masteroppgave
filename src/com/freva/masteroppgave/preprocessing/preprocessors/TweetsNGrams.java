@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
-public class GenerateNGrams {
+public class TweetsNGrams {
     public static HashMap<String, ArrayList<Integer>> createNGrams(String input_filename, int frequencyCutoff) throws IOException {
         HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
