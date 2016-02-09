@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Graph {
     private ArrayList<Node> nodes = new ArrayList<>();
-    private static final float edgeThreshold = 0.7f;
+    private static final float edgeThreshold = 0.6f;
 
     public void addNode(Node node) {
         nodes.add(node);
