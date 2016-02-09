@@ -27,8 +27,9 @@ public class Initialization {
 
 
     public Initialization() throws IOException, JSONException {
-        readPolarityLexicon();
+//        readPolarityLexicon();
         readTweets();
+        System.out.println("Done reading tweets");
 //        mergePolarityAndNGrams();
         createFinalHashMap();
         createGraph();
@@ -36,9 +37,11 @@ public class Initialization {
 
 
     private void readTweets() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/200k.txt")));
         String line = "";
+        int counter = 0;
         while((line = reader.readLine()) != null) {
+            System.out.print("\r " + counter++);
             line = filter(line);
             tweets.add(line.toLowerCase());
         }
@@ -100,10 +103,6 @@ public class Initialization {
                             wordFrequencies[j].put(word, count + 1);
                         }
                     }
-//                    for(String word : phraseWindow.split(" ")) {
-//                        int count = wordFrequency.containsKey(word) ? wordFrequency.get(word) : 0;
-//                        wordFrequency.put(word, count + 1);
-//                    }
                 }
             }
             String[][] phraseVectors = new String[2][phraseVectorSize];
@@ -134,22 +133,26 @@ public class Initialization {
         String[] wordsInTweet = filteredTweet.split(" ");
         String[] keyWords = key.split(" ");
         String[] phraseWindows = {"",""};
-        int index = 0;
+        ArrayList<Integer> indexes = new ArrayList<>();
+//        int index = 0;
         for(int i = 0; i < wordsInTweet.length; i++) {
             if(matchesAtIndex(wordsInTweet, keyWords, i)) {
-                index = i;
-                break;
+                indexes.add(i);
+//                index = i;
+//                break;
             }
         }
-        for(int j = index-2; j <= index+(keyWords.length -1) + 3; j++) {
-            if(j >= 0 && j < wordsInTweet.length && !wordsInTweet[j].equals("_")) {
-                if(j <= index+(keyWords.length - 1)) {
-                    phraseWindows[0] += wordsInTweet[j] + " ";
+        for(int i = 0; i < indexes.size(); i++) {
+            for (int j = indexes.get(i) - 2; j <= indexes.get(i) + (keyWords.length - 1) + 3; j++) {
+                if (j >= 0 && j < wordsInTweet.length && !wordsInTweet[j].equals("_")) {
+                    if (j <= indexes.get(i) + (keyWords.length - 1)) {
+                        phraseWindows[0] += wordsInTweet[j] + " ";
+                    }
+                    if (j >= indexes.get(i)) {
+                        phraseWindows[1] += wordsInTweet[j] + " ";
+                    }
+                    //                phraseWindow += wordsInTweet[j] + " ";
                 }
-                if(j >= index) {
-                    phraseWindows[1] += wordsInTweet[j] + " ";
-                }
-//                phraseWindow += wordsInTweet[j] + " ";
             }
         }
         return phraseWindows;
@@ -199,11 +202,10 @@ public class Initialization {
         ArrayList<Node> nodes = graph.getNodes();
         System.out.println("Printing similarities....");
         for(Node node : nodes) {
-            if(polarityLexicon.containsKey(node.getPhrase())) {
                 for (Edge edge : node.getNeighbors()) {
-                    System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
+                    if(!node.getPhrase().contains(edge.getNeighbor().getPhrase()) && !edge.getNeighbor().getPhrase().contains(node.getPhrase()))
+                        System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
                 }
-            }
         }
     }
 
