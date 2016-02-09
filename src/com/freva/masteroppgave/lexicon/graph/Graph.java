@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Graph {
     private ArrayList<Node> nodes = new ArrayList<>();
@@ -32,9 +33,11 @@ public class Graph {
      * @param node2 - second node to be compared
      */
     private void checkIfEdge(Node node1, Node node2) {
-        String[] contextVector1 = node1.getContextVector();
-        String[] contextVector2 = node2.getContextVector();
-        double similarity = calculateSimilarity(contextVector1, contextVector2);
+        String[][] contextVector1 = node1.getContextVector();
+        String[][] contextVector2 = node2.getContextVector();
+        double leftSimilarity = calculateSimilarity(createVectors(contextVector1[0], contextVector2[0]));
+        double rightSimilarity = calculateSimilarity(createVectors(contextVector1[1], contextVector2[1]));
+        double similarity = Math.max(leftSimilarity, rightSimilarity);
         if (similarity >= edgeThreshold) {
             node1.addNeighbor(new Edge(node2, similarity));
             node2.addNeighbor(new Edge(node1, similarity));
@@ -43,12 +46,10 @@ public class Graph {
 
     /**
      * Calculates the Cosine Similarity between two context vectors
-     * @param contextVector1 - The first context vector
-     * @param contextVector2 - The second context vector
+     * @param vectors - A HashMap containing numerical vectors for two context vectors
      * @return The calculated Cosine Similarity
      */
-    private double calculateSimilarity(String[] contextVector1, String[] contextVector2) {
-        HashMap<String, int[]> vectors = createVectors(contextVector1, contextVector2);
+    private double calculateSimilarity(HashMap<String, int[]> vectors) {
         double dotProduct = 0.0;
         double normA = 0.0;
         double normB = 0.0;
@@ -78,11 +79,15 @@ public class Graph {
             for (int i = 0; i < contextVectors.get(j).length; i++) {
                 if (!occurrences.containsKey(contextVectors.get(j)[i])) {
                     int[] frequencies = new int[2];
-                    frequencies[j] += 1;
+                    if(contextVectors.get(j)[i] != null) {
+                        frequencies[j] += 1;
+                    }
                     occurrences.put(contextVectors.get(j)[i], frequencies);
                 } else {
                     int[] frequencies = occurrences.get(contextVectors.get(j)[i]);
-                    frequencies[j] += 1;
+                    if(contextVectors.get(j)[i] != null) {
+                        frequencies[j] += 1;
+                    }
                     occurrences.put(contextVectors.get(j)[i], frequencies);
                 }
             }

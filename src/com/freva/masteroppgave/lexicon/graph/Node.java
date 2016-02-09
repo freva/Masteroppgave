@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class Node {
     private String phrase;
-    private String[] contextVector;
+    private String[][] contextVector;
     private ArrayList<Edge> neighbors = new ArrayList<>();
     private double posScore = 0;
     private double negScore = 0;
 
-    public Node(String phrase, String[] contextVector) {
+    public Node(String phrase, String[][] contextVector) {
         this.phrase = phrase;
         this.contextVector = contextVector;
     }
@@ -26,7 +26,7 @@ public class Node {
      * Returns the context vector of the node-phrase.
      * @return context vector
      */
-    public String[] getContextVector() {
+    public String[][] getContextVector() {
         return contextVector;
     }
 
