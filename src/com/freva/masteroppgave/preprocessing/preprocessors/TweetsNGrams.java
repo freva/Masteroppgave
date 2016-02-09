@@ -3,6 +3,8 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
+import com.freva.masteroppgave.utils.FileUtils;
+import com.freva.masteroppgave.utils.ProgressBar;
 
 import java.io.*;
 import java.util.*;
@@ -18,19 +20,22 @@ public class TweetsNGrams {
      * @throws IOException
      */
     public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
-        HashMap<String, HashSet<Integer>> nGramsCounter = new HashMap<>();
+        final String anim= "|/-\\";
+        HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter = 0;
+        ProgressBar progress = new ProgressBar(FileUtils.countLines(input_filename));
 
         try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
             for(String line; (line = br.readLine()) != null; lineCounter++) {
                 line = filter(line).toLowerCase();
+                progress.printProgress(lineCounter);
 
                 for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
                     if(! containsAlphabet.matcher(nGram).find()) continue;
 
                     if(! nGramsCounter.containsKey(nGram)) {
-                        nGramsCounter.put(nGram, new HashSet<>());
+                        nGramsCounter.put(nGram, new ArrayList<>());
                     }
 
                     nGramsCounter.get(nGram).add(lineCounter);
@@ -38,20 +43,21 @@ public class TweetsNGrams {
             }
         }
 
-        Iterator<Map.Entry<String, HashSet<Integer>>> iter = nGramsCounter.entrySet().iterator();
+        Iterator<Map.Entry<String, ArrayList<Integer>>> iter = nGramsCounter.entrySet().iterator();
         int limit = (int) (frequencyCutoff*lineCounter);
         try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
             while (iter.hasNext()) {
-                Map.Entry<String, HashSet<Integer>> entry = iter.next();
+                Map.Entry<String, ArrayList<Integer>> entry = iter.next();
                 if (entry.getValue().size() > limit) {
-                    output.write("{\"" + entry.getKey() + "\": " + entry.getValue() + "}\n");
+                    HashSet<Integer> uniqueIDs = new HashSet<>(entry.getValue());
+                    output.write("{\"" + entry.getKey() + "\": " + uniqueIDs + "}\n");
                 }
 
                 iter.remove();
             }
         }
     }
-
+    
 
     private static String filter(String text) {
         text = Filters.HTMLUnescape(text);
