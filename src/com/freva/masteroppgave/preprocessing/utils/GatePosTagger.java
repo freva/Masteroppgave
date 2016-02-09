@@ -22,18 +22,28 @@ public class GatePosTagger {
     private boolean do_correction;
     private boolean do_entities;
     private boolean do_interjections;
-    private boolean label_fixed;
+    private boolean do_twitter_labels;
 
     public GatePosTagger(String model) throws Exception {
         this(model, true, true, true, false);
     }
 
-    public GatePosTagger(String model, boolean do_correction, boolean do_entities, boolean do_interjections, boolean label_fixed) throws Exception {
+
+    /**
+     * Gate Part-of-Speech tagger initializer
+     * @param model File path to Gate model file
+     * @param do_correction Perform basic internet speak correction to English (f.ex. da => the, l8r => later)
+     * @param do_entities Use entities.txt to classify person-names, city-names and company-names
+     * @param do_interjections Use set of regex defined interjections
+     * @param do_twitter_labels Tag basic twitter elements like hashtags, usernames and links
+     * @throws Exception
+     */
+    public GatePosTagger(String model, boolean do_correction, boolean do_entities, boolean do_interjections, boolean do_twitter_labels) throws Exception {
         this.tagger = new MaxentTagger(model);
         this.do_correction = do_correction;
         this.do_entities = do_entities;
         this.do_interjections = do_interjections;
-        this.label_fixed = label_fixed;
+        this.do_twitter_labels = do_twitter_labels;
 
         if (do_correction) {
             for (String line : Files.readAllLines(Paths.get("res/gate_pos_tagger/orth.en.csv"))) {
@@ -53,6 +63,12 @@ public class GatePosTagger {
         }
     }
 
+
+    /**
+     * Runs Gate Part-of-Speech tagger on a sentence
+     * @param sentence Sentence to PoS tag
+     * @return PoS tagged string where PoS tags are attached to the end of each word by an underscore
+     */
     public String tagSentence(String sentence) {
         String[] input_tokens = RegexFilters.WHITESPACE.split(sentence);
         List<String> tokens = Arrays.asList(input_tokens);
@@ -73,7 +89,7 @@ public class GatePosTagger {
         for(Iterator<String> var4 = tokens.iterator(); var4.hasNext(); untagged_string.add(to_label)) {
             String token = var4.next();
             to_label = new TaggedWord(token);
-            if(label_fixed) {
+            if(do_twitter_labels) {
                 if(token.indexOf("#") == 0) {
                     to_label.setTag("HT");
                 }

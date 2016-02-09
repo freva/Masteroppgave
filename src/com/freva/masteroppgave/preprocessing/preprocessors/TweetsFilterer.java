@@ -4,6 +4,12 @@ import java.io.*;
 import java.util.HashSet;
 
 public class TweetsFilterer {
+    /**
+     * First stage of raw downloaded tweet filtering. Removes all tweets that cant be used by any other preprocessor.
+     * @param input_filename File path to the raw downloaded tweets
+     * @param output_filename File path to write the filtered tweets
+     * @throws IOException
+     */
     public static void rawTweetCleaner(String input_filename, String output_filename) throws IOException {
         final HashSet<String> unique = new HashSet<>();
         int lineCounter = 0;
