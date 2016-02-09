@@ -6,8 +6,15 @@ import java.io.*;
 
 
 public class TweetsTagger {
-    public static void posTagTweets(String input_filename, String output_filename, String moodel_filename) throws Exception {
-        GatePosTagger tagger = new GatePosTagger(moodel_filename);
+    /**
+     * Runs Gate PoS tagger on all tweets inside a file and writes it to another
+     * @param input_filename File path to input file with tweets, one on each line
+     * @param output_filename File path to output file
+     * @param model_filename File path to Gate PoS tagger model file
+     * @throws Exception
+     */
+    public static void posTagTweets(String input_filename, String output_filename, String model_filename) throws Exception {
+        GatePosTagger tagger = new GatePosTagger(model_filename);
 
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "utf-8"))) {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {

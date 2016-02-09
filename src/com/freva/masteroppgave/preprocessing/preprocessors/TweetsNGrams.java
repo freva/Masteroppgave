@@ -10,7 +10,14 @@ import java.util.regex.Pattern;
 
 
 public class TweetsNGrams {
-    public static HashMap<String, ArrayList<Integer>> createNGrams(String input_filename, int frequencyCutoff) throws IOException {
+    /**
+     * Writes all frequent n-grams found in a file to another file in JSON format
+     * @param input_filename File path to tweets to generate n-grams for
+     * @param output_filename File path to write n-grams to
+     * @param frequencyCutoff Percentage of total number of tweets that n-gram must have appeared in to be included
+     * @throws IOException
+     */
+    public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
         HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter = 0;
@@ -32,15 +39,19 @@ public class TweetsNGrams {
         }
 
         Iterator<Map.Entry<String, ArrayList<Integer>>> iter = nGramsCounter.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, ArrayList<Integer>> entry = iter.next();
-            if(entry.getValue().size() < frequencyCutoff) {
+        int limit = (int) (frequencyCutoff*lineCounter);
+        try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
+            while (iter.hasNext()) {
+                Map.Entry<String, ArrayList<Integer>> entry = iter.next();
+                if (entry.getValue().size() > limit) {
+                    output.write("{\"" + entry.getKey() + "\": " + entry.getValue() + "}\n");
+                }
+
                 iter.remove();
             }
         }
-
-        return nGramsCounter;
     }
+
 
     private static String filter(String text) {
         text = Filters.HTMLUnescape(text);
