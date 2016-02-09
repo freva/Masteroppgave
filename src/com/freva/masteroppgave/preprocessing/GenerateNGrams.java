@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+
 public class GenerateNGrams {
     public static HashMap<String, ArrayList<Integer>> createNGrams() {
         long startTime = System.currentTimeMillis();
