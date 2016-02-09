@@ -9,9 +9,13 @@ public class WordFilters {
             "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there",
             "these", "they", "this", "to", "was", "will", "with"};
     private static final String pattern = "\\b(" + StringUtils.join(stopWords, "|") + ")\\b";
-    private static final Pattern removeStopWords = Pattern.compile(pattern);
+    private static final Pattern stopWordsRegex = Pattern.compile(pattern);
 
     public static String replaceStopWords(String text, String replace) {
-        return removeStopWords.matcher(text.toLowerCase()).replaceAll(replace);
+        return stopWordsRegex.matcher(text.toLowerCase()).replaceAll(replace);
+    }
+
+    public static boolean containsStopWord(String text) {
+        return stopWordsRegex.matcher(text).find();
     }
 }
