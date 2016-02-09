@@ -18,7 +18,7 @@ public class TweetsNGrams {
      * @throws IOException
      */
     public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
-        HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
+        HashMap<String, HashSet<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter = 0;
 
@@ -30,7 +30,7 @@ public class TweetsNGrams {
                     if(! containsAlphabet.matcher(nGram).find()) continue;
 
                     if(! nGramsCounter.containsKey(nGram)) {
-                        nGramsCounter.put(nGram, new ArrayList<>());
+                        nGramsCounter.put(nGram, new HashSet<>());
                     }
 
                     nGramsCounter.get(nGram).add(lineCounter);
@@ -38,11 +38,11 @@ public class TweetsNGrams {
             }
         }
 
-        Iterator<Map.Entry<String, ArrayList<Integer>>> iter = nGramsCounter.entrySet().iterator();
+        Iterator<Map.Entry<String, HashSet<Integer>>> iter = nGramsCounter.entrySet().iterator();
         int limit = (int) (frequencyCutoff*lineCounter);
         try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
             while (iter.hasNext()) {
-                Map.Entry<String, ArrayList<Integer>> entry = iter.next();
+                Map.Entry<String, HashSet<Integer>> entry = iter.next();
                 if (entry.getValue().size() > limit) {
                     output.write("{\"" + entry.getKey() + "\": " + entry.getValue() + "}\n");
                 }
