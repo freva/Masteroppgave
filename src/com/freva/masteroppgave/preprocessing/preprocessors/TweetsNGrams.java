@@ -24,9 +24,9 @@ public class TweetsNGrams {
 
         try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
             for(String line; (line = br.readLine()) != null; lineCounter++) {
-                line = filter(line);
+                line = filter(line).toLowerCase();
 
-                for(String nGram: NGrams.getNGrams(line, 6)) {
+                for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
                     if(! containsAlphabet.matcher(nGram).find()) continue;
 
                     if(! nGramsCounter.containsKey(nGram)) {
@@ -65,7 +65,6 @@ public class TweetsNGrams {
         text = Filters.removeInnerWordCharacters(text);
         text = Filters.removeNonAlphanumericalText(text);
         text = Filters.removeFreeDigits(text);
-        text = Filters.removeStopWords(text);
         text = Filters.removeRepeatedWhitespace(text);
         return text.trim();
     }
