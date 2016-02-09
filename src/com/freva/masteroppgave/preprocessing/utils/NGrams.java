@@ -4,8 +4,8 @@ import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class NGrams {
     private static final Pattern punctuation = Pattern.compile("[!?.]");
@@ -13,9 +13,9 @@ public class NGrams {
 
     /**
      * Generates all n-grams from a sentence (f.ex. "I like cats" with n=2 returns
-     * "I like", "I", "like cats", "like" and "cats")
+     * "I like", "I", "like cats", "like" and "cats"), splits on \\s+ regex.
      * @param text String to generate n-grams for
-     * @param n Maximum n-gram length limit
+     * @param n Maximum n-gram length
      * @return String array with all n-grams
      */
     public static String[] getNGrams(String text, int n) {
@@ -24,6 +24,12 @@ public class NGrams {
     }
 
 
+    /**
+     * Generates all the n-grams on already split up tokens.
+     * @param tokens Tokens to generate n-gram for
+     * @param n Maximum n-gram length
+     * @return String with all n-grams
+     */
     public static String[] getNGrams(String[] tokens, int n) {
         String[] nGrams = new String[getNumberNGrams(tokens.length, n)];
 
@@ -36,7 +42,17 @@ public class NGrams {
     }
 
 
-
+    /**
+     * Generates all n-grams while also respecting basic punctuation (!?.)
+     * F.ex. for sentence "Today is a nice day. I like the sun", the n-grams with n=3 are:
+     * "Today", "Today is", "Today is a", "is", "is a", "is a nice", "a", "a nice", "a nice day",
+     * "nice", "nice day", "day", "I" "I like", "I like the", "like" "like the", "like the sun",
+     * "the", "the sun", "sun". Note that "nice day I", "day I", "day I like" are not included
+     * because they are separated by a punctuation.
+     * @param text String to generate n-Grams for
+     * @param n Maximum n-gram length
+     * @return String array with all n-grams
+     */
     public static String[] getSyntacticalNGrams(String text, int n) {
         String[] subParts = punctuation.split(text);
         String[][] nGramParts = new String[subParts.length][];
