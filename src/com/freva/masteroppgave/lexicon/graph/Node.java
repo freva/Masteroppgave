@@ -4,32 +4,44 @@ import java.util.ArrayList;
 
 public class Node {
     private String phrase;
-    private String[] phraseVector;
+    private String[] contextVector;
     private ArrayList<Edge> neighbors = new ArrayList<>();
     private double posScore = 0;
     private double negScore = 0;
 
-    public Node(String phrase, String[] phraseVector) {
+    public Node(String phrase, String[] contextVector) {
         this.phrase = phrase;
-        this.phraseVector = phraseVector;
+        this.contextVector = contextVector;
     }
 
-//    Returns the phrase associated with the Node.
+    /**
+     * Returns the phrase associated with the node.
+     * @return phrase
+     */
     public String getPhrase() {
         return phrase;
     }
 
-//    List of tweets containing the phrase/word.
-    public String[] getPhraseVector() {
-        return phraseVector;
+    /**
+     * Returns the context vector of the node-phrase.
+     * @return context vector
+     */
+    public String[] getContextVector() {
+        return contextVector;
     }
 
-//    Returns array of all outgoing Edges or direct neighbors.
+    /**
+     * Returns the nodes neighbors
+     * @return neighbors
+     */
     public ArrayList<Edge> getNeighbors() {
         return neighbors;
     }
 
-//    Adds Edge or neighbor to the array of Edges/neighbors.
+    /**
+     * Adds a neighbor node to the array of neighbors
+     * @param neighbor node
+     */
     public void addNeighbor(Edge neighbor) {
         neighbors.add(neighbor);
     }
