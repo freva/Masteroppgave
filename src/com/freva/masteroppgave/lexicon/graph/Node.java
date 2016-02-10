@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class Node {
+public class Node implements Comparable<Node> {
     private String phrase;
     private String[][] contextVector;
     private ArrayList<Edge> neighbors = new ArrayList<>();
@@ -94,5 +94,11 @@ public class Node {
             total += score;
         }
         return total;
+    }
+
+    @Override
+    public int compareTo(Node other) {
+        if(other == null) return -1;
+        else return (int) Math.signum(other.getSentimentScore()-this.getSentimentScore());
     }
 }
