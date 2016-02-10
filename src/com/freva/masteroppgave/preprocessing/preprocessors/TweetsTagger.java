@@ -19,31 +19,19 @@ public class TweetsTagger {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "utf-8"))) {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for(String line; (line = br.readLine()) != null; ) {
-                    line = filter(line);
+                    line = Filters.chain(line,
+                            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
+                            Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
+                            Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalText,
+                            Filters::fixSyntacticalPunctuationGrammar, Filters::removeRepeatedWhitespace, String::trim);
+
                     if(line.length() > 0) line = tagger.tagSentence(line);
-                    line = Filters.removeNonPosTaggedAlphabeticalText(line);
-                    line = Filters.removeRepeatedWhitespace(line);
-                    line = line.trim();
+                    line = Filters.chain(line,
+                            Filters::removeNonPosTaggedAlphabeticalText, Filters::removeRepeatedWhitespace, String::trim);
 
                     writer.write(line + "\n");
                 }
             }
         }
-    }
-
-    private static String filter(String text) {
-        text = Filters.HTMLUnescape(text);
-        text = Filters.removeUnicodeEmoticons(text);
-        text = Filters.normalizeForm(text);
-        text = Filters.removeURL(text);
-        text = Filters.removeRTTag(text);
-        text = Filters.removeHashtag(text);
-        text = Filters.removeUsername(text);
-        text = Filters.removeEmoticons(text);
-        text = Filters.removeInnerWordCharacters(text);
-        text = Filters.removeNonSyntacticalText(text);
-        text = Filters.fixSyntacticalPunctuationGrammar(text);
-        text = Filters.removeRepeatedWhitespace(text);
-        return text.trim();
     }
 }

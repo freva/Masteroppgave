@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
 import com.freva.masteroppgave.utils.FileUtils;
@@ -20,7 +19,6 @@ public class TweetsNGrams {
      * @throws IOException
      */
     public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
-        final String anim= "|/-\\";
         HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter = 0;
@@ -28,7 +26,11 @@ public class TweetsNGrams {
 
         try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
             for(String line; (line = br.readLine()) != null; lineCounter++) {
-                line = filter(line).toLowerCase();
+                line = Filters.chain(line,
+                        Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
+                        Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
+                        Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText,
+                        Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim);
                 progress.printProgress(lineCounter);
 
                 for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
@@ -56,22 +58,5 @@ public class TweetsNGrams {
                 iter.remove();
             }
         }
-    }
-    
-
-    private static String filter(String text) {
-        text = Filters.HTMLUnescape(text);
-        text = Filters.removeUnicodeEmoticons(text);
-        text = Filters.normalizeForm(text);
-        text = Filters.removeURL(text);
-        text = Filters.removeRTTag(text);
-        text = Filters.removeHashtag(text);
-        text = Filters.removeUsername(text);
-        text = Filters.removeEmoticons(text);
-        text = Filters.removeInnerWordCharacters(text);
-        text = Filters.removeNonAlphanumericalText(text);
-        text = Filters.removeFreeDigits(text);
-        text = Filters.removeRepeatedWhitespace(text);
-        return text.trim();
     }
 }

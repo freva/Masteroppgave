@@ -40,7 +40,12 @@ public class Initialization {
         int counter = 0;
         while((line = reader.readLine()) != null) {
             progress.printProgress(counter);
-            line = filter(line);
+            line = Filters.chain(line,
+                    Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
+                    Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
+                    Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
+                    Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+
             tweets.add(line);
             counter++;
         }
@@ -158,21 +163,5 @@ public class Initialization {
 //                        System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
 //                }
 //        }
-    }
-
-    private static String filter(String text) {
-        text = Filters.HTMLUnescape(text);
-        text = Filters.removeUnicodeEmoticons(text);
-        text = Filters.normalizeForm(text);
-        text = Filters.removeURL(text);
-        text = Filters.removeRTTag(text);
-        text = Filters.removeHashtag(text);
-        text = Filters.removeUsername(text);
-        text = Filters.removeEmoticons(text);
-        text = Filters.removeInnerWordCharacters(text);
-        text = Filters.removeNonSyntacticalTextPlus(text);
-        text = Filters.removeFreeDigits(text);
-        text = Filters.removeRepeatedWhitespace(text);
-        return text.trim().toLowerCase();
     }
 }
