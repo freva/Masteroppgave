@@ -4,12 +4,27 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.Normalizer;
+import java.util.function.Function;
 
 public class Filters {
     public static final String USERNAME_PLACEHOLDER = "||U||";
     public static final String HASHTAG_PLACEHOLDER = "||H||";
     public static final String RTTAG_PLACEHOLDER = "||RT||";
     public static final String URL_PLACEHOLDER = "||URL||";
+
+
+    /**
+     * Chain several filters after each other
+     * @param text String to format
+     * @param filters Sequence of filters to apply on String
+     * @return The formatted String
+     */
+    @SafeVarargs
+    public static String chain(String text, Function<String, String>... filters) {
+        for (Function<String, String> filter : filters)
+            text = filter.apply(text);
+        return text;
+    }
 
 
     /**
@@ -72,7 +87,7 @@ public class Filters {
     }
 
     public static String hashtagToWord(String text) {
-        return RegexFilters.replaceHashtag(text, "\1");
+        return RegexFilters.replaceHashtag(text, "$1");
     }
 
 
