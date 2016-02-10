@@ -1,17 +1,15 @@
 package com.freva.masteroppgave.lexicon;
 
-import com.freva.masteroppgave.lexicon.graph.Edge;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
-import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
+import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.utils.FileUtils;
-import com.freva.masteroppgave.utils.HashMapSorter;
+import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.ProgressBar;
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.util.*;
@@ -21,16 +19,13 @@ import java.util.regex.Pattern;
 public class Initialization {
     private ArrayList<String> tweets = new ArrayList<>();
     private HashMap<String, String[][]> phraseInTweets = new HashMap<>();
-    private HashMap<String, Integer> polarityLexicon = new HashMap<>();
 
     private static final int phraseVectorSize = 10;
     private static final int phraseWindowSize = 6;
     private static final Pattern punctuation = Pattern.compile("[!?.]");
 
 
-
-    public Initialization() throws IOException, JSONException {
-        readPolarityLexicon();
+    public Initialization() throws IOException {
         readTweets();
         createFinalHashMap();
         createGraph();
@@ -39,8 +34,8 @@ public class Initialization {
 
     private void readTweets() throws IOException {
         System.out.println("Reading tweets:");
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
         ProgressBar progress = new ProgressBar(FileUtils.countLines("res/tweets/10k.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
         String line = "";
         int counter = 0;
         while((line = reader.readLine()) != null) {
@@ -52,32 +47,14 @@ public class Initialization {
     }
 
 
-    private void readPolarityLexicon() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/AFINN111.txt")));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                String[] wordAndScore = line.split("\\s+");
-                String key = "";
-                for (int i = 0; i < wordAndScore.length - 1; i++) {
-                    key += wordAndScore[i] + " ";
-                }
-                polarityLexicon.put(key.trim().toLowerCase(), Integer.valueOf(wordAndScore[wordAndScore.length - 1]));
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-    }
-
-
 //    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
-    private void createFinalHashMap() throws IOException, JSONException {
-        JSONLineByLine<String, JSONArray> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt");
+    private void createFinalHashMap() throws IOException {
+        JSONLineByLine<Map<String, Integer[]>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, Integer[]>>(){}.getType());
         while(ngrams.hasNext()) {
-            Map.Entry<String, JSONArray> entry = ngrams.next();
+            Map.Entry<String, Integer[]> entry = ngrams.next().entrySet().iterator().next();
             HashMap<String, Integer> [] wordFrequencies = new HashMap[]{new HashMap(), new HashMap()};
-            for(int i = 0; i < entry.getValue().length(); i++) {
-                String tweet = tweets.get(entry.getValue().getInt(i));
+            for(int i = 0; i < entry.getValue().length; i++) {
+                String tweet = tweets.get(entry.getValue()[i]);
                 String filteredTweet = Filters.removeNonAlphanumericalText(tweet);
                 if(filteredTweet.contains(entry.getKey())) {
                     String[] phraseWindows = constructPhraseWindows(tweet, entry.getKey());
@@ -91,7 +68,7 @@ public class Initialization {
             }
             String[][] phraseVectors = new String[2][phraseVectorSize];
             for(int i = 0; i < wordFrequencies.length; i++) {
-                HashMap<String, Integer> sortedWordFrequency = HashMapSorter.sortByValues(wordFrequencies[i]);
+                Map<String, Integer> sortedWordFrequency = MapUtils.sortMapByValue(wordFrequencies[i]);
                 int counter = 0;
                 String[] relatedWords = new String[phraseVectorSize];
                 for (String sortedKey : sortedWordFrequency.keySet()) {
@@ -151,14 +128,14 @@ public class Initialization {
         return true;
     }
 
-    private void createGraph() {
-        PolarityWordsDetector polarityWordsDetector = new PolarityWordsDetector(polarityLexicon);
+    private void createGraph() throws IOException {
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon("res/data/afinn111.json");
         Graph graph = new Graph();
         System.out.println("\nAdding nodes...");
         HashMap<String, Integer> polarityLexiconWords = new HashMap<>();
         for(String key : phraseInTweets.keySet()) {
             graph.addNode(new Node(key, phraseInTweets.get(key)));
-            int polarityValue = polarityWordsDetector.getPolarity(key);
+            int polarityValue = priorPolarityLexicon.getPolarity(key);
             if(polarityValue != 0) {
                 polarityLexiconWords.put(key, polarityValue);
             }
@@ -168,7 +145,9 @@ public class Initialization {
         graph.createAndWeighEdges();
         System.out.println("Propagating Sentiment...");
         graph.propagateSentiment();
+
         ArrayList<Node> nodes = graph.getNodes();
+        Collections.sort(nodes);
         for(int i = 0; i < nodes.size(); i++) {
             System.out.println(nodes.get(i).getPhrase() + " : " + nodes.get(i).getSentimentScore());
         }
