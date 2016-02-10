@@ -5,6 +5,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileUtils {
     /**
@@ -29,5 +31,16 @@ public class FileUtils {
             }
             return (count == 0 && !empty) ? 1 : count;
         }
+    }
+
+
+    /**
+     * Reads entire file into a String
+     * @param filename File path to file to read in
+     * @return String with entire file contents
+     * @throws IOException
+     */
+    public static String readEntireFileIntoString(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(filename)));
     }
 }
