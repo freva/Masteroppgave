@@ -41,4 +41,11 @@ public class PolarityWordsDetector {
         }
         return counter;
     }
+
+    public int getPolarity(String phrase) {
+        if(polarityLexicon.containsKey(phrase)) {
+            return polarityLexicon.get(phrase);
+        }
+        return 0;
+    }
 }

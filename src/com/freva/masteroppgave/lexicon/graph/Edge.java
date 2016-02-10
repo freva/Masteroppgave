@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-public class Edge {
+public class Edge implements Comparable<Edge> {
     private Node neighbor;
     private double weight;
 
@@ -28,5 +28,16 @@ public class Edge {
      */
     public double getWeight() {
         return weight;
+    }
+
+    @Override
+    public int compareTo(Edge o) {
+        if(weight < o.weight) {
+            return 1;
+        }
+        else if(weight > o.weight) {
+            return -1;
+        }
+        return 0;
     }
 }

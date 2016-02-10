@@ -1,13 +1,16 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Node {
     private String phrase;
     private String[][] contextVector;
     private ArrayList<Edge> neighbors = new ArrayList<>();
-    private double posScore = 0;
-    private double negScore = 0;
+    private HashMap<String, Double> posValues = new HashMap<>();
+    private HashMap<String, Double> negValues = new HashMap<>();
+    private double currentScore;
 
     public Node(String phrase, String[][] contextVector) {
         this.phrase = phrase;
@@ -44,17 +47,52 @@ public class Node {
      */
     public void addNeighbor(Edge neighbor) {
         neighbors.add(neighbor);
+        posValues.put(neighbor.getNeighbor().getPhrase(), 0.0);
     }
 
-    public void updatePosScore(double score) {
-        posScore += score;
+
+    public void updateSentimentScore(double score, Node neighbor) {
+        currentScore = score;
+        if(score < 0) {
+            updateNegScore(score, neighbor);
+        }
+        else updatePosScore(score, neighbor);
     }
 
-    public void updateNegScore(double score) {
-        negScore += score;
+    private void updatePosScore(double score, Node neighbor) {
+        if(!posValues.containsKey(neighbor.getPhrase())) {
+            posValues.put(neighbor.getPhrase(), score);
+        }
+        else {
+            double maxScore = Math.max(posValues.get(neighbor.getPhrase()), score);
+            posValues.put(neighbor.getPhrase(), maxScore);
+        }
+    }
+
+    private void updateNegScore(double score, Node neighbor) {
+        if(!negValues.containsKey(neighbor.getPhrase())) {
+            negValues.put(neighbor.getPhrase(), score);
+        }
+        else {
+            double minScore = Math.min(negValues.get(neighbor.getPhrase()), score);
+            negValues.put(neighbor.getPhrase(), minScore);
+        }
     }
 
     public double getSentimentScore() {
-        return posScore - negScore;
+//        double beta = posValues.size()/negValues.size();
+        return sumScores(posValues) + (sumScores(negValues));
+    }
+
+    public double getCurrentScore(){
+        return currentScore;
+    }
+
+    private double sumScores(HashMap<String, Double> scores) {
+        double total = 0.0;
+        for(Double score : scores.values()) {
+            total += score;
+        }
+        return total;
     }
 }

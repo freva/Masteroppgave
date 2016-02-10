@@ -1,11 +1,12 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Graph {
+    private HashMap<String, Integer> polarityLexiconWords;
     private ArrayList<Node> nodes = new ArrayList<>();
-    private static final float edgeThreshold = 0.6f;
+    private static final float edgeThreshold = 0.3f;
+    private static final int pathLength = 3;
 
     /**
      *
@@ -13,6 +14,11 @@ public class Graph {
      */
     public void addNode(Node node) {
         nodes.add(node);
+    }
+
+
+    public void setPolarityLexiconWords(HashMap<String, Integer> polarityLexiconWords) {
+        this.polarityLexiconWords = polarityLexiconWords;
     }
 
     /**
@@ -93,6 +99,31 @@ public class Graph {
             }
         }
         return occurrences;
+    }
+
+    public void propagateSentiment() {
+        for(Node node : nodes) {
+            if(polarityLexiconWords.containsKey(node.getPhrase())) {
+                ArrayList<Node> nodesToCheck = new ArrayList<>();
+                nodesToCheck.add(node);
+                node.updateSentimentScore((double)polarityLexiconWords.get(node.getPhrase()), node);
+                for(int i = 0; i < pathLength; i++) {
+                    ArrayList<Node> nodesToCheckNext = new ArrayList<>();
+                    for(Node nodeToCheck : nodesToCheck) {
+                        ArrayList<Edge> neighbors = nodeToCheck.getNeighbors();
+                        Collections.sort(neighbors);
+                        int counter = 0;
+                        for (Edge edge : neighbors) {
+                            if(counter >= 30) break;
+                            edge.getNeighbor().updateSentimentScore(nodeToCheck.getCurrentScore()*edge.getWeight(), nodeToCheck);
+                            nodesToCheckNext.add(edge.getNeighbor());
+                            counter++;
+                        }
+                    }
+                    nodesToCheck = nodesToCheckNext;
+                }
+            }
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package com.freva.masteroppgave.lexicon;
 import com.freva.masteroppgave.lexicon.graph.Edge;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
+import com.freva.masteroppgave.lexicon.utils.PolarityWordsDetector;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.utils.FileUtils;
@@ -29,7 +30,7 @@ public class Initialization {
 
 
     public Initialization() throws IOException, JSONException {
-//        readPolarityLexicon();
+        readPolarityLexicon();
         readTweets();
         createFinalHashMap();
         createGraph();
@@ -151,21 +152,33 @@ public class Initialization {
     }
 
     private void createGraph() {
+        PolarityWordsDetector polarityWordsDetector = new PolarityWordsDetector(polarityLexicon);
         Graph graph = new Graph();
         System.out.println("\nAdding nodes...");
+        HashMap<String, Integer> polarityLexiconWords = new HashMap<>();
         for(String key : phraseInTweets.keySet()) {
             graph.addNode(new Node(key, phraseInTweets.get(key)));
+            int polarityValue = polarityWordsDetector.getPolarity(key);
+            if(polarityValue != 0) {
+                polarityLexiconWords.put(key, polarityValue);
+            }
         }
+        graph.setPolarityLexiconWords(polarityLexiconWords);
         System.out.println("Creating and weighing edges...");
         graph.createAndWeighEdges();
+        System.out.println("Propagating Sentiment...");
+        graph.propagateSentiment();
         ArrayList<Node> nodes = graph.getNodes();
-        System.out.println("Printing similarities....");
-        for(Node node : nodes) {
-                for (Edge edge : node.getNeighbors()) {
-                    if(!node.getPhrase().contains(edge.getNeighbor().getPhrase()) && !edge.getNeighbor().getPhrase().contains(node.getPhrase()))
-                        System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
-                }
+        for(int i = 0; i < nodes.size(); i++) {
+            System.out.println(nodes.get(i).getPhrase() + " : " + nodes.get(i).getSentimentScore());
         }
+//        System.out.println("Printing similarities....");
+//        for(Node node : nodes) {
+//                for (Edge edge : node.getNeighbors()) {
+//                    if(!node.getPhrase().contains(edge.getNeighbor().getPhrase()) && !edge.getNeighbor().getPhrase().contains(node.getPhrase()))
+//                        System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
+//                }
+//        }
     }
 
     private static String filter(String text) {
