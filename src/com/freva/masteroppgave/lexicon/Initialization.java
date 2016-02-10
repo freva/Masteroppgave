@@ -17,22 +17,22 @@ import java.util.regex.Pattern;
 
 
 public class Initialization {
-    private ArrayList<String> tweets = new ArrayList<>();
-    private HashMap<String, String[][]> phraseInTweets = new HashMap<>();
+    private static final ArrayList<String> tweets = new ArrayList<>();
+    private static final HashMap<String, String[][]> phraseInTweets = new HashMap<>();
 
     private static final int phraseVectorSize = 10;
     private static final int phraseWindowSize = 6;
     private static final Pattern punctuation = Pattern.compile("[!?.]");
 
 
-    public Initialization() throws IOException {
+    public static void main(String args[]) throws Exception{
         readTweets();
         createFinalHashMap();
         createGraph();
     }
 
 
-    private void readTweets() throws IOException {
+    private static void readTweets() throws IOException {
         System.out.println("Reading tweets:");
         ProgressBar progress = new ProgressBar(FileUtils.countLines("res/tweets/10k.txt"));
         BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
@@ -48,7 +48,7 @@ public class Initialization {
 
 
 //    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
-    private void createFinalHashMap() throws IOException {
+    private static void createFinalHashMap() throws IOException {
         JSONLineByLine<Map<String, Integer[]>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, Integer[]>>(){}.getType());
         while(ngrams.hasNext()) {
             Map.Entry<String, Integer[]> entry = ngrams.next().entrySet().iterator().next();
@@ -89,7 +89,7 @@ public class Initialization {
 
     //Finds where the phrase starts and then creates a String phraseWindow containing the 2 words in front of the phrase,
     //the phrase, and then the 2 following words. Ugly code needs cleanup
-    private String[] constructPhraseWindows(String tweet, String key) {
+    private static String[] constructPhraseWindows(String tweet, String key) {
         String[] tweetParts = punctuation.split(tweet);
         String[] keyWords = key.split(" ");
         String[] phraseWindows = {"",""};
@@ -119,7 +119,7 @@ public class Initialization {
         return phraseWindows;
     }
 
-    private boolean matchesAtIndex(String[] search, String[] needle, int index) {
+    private static boolean matchesAtIndex(String[] search, String[] needle, int index) {
         for(int j = 0 ; j < needle.length && index+j < search.length; j++) {
             if(!search[index+j].equals(needle[j])) {
                 return false;
@@ -128,7 +128,7 @@ public class Initialization {
         return true;
     }
 
-    private void createGraph() throws IOException {
+    private static void createGraph() throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon("res/data/afinn111.json");
         Graph graph = new Graph();
         System.out.println("\nAdding nodes...");
@@ -174,11 +174,5 @@ public class Initialization {
         text = Filters.removeFreeDigits(text);
         text = Filters.removeRepeatedWhitespace(text);
         return text.trim().toLowerCase();
-    }
-
-
-
-    public static void main(String args[]) throws Exception{
-        new Initialization();
     }
 }
