@@ -123,6 +123,10 @@ public class Filters {
         return RegexFilters.replaceNonSyntacticalText(text, " ");
     }
 
+    public static String removeNonSyntacticalTextPlus(String text) {
+        return RegexFilters.replaceNonSyntacticalTextPlus(text, " ");
+    }
+
     /**
      * Removes non-alphanumerical characters
      * @param text String to format (f.ex "It's very nice!")

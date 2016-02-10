@@ -28,6 +28,7 @@ public class RegexFilters {
     public static final Pattern POS_TAG = Pattern.compile("_[A-Z$]+");
     public static final Pattern INNER_WORD_CHAR = Pattern.compile("['`´’]");
     public static final Pattern NON_SYNTACTICAL_TEXT = Pattern.compile("[^a-zA-Z.,!? ]");
+    public static final Pattern NON_SYNTACTICAL_TEXT_PLUS = Pattern.compile("[^a-zA-Z.!? ]");
     public static final Pattern NON_ALPHANUMERIC_TEXT = Pattern.compile("[^a-zA-Z0-9 ]");
     public static final Pattern NON_ALPHABETIC_TEXT = Pattern.compile("[^a-zA-Z ]");
     public static final Pattern NON_POS_TAGGED_ALPHABETICAL_TEXT = Pattern.compile("[^a-zA-Z_ ]");
@@ -72,6 +73,10 @@ public class RegexFilters {
 
     public static String replaceNonSyntacticalText(String text, String replace) {
         return NON_SYNTACTICAL_TEXT.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceNonSyntacticalTextPlus(String text, String replace) {
+        return NON_SYNTACTICAL_TEXT_PLUS.matcher(text).replaceAll(replace);
     }
 
     public static String replaceNonAlphanumericalText(String text, String replace) {
