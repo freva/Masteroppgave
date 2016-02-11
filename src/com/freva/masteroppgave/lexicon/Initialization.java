@@ -18,6 +18,9 @@ public class Initialization {
     public static void main(String args[]) throws Exception{
 
         final long startTime = System.currentTimeMillis();
+
+        //TweetsNGrams.createNGrams("res/tweets/10k.txt", "res/tweets/ngrams.txt", 0.0025);
+
         final String[] tweets = TweetReader.readAndPreprocessTweets("res/tweets/10k.txt",
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                 Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
@@ -38,14 +41,14 @@ public class Initialization {
      * @throws IOException
      */
     private static Graph initializeGraph(String[] tweets) throws IOException {
-        JSONLineByLine<Map<String, Integer[]>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, Integer[]>>(){}.getType());
+        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, List<Integer>>>(){}.getType());
         Graph graph = new Graph();
 
         while(ngrams.hasNext()) {
-            Map.Entry<String, Integer[]> entry = ngrams.next().entrySet().iterator().next();
+            Map.Entry<String, List<Integer>> entry = ngrams.next().entrySet().iterator().next();
             graph.addPhrase(entry.getKey());
-            for(int i = 0; i < entry.getValue().length; i++) {
-                graph.updatePhraseContext(entry.getKey(), tweets[entry.getValue()[i]]);
+            for(int i = 0; i < entry.getValue().size(); i++) {
+                graph.updatePhraseContext(entry.getKey(), tweets[entry.getValue().get(i)]);
             }
         }
 
