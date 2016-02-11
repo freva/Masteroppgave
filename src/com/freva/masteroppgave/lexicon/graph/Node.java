@@ -55,22 +55,28 @@ public class Node implements Comparable<Node> {
                     break;
                 }
 
-                MapUtils.incrementMapValue(leftSideContextWords, contextWords[i]);
+                incrementMapValue(leftSideContextWords, contextWords[i]);
             }
 
 
             for (int i = phraseStart; i < Math.min(contextWords.length-1, phraseStart+phraseWords.length+phraseWindowSize); i++) {
                 if(punctuation.matcher(contextWords[i]).find()) {
                     String wordWithoutPunctuation = punctuation.matcher(contextWords[i]).replaceAll("");
-                    MapUtils.incrementMapValue(rightSideContextWords, wordWithoutPunctuation);
+                    incrementMapValue(rightSideContextWords, wordWithoutPunctuation);
                     break;
                 }
 
-                MapUtils.incrementMapValue(rightSideContextWords, contextWords[i]);
+                incrementMapValue(rightSideContextWords, contextWords[i]);
             }
         }
 
         cacheUpToDate = false;
+    }
+
+    private void incrementMapValue(HashMap<String, Integer> map, String contextWord ) {
+        if(!WordFilters.containsStopWord(contextWord)) {
+            MapUtils.incrementMapValue(map, contextWord);
+        }
     }
 
     /**
@@ -84,8 +90,8 @@ public class Node implements Comparable<Node> {
 
     public ContextWords getContextWords() {
         if(! cacheUpToDate) {
-            String[] leftSideContext = getFrequentContextWords(leftSideContextWords);
-            String[] rightSideContext = getFrequentContextWords(rightSideContextWords);
+            Map<String, Double> leftSideContext = getFrequentContextWords(leftSideContextWords);
+            Map<String, Double> rightSideContext = getFrequentContextWords(rightSideContextWords);
             contextWordsCache = new ContextWords(leftSideContext, rightSideContext);
             cacheUpToDate = true;
         }
@@ -94,19 +100,20 @@ public class Node implements Comparable<Node> {
     }
 
 
-    private String[] getFrequentContextWords(Map<String, Integer> map) {
-        String[] frequentContextWords = new String[phraseVectorSize];
-        Map<String, Integer> sortedWordFrequency = MapUtils.sortMapByValue(map);
-        int counter = 0;
-        for (String sortedKey: sortedWordFrequency.keySet()) {
-            if(WordFilters.containsStopWord(sortedKey)) continue;
-            if (counter < phraseVectorSize) {
-                frequentContextWords[counter++] = sortedKey;
-            } else {
-                break;
-            }
-        }
-        return frequentContextWords;
+    private Map<String, Double> getFrequentContextWords(Map<String, Integer> map) {
+//        String[] frequentContextWords = new String[phraseVectorSize];
+        Map<String, Double>  normalizedMap = MapUtils.normalizeMap(map);
+        Map<String, Double> mostFrequentContextWords = MapUtils.getNLargest(normalizedMap, phraseVectorSize);
+//        int counter = 0;
+//        for (String sortedKey: sortedWordFrequency.keySet()) {
+//            if(WordFilters.containsStopWord(sortedKey)) continue;
+//            if (counter < phraseVectorSize) {
+//                frequentContextWords[counter++] = sortedKey;
+//            } else {
+//                break;
+//            }
+//        }
+        return mostFrequentContextWords;
     }
 
     /**

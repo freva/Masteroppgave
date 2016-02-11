@@ -4,6 +4,7 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.lexicon.utils.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.google.gson.reflect.TypeToken;
@@ -15,6 +16,7 @@ import java.util.*;
 public class Initialization {
 
     public static void main(String args[]) throws Exception{
+
         final long startTime = System.currentTimeMillis();
         final String[] tweets = TweetReader.readAndPreprocessTweets("res/tweets/10k.txt",
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,

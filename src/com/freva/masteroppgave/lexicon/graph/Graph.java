@@ -54,65 +54,17 @@ public class Graph {
     private void checkIfEdge(Node node1, Node node2) {
         ContextWords cw1 = node1.getContextWords();
         ContextWords cw2 = node2.getContextWords();
-        double leftSimilarity = calculateSimilarity(createVectors(cw1.getLeftSideContextWords(), cw2.getLeftSideContextWords()));
-        double rightSimilarity = calculateSimilarity(createVectors(cw1.getRightSideContextWords(), cw2.getRightSideContextWords()));
-        double similarity = Math.max(leftSimilarity, rightSimilarity);
+//        double leftSimilarity = calculateSimilarity(createVectors(cw1.getLeftSideContextWords(), cw2.getLeftSideContextWords()));
+//        double rightSimilarity = calculateSimilarity(createVectors(cw1.getRightSideContextWords(), cw2.getRightSideContextWords()));
+        double similarity = cw1.getSimilarity(cw2);
+//        double similarity = Math.max(leftSimilarity, rightSimilarity);
         if (similarity >= edgeThreshold) {
             node1.addNeighbor(new Edge(node2, similarity));
             node2.addNeighbor(new Edge(node1, similarity));
         }
     }
 
-    /**
-     * Calculates the Cosine Similarity between two context vectors
-     * @param vectors - A HashMap containing numerical vectors for two context vectors
-     * @return The calculated Cosine Similarity
-     */
-    public static double calculateSimilarity(HashMap<String, double[]> vectors) {
-        double dotProduct = 0.0;
-        double normA = 0.0;
-        double normB = 0.0;
-        for (String key : vectors.keySet()) {
-            dotProduct += vectors.get(key)[0] * vectors.get(key)[1];
-            normA += Math.pow(vectors.get(key)[0], 2);
-            normB += Math.pow(vectors.get(key)[1], 2);
-        }
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    }
 
-    /**
-     * Creates a HashMap containing numerical vectors for two given context vectors.
-     * Ex. {"cool": [1, 0], "nice": [0, 1] ...}
-     * 1 represents the occurrence of the word in the respective context vector.
-     * The first element in the Array represents the first given context vector and the second the second given context vector.
-     * @param contextVector1 - The first context vector
-     * @param contextVector2 - The second context vector
-     * @return The HashMap containing the numerical vectors.
-     */
-    public static HashMap<String, double[]> createVectors(String[] contextVector1, String[] contextVector2) {
-        ArrayList<String[]> contextVectors = new ArrayList<>();
-        contextVectors.add(contextVector1);
-        contextVectors.add(contextVector2);
-        HashMap<String, double[]> occurrences = new HashMap<>();
-        for (int j = 0; j < 2; j++) {
-            for (int i = 0; i < contextVectors.get(j).length; i++) {
-                if (!occurrences.containsKey(contextVectors.get(j)[i])) {
-                    double[] frequencies = new double[2];
-                    if(contextVectors.get(j)[i] != null) {
-                        frequencies[j] += 1;
-                    }
-                    occurrences.put(contextVectors.get(j)[i], frequencies);
-                } else {
-                    double[] frequencies = occurrences.get(contextVectors.get(j)[i]);
-                    if(contextVectors.get(j)[i] != null) {
-                        frequencies[j] += 1;
-                    }
-                    occurrences.put(contextVectors.get(j)[i], frequencies);
-                }
-            }
-        }
-        return occurrences;
-    }
 
     /**
      * Propagates sentiment scores from nodes with prior polarity values to nodes on a path with length = pathLength from the node.
