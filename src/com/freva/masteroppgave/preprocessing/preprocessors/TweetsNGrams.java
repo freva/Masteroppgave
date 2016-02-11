@@ -19,18 +19,22 @@ public class TweetsNGrams {
      * @throws IOException
      */
     public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
-        HashMap<String, ArrayList<Integer>> nGramsCounter = new HashMap<>();
+        Map<String, List<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter = 0;
         ProgressBar progress = new ProgressBar(FileUtils.countLines(input_filename));
 
         try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
             for(String line; (line = br.readLine()) != null; lineCounter++) {
+                if(lineCounter % 50000 == 0 && lineCounter != 0) {
+                    removeEntriesUnderThreshold(nGramsCounter, (int) (frequencyCutoff * lineCounter) / 2);
+                }
+
                 line = Filters.chain(line,
                         Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                         Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                         Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText,
-                        Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim);
+                        Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
                 progress.printProgress(lineCounter);
 
                 for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
@@ -45,16 +49,21 @@ public class TweetsNGrams {
             }
         }
 
-        Iterator<Map.Entry<String, ArrayList<Integer>>> iter = nGramsCounter.entrySet().iterator();
-        int limit = (int) (frequencyCutoff*lineCounter);
+        removeEntriesUnderThreshold(nGramsCounter, (int) (frequencyCutoff*lineCounter));
         try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
-            while (iter.hasNext()) {
-                Map.Entry<String, ArrayList<Integer>> entry = iter.next();
-                if (entry.getValue().size() > limit) {
-                    HashSet<Integer> uniqueIDs = new HashSet<>(entry.getValue());
-                    output.write("{\"" + entry.getKey() + "\": " + uniqueIDs + "}\n");
-                }
+            for(Map.Entry<String, List<Integer>> entry: nGramsCounter.entrySet()) {
+                HashSet<Integer> uniqueIDs = new HashSet<>(entry.getValue());
+                output.write("{\"" + entry.getKey() + "\": " + uniqueIDs + "}\n");
+            }
+        }
+    }
 
+
+    private static void removeEntriesUnderThreshold(Map<String, List<Integer>> map, int thresh) {
+        Iterator<Map.Entry<String, List<Integer>>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, List<Integer>> entry = iter.next();
+            if (entry.getValue().size() < thresh) {
                 iter.remove();
             }
         }
