@@ -20,4 +20,18 @@ public class MapUtils {
         }
         return sortedHashMap;
     }
+
+
+    /**
+     * Increments value of key by 1 if present in the list, otherwise initializes the value at 1.
+     * @param map Map to increment key for
+     * @param key Key to increment
+     */
+    public static<T> void incrementMapValue(Map<T, Integer> map, T key) {
+        if(! map.containsKey(key)) {
+            map.put(key, 1);
+        } else {
+            map.put(key, map.get(key)+1);
+        }
+    }
 }

@@ -1,19 +1,70 @@
 package com.freva.masteroppgave.lexicon.graph;
 
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.utils.MapUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Node implements Comparable<Node> {
-    private String phrase;
-    private String[][] contextVector;
-    private ArrayList<Edge> neighbors = new ArrayList<>();
+    private static final Pattern punctuation = Pattern.compile("[!?.]");
+    private static final int phraseVectorSize = 10;
+    private static final int phraseWindowSize = 6;
+
+    private HashMap<String, Integer> rightSideContextWords = new HashMap<>();
+    private HashMap<String, Integer> leftSideContextWords = new HashMap<>();
     private HashMap<String, Double> posValues = new HashMap<>();
     private HashMap<String, Double> negValues = new HashMap<>();
+    private ArrayList<Edge> neighbors = new ArrayList<>();
+
+    private String[] phraseWords;
+    private String phrase;
     private double currentScore;
 
-    public Node(String phrase, String[][] contextVector) {
+    public Node(String phrase) {
         this.phrase = phrase;
-        this.contextVector = contextVector;
+        this.phraseWords = RegexFilters.WHITESPACE.split(phrase);
+    }
+
+
+    /**
+     * Finds all occurrences of the phrase withing the given tweet and creates two Strings(phraseWindows).
+     * The phraseWindows contains the x = phraseWindowSize words in front of the phrase and the x words following the phrase respectively.
+     * Ex: Tweet = "I really don't like that guy", Phrase = "don't like", PhraseWindowSize = 2  -> phraseWindows = ["I really don't like", "don't like that guy"]
+     * @param context - The tweet the phrase occurs in.
+     */
+    public void updatePhraseContext(String context) {
+        String[] contextWords = RegexFilters.WHITESPACE.split(context);
+
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (int j = 0; j < contextWords.length; j++) {
+            if (matchesAtIndex(contextWords, j)) {
+                indexes.add(j);
+            }
+        }
+
+        for(Integer phraseStart: indexes) {
+            for (int i = phraseStart+phraseWords.length; i>= Math.max(0, phraseStart-phraseWindowSize); i--) {
+                if(punctuation.matcher(contextWords[i]).find()) {
+                    break;
+                }
+
+                MapUtils.incrementMapValue(leftSideContextWords, contextWords[i]);
+            }
+
+            for (int i = phraseStart; i < Math.min(contextWords.length-1, phraseStart+phraseWords.length+phraseWindowSize); i++) {
+                if(punctuation.matcher(contextWords[i]).find()) {
+                    String wordWithoutPunctuation = punctuation.matcher(contextWords[i]).replaceAll("");
+                    MapUtils.incrementMapValue(rightSideContextWords, wordWithoutPunctuation);
+                    break;
+                }
+
+                MapUtils.incrementMapValue(rightSideContextWords, contextWords[i]);
+            }
+        }
     }
 
     /**
@@ -24,12 +75,29 @@ public class Node implements Comparable<Node> {
         return phrase;
     }
 
-    /**
-     * Returns the context vector of the node-phrase.
-     * @return context vector
-     */
-    public String[][] getContextVector() {
-        return contextVector;
+
+    public String[] getLeftContextWords() {
+        return getFrequentContextWords(leftSideContextWords);
+    }
+
+    public String[] getRightContextWords() {
+        return getFrequentContextWords(rightSideContextWords);
+    }
+
+
+    private String[] getFrequentContextWords(HashMap<String, Integer> map) {
+        String[] frequentContextWords = new String[phraseVectorSize];
+        Map<String, Integer> sortedWordFrequency = MapUtils.sortMapByValue(map);
+        int counter = 0;
+        for (String sortedKey: sortedWordFrequency.keySet()) {
+            if(WordFilters.containsStopWord(sortedKey)) continue;
+            if (counter < phraseVectorSize) {
+                frequentContextWords[counter++] = sortedKey;
+            } else {
+                break;
+            }
+        }
+        return frequentContextWords;
     }
 
     /**
@@ -126,4 +194,22 @@ public class Node implements Comparable<Node> {
         if(other == null) return -1;
         else return (int) Math.signum(other.getSentimentScore()-this.getSentimentScore());
     }
+
+
+
+    /**
+     * Checks if a given index is the starting index of a phrase in a contextWords.
+     * @param contextWords - The given contextWords.
+     * @param index - The current index.
+     * @return True if correct index, False else.
+     */
+    private boolean matchesAtIndex(String[] contextWords, int index) {
+        for(int j = 0 ; j < phraseWords.length && index+j < contextWords.length; j++) {
+            if(! contextWords[index+j].equals(phraseWords[j])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
