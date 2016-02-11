@@ -1,7 +1,6 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Node implements Comparable<Node> {
@@ -50,7 +49,11 @@ public class Node implements Comparable<Node> {
         posValues.put(neighbor.getNeighbor().getPhrase(), 0.0);
     }
 
-
+    /**
+     * Updates the current propagation score, as well as either the max positive score or the min negative score propagated from the given neighbor node.
+     * @param score - The score propagated from the given neighbor.(Can be positive or negative)
+     * @param neighbor - The neighbor node propagating the sentiment score to the current node.
+     */
     public void updateSentimentScore(double score, Node neighbor) {
         currentScore = score;
         if(score < 0) {
@@ -59,6 +62,11 @@ public class Node implements Comparable<Node> {
         else updatePosScore(score, neighbor);
     }
 
+    /**
+     * Updates the max positive sentiment score propagated from the given neighbor if the given score is bigger than the previous max score propagated from the neighbor.
+     * @param score - The positive sentiment score propagated from the neighbor.
+     * @param neighbor - The neighbor node propagating the sentiment score.
+     */
     private void updatePosScore(double score, Node neighbor) {
         if(!posValues.containsKey(neighbor.getPhrase())) {
             posValues.put(neighbor.getPhrase(), score);
@@ -69,6 +77,11 @@ public class Node implements Comparable<Node> {
         }
     }
 
+    /**
+     * Updates the min negative sentiment score propagated from the given neighbor if the given score is smaller than the previous min score propagated from the neighbor.
+     * @param score - The negative sentiment score propagated from the neighbor.
+     * @param neighbor - The neighbor node propagating the sentiment score.
+     */
     private void updateNegScore(double score, Node neighbor) {
         if(!negValues.containsKey(neighbor.getPhrase())) {
             negValues.put(neighbor.getPhrase(), score);
@@ -79,15 +92,27 @@ public class Node implements Comparable<Node> {
         }
     }
 
+    /**
+     * Returns the overall sentiment score of the node.
+     * @return - Sentiment score.
+     */
     public double getSentimentScore() {
-//        double beta = posValues.size()/negValues.size();
         return sumScores(posValues) + (sumScores(negValues));
     }
 
+    /**
+     * Returns the current propagation score. The score that is going to be propagated out from the node to its neighbors.
+     * @return - Current propagation score.
+     */
     public double getCurrentScore(){
         return currentScore;
     }
 
+    /**
+     * Sums up the sentiment scores contained in a HashMap. This method is called once for the HashMaps containing positive and negative sentiment scores respectively.
+     * @param scores - HashMap containing sentiment scores
+     * @return - The sum of the sentiment scores.
+     */
     private double sumScores(HashMap<String, Double> scores) {
         double total = 0.0;
         for(Double score : scores.values()) {

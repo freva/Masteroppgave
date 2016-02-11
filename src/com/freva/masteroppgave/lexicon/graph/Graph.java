@@ -7,6 +7,7 @@ public class Graph {
     private ArrayList<Node> nodes = new ArrayList<>();
     private static final float edgeThreshold = 0.3f;
     private static final int pathLength = 3;
+    private static final int neighborLimit = 30;
 
     /**
      *
@@ -17,6 +18,10 @@ public class Graph {
     }
 
 
+    /**
+     * Initializes a HashMap containing all prior polarity words existing in the graph.
+     * @param polarityLexiconWords - A HashMap containing the polarity words in the graph. Ex.:{"good" : 3, "bad" : -3, ...}
+     */
     public void setPolarityLexiconWords(HashMap<String, Integer> polarityLexiconWords) {
         this.polarityLexiconWords = polarityLexiconWords;
     }
@@ -101,6 +106,11 @@ public class Graph {
         return occurrences;
     }
 
+    /**
+     * Propagates sentiment scores from nodes with prior polarity values to nodes on a path with length = pathLength from the node.
+     * The prior polarity nodes propagates its sentiment score to its neighbors, the neighbors then propagates to their neighbors and so on until the pathLength is reached.
+     * Each node only propagates sentiment to its x = neighborLimit highest weighted neighbors.
+     */
     public void propagateSentiment() {
         for(Node node : nodes) {
             if(polarityLexiconWords.containsKey(node.getPhrase())) {
@@ -114,7 +124,7 @@ public class Graph {
                         Collections.sort(neighbors);
                         int counter = 0;
                         for (Edge edge : neighbors) {
-                            if(counter >= 30) break;
+                            if(counter >= neighborLimit) break;
                             edge.getNeighbor().updateSentimentScore(nodeToCheck.getCurrentScore()*edge.getWeight(), nodeToCheck);
                             nodesToCheckNext.add(edge.getNeighbor());
                             counter++;

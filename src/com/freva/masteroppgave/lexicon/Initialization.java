@@ -36,7 +36,11 @@ public class Initialization {
     }
 
 
-//    Creation of phrase-vector from set of tweets containing phrase. Needs some cleanup. The phrase-vector should contain the x = phraseVectorSize most frequent words used together with the phrase.
+    /**
+     * Creation of two phrase-vectors(left of phrase and right of phrase) using a set of tweets containing the phrase.
+     * The phrase-vectors should contain the x = phraseVectorSize most frequent words used together with the phrase.
+     * @throws IOException
+     */
     private static void createFinalHashMap() throws IOException {
         JSONLineByLine<Map<String, Integer[]>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, Integer[]>>(){}.getType());
         while(ngrams.hasNext()) {
@@ -78,9 +82,18 @@ public class Initialization {
 
     //Finds where the phrase starts and then creates a String phraseWindow containing the 2 words in front of the phrase,
     //the phrase, and then the 2 following words. Ugly code needs cleanup
-    private static String[] constructPhraseWindows(String tweet, String key) {
+
+    /**
+     * Finds all occurrences of the phrase withing the given tweet and creates two Strings(phraseWindows).
+     * The phraseWindows contains the x = phraseWindowSize words in front of the phrase and the x words following the phrase respectively.
+     * Ex: Tweet = "I really don't like that guy", Phrase = "don't like", PhraseWindowSize = 2  -> phraseWindows = ["I really don't like", "don't like that guy"]
+     * @param tweet - The tweet the phrase occurs in.
+     * @param phrase - The given phrase.
+     * @return - A string array containing the two phraseWindows.
+     */
+    private static String[] constructPhraseWindows(String tweet, String phrase) {
         String[] tweetParts = punctuation.split(tweet);
-        String[] keyWords = key.split(" ");
+        String[] keyWords = phrase.split(" ");
         String[] phraseWindows = {"",""};
         ArrayList<int[]> indexes = new ArrayList<>();
         for(int j = 0; j < tweetParts.length; j++) {
@@ -108,15 +121,26 @@ public class Initialization {
         return phraseWindows;
     }
 
-    private static boolean matchesAtIndex(String[] search, String[] needle, int index) {
-        for(int j = 0 ; j < needle.length && index+j < search.length; j++) {
-            if(!search[index+j].equals(needle[j])) {
+    /**
+     * Checks if a given index is the starting index of a phrase in a tweet.
+     * @param tweet - The given tweet.
+     * @param phrase - The given phrase.
+     * @param index - The current index.
+     * @return True if correct index, False else.
+     */
+    private static boolean matchesAtIndex(String[] tweet, String[] phrase, int index) {
+        for(int j = 0 ; j < phrase.length && index+j < tweet.length; j++) {
+            if(!tweet[index+j].equals(phrase[j])) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Initializes a graph of phrases, before starting the sentiment propagation within the graph resulting in a sentiment lexicon.
+     * @throws IOException
+     */
     private static void createGraph() throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon("res/data/afinn111.json");
         Graph graph = new Graph();
@@ -140,12 +164,5 @@ public class Initialization {
         for(int i = 0; i < nodes.size(); i++) {
             System.out.println(nodes.get(i).getPhrase() + " : " + nodes.get(i).getSentimentScore());
         }
-//        System.out.println("Printing similarities....");
-//        for(Node node : nodes) {
-//                for (Edge edge : node.getNeighbors()) {
-//                    if(!node.getPhrase().contains(edge.getNeighbor().getPhrase()) && !edge.getNeighbor().getPhrase().contains(node.getPhrase()))
-//                        System.out.println(node.getPhrase() + " and " + edge.getNeighbor().getPhrase() + "\n" + "Similarity: " + edge.getWeight() + "'\n");
-//                }
-//        }
     }
 }
