@@ -3,12 +3,11 @@ package com.freva.masteroppgave.lexicon;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
+import com.freva.masteroppgave.lexicon.utils.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.JSONLineByLine;
-import com.freva.masteroppgave.utils.ProgressBar;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
@@ -17,8 +16,8 @@ import java.util.regex.Pattern;
 
 
 public class Initialization {
-    private static final ArrayList<String> tweets = new ArrayList<>();
     private static final HashMap<String, String[][]> phraseInTweets = new HashMap<>();
+    private static String[] tweets;
 
     private static final int phraseVectorSize = 10;
     private static final int phraseWindowSize = 6;
@@ -26,29 +25,14 @@ public class Initialization {
 
 
     public static void main(String args[]) throws Exception{
-        readTweets();
+        tweets = TweetReader.readAndPreprocessTweets("res/tweets/10k.txt",
+                Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
+                Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
+                Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
+                Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+
         createFinalHashMap();
         createGraph();
-    }
-
-
-    private static void readTweets() throws IOException {
-        System.out.println("Reading tweets:");
-        ProgressBar progress = new ProgressBar(FileUtils.countLines("res/tweets/10k.txt"));
-        BufferedReader reader = new BufferedReader(new FileReader(new File("res/tweets/10k.txt")));
-        String line = "";
-        int counter = 0;
-        while((line = reader.readLine()) != null) {
-            progress.printProgress(counter);
-            line = Filters.chain(line,
-                    Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
-                    Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
-                    Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
-                    Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-
-            tweets.add(line);
-            counter++;
-        }
     }
 
 
@@ -59,7 +43,7 @@ public class Initialization {
             Map.Entry<String, Integer[]> entry = ngrams.next().entrySet().iterator().next();
             HashMap<String, Integer> [] wordFrequencies = new HashMap[]{new HashMap(), new HashMap()};
             for(int i = 0; i < entry.getValue().length; i++) {
-                String tweet = tweets.get(entry.getValue()[i]);
+                String tweet = tweets[entry.getValue()[i]];
                 String filteredTweet = Filters.removeNonAlphanumericalText(tweet);
                 if(filteredTweet.contains(entry.getKey())) {
                     String[] phraseWindows = constructPhraseWindows(tweet, entry.getKey());
