@@ -20,6 +20,9 @@ public class Node implements Comparable<Node> {
     private HashMap<String, Double> negValues = new HashMap<>();
     private ArrayList<Edge> neighbors = new ArrayList<>();
 
+    private ContextWords contextWordsCache;
+    private boolean cacheUpToDate = false;
+
     private String[] phraseWords;
     private String phrase;
     private double currentScore;
@@ -47,13 +50,14 @@ public class Node implements Comparable<Node> {
         }
 
         for(Integer phraseStart: indexes) {
-            for (int i = phraseStart+phraseWords.length; i>= Math.max(0, phraseStart-phraseWindowSize); i--) {
-                if(punctuation.matcher(contextWords[i]).find()) {
+            for (int i = phraseStart + phraseWords.length - 1; i >= Math.max(0, phraseStart - phraseWindowSize); i--) {
+                if (punctuation.matcher(contextWords[i]).find()) {
                     break;
                 }
 
                 MapUtils.incrementMapValue(leftSideContextWords, contextWords[i]);
             }
+
 
             for (int i = phraseStart; i < Math.min(contextWords.length-1, phraseStart+phraseWords.length+phraseWindowSize); i++) {
                 if(punctuation.matcher(contextWords[i]).find()) {
@@ -65,6 +69,8 @@ public class Node implements Comparable<Node> {
                 MapUtils.incrementMapValue(rightSideContextWords, contextWords[i]);
             }
         }
+
+        cacheUpToDate = false;
     }
 
     /**
@@ -76,16 +82,19 @@ public class Node implements Comparable<Node> {
     }
 
 
-    public String[] getLeftContextWords() {
-        return getFrequentContextWords(leftSideContextWords);
+    public ContextWords getContextWords() {
+        if(! cacheUpToDate) {
+            String[] leftSideContext = getFrequentContextWords(leftSideContextWords);
+            String[] rightSideContext = getFrequentContextWords(rightSideContextWords);
+            contextWordsCache = new ContextWords(leftSideContext, rightSideContext);
+            cacheUpToDate = true;
+        }
+
+        return contextWordsCache;
     }
 
-    public String[] getRightContextWords() {
-        return getFrequentContextWords(rightSideContextWords);
-    }
 
-
-    private String[] getFrequentContextWords(HashMap<String, Integer> map) {
+    private String[] getFrequentContextWords(Map<String, Integer> map) {
         String[] frequentContextWords = new String[phraseVectorSize];
         Map<String, Integer> sortedWordFrequency = MapUtils.sortMapByValue(map);
         int counter = 0;
@@ -204,6 +213,8 @@ public class Node implements Comparable<Node> {
      * @return True if correct index, False else.
      */
     private boolean matchesAtIndex(String[] contextWords, int index) {
+        if(index+phraseWords.length > contextWords.length) return false;
+
         for(int j = 0 ; j < phraseWords.length && index+j < contextWords.length; j++) {
             if(! contextWords[index+j].equals(phraseWords[j])) {
                 return false;

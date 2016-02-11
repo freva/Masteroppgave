@@ -9,6 +9,6 @@ public class Preprocessor {
     public static void main(String[] args) throws Exception {
         //TweetsFilterer.rawTweetCleaner("res/tweets/2m.txt", "res/tweets/filtered.txt");
         //TweetsTagger.posTagTweets("res/tweets/10k.txt", "res/tweets/tagged.txt", "res/gate_pos_tagger/models/gate-EN-twitter-fast.model");
-        TweetsNGrams.createNGrams("res/tweets/10k.txt", "res/tweets/ngrams.txt", 0.001);
+        TweetsNGrams.createNGrams("res/tweets/10k.txt", "res/tweets/ngrams.txt", 0.0025);
     }
 }
