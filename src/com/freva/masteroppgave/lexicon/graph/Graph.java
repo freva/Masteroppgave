@@ -1,13 +1,16 @@
 package com.freva.masteroppgave.lexicon.graph;
 
+import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
+
 import java.util.*;
 
 public class Graph {
-    private HashMap<String, Integer> polarityLexiconWords;
-    private HashMap<String, Node> nodes = new HashMap<>();
     private static final float edgeThreshold = 0.3f;
     private static final int pathLength = 3;
     private static final int neighborLimit = 30;
+
+    private HashMap<String, Node> nodes = new HashMap<>();
+    private PriorPolarityLexicon priorPolarityLexicon;
 
     /**
      *
@@ -25,10 +28,10 @@ public class Graph {
 
     /**
      * Initializes a HashMap containing all prior polarity words existing in the graph.
-     * @param polarityLexiconWords - A HashMap containing the polarity words in the graph. Ex.:{"good" : 3, "bad" : -3, ...}
+     * @param priorPolarityLexicon - A HashMap containing the polarity words in the graph. Ex.:{"good" : 3, "bad" : -3, ...}
      */
-    public void setPolarityLexiconWords(HashMap<String, Integer> polarityLexiconWords) {
-        this.polarityLexiconWords = polarityLexiconWords;
+    public void setPriorPolarityLexicon(PriorPolarityLexicon priorPolarityLexicon) {
+        this.priorPolarityLexicon = priorPolarityLexicon;
     }
 
     /**
@@ -49,8 +52,10 @@ public class Graph {
      * @param node2 - second node to be compared
      */
     private void checkIfEdge(Node node1, Node node2) {
-        double leftSimilarity = calculateSimilarity(createVectors(node1.getLeftContextWords(), node2.getLeftContextWords()));
-        double rightSimilarity = calculateSimilarity(createVectors(node1.getRightContextWords(), node2.getRightContextWords()));
+        ContextWords cw1 = node1.getContextWords();
+        ContextWords cw2 = node2.getContextWords();
+        double leftSimilarity = calculateSimilarity(createVectors(cw1.getLeftSideContextWords(), cw2.getLeftSideContextWords()));
+        double rightSimilarity = calculateSimilarity(createVectors(cw1.getRightSideContextWords(), cw2.getRightSideContextWords()));
         double similarity = Math.max(leftSimilarity, rightSimilarity);
         if (similarity >= edgeThreshold) {
             node1.addNeighbor(new Edge(node2, similarity));
@@ -116,10 +121,10 @@ public class Graph {
      */
     public void propagateSentiment() {
         for(Node node : nodes.values()) {
-            if(polarityLexiconWords.containsKey(node.getPhrase())) {
+            if(priorPolarityLexicon.hasWord(node.getPhrase())) {
                 ArrayList<Node> nodesToCheck = new ArrayList<>();
                 nodesToCheck.add(node);
-                node.updateSentimentScore((double)polarityLexiconWords.get(node.getPhrase()), node);
+                node.updateSentimentScore((double) priorPolarityLexicon.getPolarity(node.getPhrase()), node);
                 for(int i = 0; i < pathLength; i++) {
                     ArrayList<Node> nodesToCheckNext = new ArrayList<>();
                     for(Node nodeToCheck : nodesToCheck) {
@@ -137,6 +142,19 @@ public class Graph {
                 }
             }
         }
+
+        //Calculate Beta
+        //Normalize scores
+    }
+
+
+    public Map<String, Double> getLexicon() {
+        Map<String, Double> lexicon = new HashMap<>();
+        for(Node node: getNodes()) {
+            lexicon.put(node.getPhrase(), node.getSentimentScore());
+        }
+
+        return lexicon;
     }
 
     /**
