@@ -4,17 +4,22 @@ import java.util.*;
 
 public class Graph {
     private HashMap<String, Integer> polarityLexiconWords;
-    private ArrayList<Node> nodes = new ArrayList<>();
+    private HashMap<String, Node> nodes = new HashMap<>();
     private static final float edgeThreshold = 0.3f;
     private static final int pathLength = 3;
     private static final int neighborLimit = 30;
 
     /**
      *
-     * @param node to add to graph
+     * @param phrase Phrase to add to graph
      */
-    public void addNode(Node node) {
-        nodes.add(node);
+    public void addPhrase(String phrase) {
+        nodes.put(phrase, new Node(phrase));
+    }
+
+
+    public void updatePhraseContext(String phrase, String context) {
+        nodes.get(phrase).updatePhraseContext(context);
     }
 
 
@@ -30,10 +35,10 @@ public class Graph {
      * Comparing each node, checking if there should be an edge between them
      */
     public void createAndWeighEdges() {
-        int size = nodes.size();
-        for (int i = 0; i < size; i++) {
-            for (int j = i + 1; j < size; j++) {
-                checkIfEdge(nodes.get(i), nodes.get(j));
+        List<Node> nodeList = new ArrayList<>(getNodes());
+        for (int i = 0; i < nodeList.size(); i++) {
+            for (int j = i + 1; j < nodeList.size(); j++) {
+                checkIfEdge(nodeList.get(i), nodeList.get(j));
             }
         }
     }
@@ -44,10 +49,8 @@ public class Graph {
      * @param node2 - second node to be compared
      */
     private void checkIfEdge(Node node1, Node node2) {
-        String[][] contextVector1 = node1.getContextVector();
-        String[][] contextVector2 = node2.getContextVector();
-        double leftSimilarity = calculateSimilarity(createVectors(contextVector1[0], contextVector2[0]));
-        double rightSimilarity = calculateSimilarity(createVectors(contextVector1[1], contextVector2[1]));
+        double leftSimilarity = calculateSimilarity(createVectors(node1.getLeftContextWords(), node2.getLeftContextWords()));
+        double rightSimilarity = calculateSimilarity(createVectors(node1.getRightContextWords(), node2.getRightContextWords()));
         double similarity = Math.max(leftSimilarity, rightSimilarity);
         if (similarity >= edgeThreshold) {
             node1.addNeighbor(new Edge(node2, similarity));
@@ -60,7 +63,7 @@ public class Graph {
      * @param vectors - A HashMap containing numerical vectors for two context vectors
      * @return The calculated Cosine Similarity
      */
-    private double calculateSimilarity(HashMap<String, int[]> vectors) {
+    public static double calculateSimilarity(HashMap<String, double[]> vectors) {
         double dotProduct = 0.0;
         double normA = 0.0;
         double normB = 0.0;
@@ -81,21 +84,21 @@ public class Graph {
      * @param contextVector2 - The second context vector
      * @return The HashMap containing the numerical vectors.
      */
-    private HashMap<String, int[]> createVectors(String[] contextVector1, String[] contextVector2) {
+    public static HashMap<String, double[]> createVectors(String[] contextVector1, String[] contextVector2) {
         ArrayList<String[]> contextVectors = new ArrayList<>();
         contextVectors.add(contextVector1);
         contextVectors.add(contextVector2);
-        HashMap<String, int[]> occurrences = new HashMap<>();
+        HashMap<String, double[]> occurrences = new HashMap<>();
         for (int j = 0; j < 2; j++) {
             for (int i = 0; i < contextVectors.get(j).length; i++) {
                 if (!occurrences.containsKey(contextVectors.get(j)[i])) {
-                    int[] frequencies = new int[2];
+                    double[] frequencies = new double[2];
                     if(contextVectors.get(j)[i] != null) {
                         frequencies[j] += 1;
                     }
                     occurrences.put(contextVectors.get(j)[i], frequencies);
                 } else {
-                    int[] frequencies = occurrences.get(contextVectors.get(j)[i]);
+                    double[] frequencies = occurrences.get(contextVectors.get(j)[i]);
                     if(contextVectors.get(j)[i] != null) {
                         frequencies[j] += 1;
                     }
@@ -112,7 +115,7 @@ public class Graph {
      * Each node only propagates sentiment to its x = neighborLimit highest weighted neighbors.
      */
     public void propagateSentiment() {
-        for(Node node : nodes) {
+        for(Node node : nodes.values()) {
             if(polarityLexiconWords.containsKey(node.getPhrase())) {
                 ArrayList<Node> nodesToCheck = new ArrayList<>();
                 nodesToCheck.add(node);
@@ -140,7 +143,7 @@ public class Graph {
      * Returns all nodes in the graph
      * @return - All nodes
      */
-    public ArrayList<Node> getNodes() {
-        return nodes;
+    public Collection<Node> getNodes() {
+        return nodes.values();
     }
 }
