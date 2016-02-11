@@ -54,4 +54,18 @@ public class MapUtils {
         }
         return result;
     }
+
+
+    public static<K, V extends Number & Comparable<V>> Map<K, Double> normalizeMap(Map<K, V> map) {
+        Collection<V> values = new ArrayList<>(map.values());
+        double min = Collections.min(values).doubleValue();
+        double range = Collections.max(values).doubleValue() - min;
+
+        Map<K, Double> normalizedMap = new HashMap<>();
+        for(Map.Entry<K, V> entry: map.entrySet()) {
+            normalizedMap.put(entry.getKey(), (entry.getValue().doubleValue()-min)/range);
+        }
+
+        return normalizedMap;
+    }
 }
