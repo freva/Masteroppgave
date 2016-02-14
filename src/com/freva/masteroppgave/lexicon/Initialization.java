@@ -2,7 +2,7 @@ package com.freva.masteroppgave.lexicon;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
-import com.freva.masteroppgave.lexicon.utils.TweetReader;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetsNGrams;
 import com.freva.masteroppgave.utils.JSONLineByLine;

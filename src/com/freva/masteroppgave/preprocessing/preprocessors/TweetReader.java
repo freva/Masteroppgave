@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon.utils;
+package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.utils.FileUtils;
