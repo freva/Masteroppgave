@@ -10,20 +10,51 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class TweetReader implements Progressable {
+    private Function<String, String>[] filters;
+    private Scanner scanner;
     private int totalLines = 0;
     private int lineCounter = 0;
 
     @SafeVarargs
-    public final String[] readAndPreprocessTweets(String filename, Function<String, String>... filters) throws IOException {
+    public TweetReader(String filename, Function<String, String>... filters) throws IOException {
         this.totalLines = FileUtils.countLines(filename);
+        this.scanner = new Scanner(new File(filename));
+        this.filters = filters;
+    }
+
+
+    /**
+     * Reads and preprocesses all tweets at once
+     * @return Returns String array with all preprocessed tweets in file
+     * @throws IOException
+     */
+    public final String[] readAndPreprocessAllTweets() throws IOException {
         String[] tweets = new String[totalLines];
-        Scanner scanner = new Scanner(new File(filename));
 
         while (scanner.hasNext()) {
             tweets[lineCounter++] = Filters.chain(scanner.nextLine(), filters);
         }
 
         return tweets;
+    }
+
+
+    /**
+     * Reads and preprocesses next tweet
+     * @return Preprocessed tweet in a String
+     */
+    public String readAndPreprocessNextTweet() {
+        lineCounter++;
+        return Filters.chain(scanner.nextLine(), filters);
+    }
+
+
+    /**
+     * Check if there are more entries left
+     * @return True if more entries present
+     */
+    public boolean hasNext() {
+        return scanner.hasNext();
     }
 
     @Override
