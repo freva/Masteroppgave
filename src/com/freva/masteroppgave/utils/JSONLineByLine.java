@@ -38,6 +38,10 @@ public class JSONLineByLine<T> implements Progressable {
     }
 
 
+    /**
+     * Reads and parses the next JSON entry from file
+     * @return Parsed element of type <T>
+     */
     public T next() throws JSONException {
         lineCounter++;
         return new Gson().fromJson(scanner.nextLine(), type);

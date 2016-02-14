@@ -35,8 +35,10 @@ public class Node implements Comparable<Node> {
 
     /**
      * Finds all occurrences of the phrase withing the given tweet and creates two Strings(phraseWindows).
-     * The phraseWindows contains the x = phraseWindowSize words in front of the phrase and the x words following the phrase respectively.
-     * Ex: Tweet = "I really don't like that guy", Phrase = "don't like", PhraseWindowSize = 2  -> phraseWindows = ["I really don't like", "don't like that guy"]
+     * The phraseWindows contains the x = phraseWindowSize words in front of the phrase and the x words following the
+     * phrase respectively.
+     * Ex: Tweet = "I really don't like that guy", Phrase = "don't like", PhraseWindowSize = 2:
+     * phraseWindows = ["I really don't like", "don't like that guy"]
      * @param context - The tweet the phrase occurs in.
      */
     public void updatePhraseContext(String context) {
@@ -73,11 +75,13 @@ public class Node implements Comparable<Node> {
         cacheUpToDate = false;
     }
 
+
     private void incrementMapValue(HashMap<String, Integer> map, String contextWord ) {
         if(!WordFilters.containsStopWord(contextWord)) {
             MapUtils.incrementMapValue(map, contextWord);
         }
     }
+
 
     /**
      * Returns the phrase associated with the node.
@@ -101,20 +105,10 @@ public class Node implements Comparable<Node> {
 
 
     private Map<String, Double> getFrequentContextWords(Map<String, Integer> map) {
-//        String[] frequentContextWords = new String[phraseVectorSize];
-        Map<String, Double>  normalizedMap = MapUtils.normalizeMap(map);
-        Map<String, Double> mostFrequentContextWords = MapUtils.getNLargest(normalizedMap, phraseVectorSize);
-//        int counter = 0;
-//        for (String sortedKey: sortedWordFrequency.keySet()) {
-//            if(WordFilters.containsStopWord(sortedKey)) continue;
-//            if (counter < phraseVectorSize) {
-//                frequentContextWords[counter++] = sortedKey;
-//            } else {
-//                break;
-//            }
-//        }
-        return mostFrequentContextWords;
+        Map<String, Double>  normalizedMap = MapUtils.normalizeMapBetween(map, 0, 1);
+        return MapUtils.getNLargest(normalizedMap, phraseVectorSize);
     }
+
 
     /**
      * Returns the nodes neighbors
@@ -123,6 +117,7 @@ public class Node implements Comparable<Node> {
     public ArrayList<Edge> getNeighbors() {
         return neighbors;
     }
+
 
     /**
      * Adds a neighbor node to the array of neighbors
@@ -133,8 +128,10 @@ public class Node implements Comparable<Node> {
         posValues.put(neighbor.getNeighbor().getPhrase(), 0.0);
     }
 
+
     /**
-     * Updates the current propagation score, as well as either the max positive score or the min negative score propagated from the given neighbor node.
+     * Updates the current propagation score, as well as either the max positive score or the min negative score
+     * propagated from the given neighbor node.
      * @param score - The score propagated from the given neighbor.(Can be positive or negative)
      * @param neighbor - The neighbor node propagating the sentiment score to the current node.
      */
@@ -146,8 +143,10 @@ public class Node implements Comparable<Node> {
         else updatePosScore(score, neighbor);
     }
 
+
     /**
-     * Updates the max positive sentiment score propagated from the given neighbor if the given score is bigger than the previous max score propagated from the neighbor.
+     * Updates the max positive sentiment score propagated from the given neighbor if the given score is bigger than
+     * the previous max score propagated from the neighbor.
      * @param score - The positive sentiment score propagated from the neighbor.
      * @param neighbor - The neighbor node propagating the sentiment score.
      */
@@ -161,8 +160,10 @@ public class Node implements Comparable<Node> {
         }
     }
 
+
     /**
-     * Updates the min negative sentiment score propagated from the given neighbor if the given score is smaller than the previous min score propagated from the neighbor.
+     * Updates the min negative sentiment score propagated from the given neighbor if the given score is smaller than
+     * the previous min score propagated from the neighbor.
      * @param score - The negative sentiment score propagated from the neighbor.
      * @param neighbor - The neighbor node propagating the sentiment score.
      */
@@ -176,6 +177,7 @@ public class Node implements Comparable<Node> {
         }
     }
 
+
     /**
      * Returns the overall sentiment score of the node.
      * @return - Sentiment score.
@@ -183,6 +185,7 @@ public class Node implements Comparable<Node> {
     public double getSentimentScore() {
         return sumScores(posValues) + (sumScores(negValues));
     }
+
 
     /**
      * Returns the current propagation score. The score that is going to be propagated out from the node to its neighbors.
@@ -192,8 +195,10 @@ public class Node implements Comparable<Node> {
         return currentScore;
     }
 
+
     /**
-     * Sums up the sentiment scores contained in a HashMap. This method is called once for the HashMaps containing positive and negative sentiment scores respectively.
+     * Sums up the sentiment scores contained in a HashMap. This method is called once for the HashMaps containing
+     * positive and negative sentiment scores respectively.
      * @param scores - HashMap containing sentiment scores
      * @return - The sum of the sentiment scores.
      */
@@ -204,13 +209,6 @@ public class Node implements Comparable<Node> {
         }
         return total;
     }
-
-    @Override
-    public int compareTo(Node other) {
-        if(other == null) return -1;
-        else return (int) Math.signum(other.getSentimentScore()-this.getSentimentScore());
-    }
-
 
 
     /**
@@ -230,4 +228,10 @@ public class Node implements Comparable<Node> {
         return true;
     }
 
+
+    @Override
+    public int compareTo(Node other) {
+        if(other == null) return -1;
+        else return (int) Math.signum(other.getSentimentScore()-this.getSentimentScore());
+    }
 }

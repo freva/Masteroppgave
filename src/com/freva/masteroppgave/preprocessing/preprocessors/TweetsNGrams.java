@@ -3,7 +3,6 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
 import com.freva.masteroppgave.utils.FileUtils;
-import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.io.*;
