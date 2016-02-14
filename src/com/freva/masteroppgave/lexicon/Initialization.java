@@ -16,22 +16,27 @@ import java.util.*;
 
 public class Initialization {
     private static final String tweets_file = "res/tweets/10k.txt";
+    private static final String ngrams_file = "res/tweets/ngrams.txt";
     private static final boolean generate_ngrams = true;
 
     public static void main(String args[]) throws Exception{
         if(generate_ngrams) {
-            TweetNGrams tweetNGrams = new TweetNGrams();
+            TweetNGrams tweetNGrams = new TweetNGrams(tweets_file, ngrams_file,
+                    Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+                    Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
+                    Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
+                    Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
             ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-            tweetNGrams.createNGrams(tweets_file, "res/tweets/ngrams.txt", 0.002);
+            tweetNGrams.createFrequentNGrams(0.002);
         }
 
-        TweetReader tweetReader = new TweetReader();
-        ProgressBar.trackProgress(tweetReader, "Reading in tweets...");
-        final String[] tweets = tweetReader.readAndPreprocessTweets(tweets_file,
+        TweetReader tweetReader = new TweetReader(tweets_file,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                 Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                 Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
                 Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+        ProgressBar.trackProgress(tweetReader, "Reading in tweets...");
+        final String[] tweets = tweetReader.readAndPreprocessAllTweets();
 
         Graph graph = initializeGraph(tweets);
         Map<String, Double> lexicon = createLexicon(graph);
@@ -45,7 +50,7 @@ public class Initialization {
      * @throws IOException
      */
     private static Graph initializeGraph(String[] tweets) throws IOException {
-        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, List<Integer>>>(){}.getType());
+        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>(ngrams_file, new TypeToken<Map<String, List<Integer>>>(){}.getType());
         ProgressBar.trackProgress(ngrams, "Initializing graph...");
         Graph graph = new Graph();
 
