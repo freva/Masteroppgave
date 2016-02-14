@@ -3,7 +3,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import java.io.*;
 import java.util.HashSet;
 
-public class TweetsFilterer {
+public class TweetFilterer {
     /**
      * First stage of raw downloaded tweet filtering. Removes all tweets that cant be used by any other preprocessor.
      * @param input_filename File path to the raw downloaded tweets

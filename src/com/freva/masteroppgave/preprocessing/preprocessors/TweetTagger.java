@@ -5,7 +5,7 @@ import com.freva.masteroppgave.preprocessing.utils.GatePosTagger;
 import java.io.*;
 
 
-public class TweetsTagger {
+public class TweetTagger {
     /**
      * Runs Gate PoS tagger on all tweets inside a file and writes it to another
      * @param input_filename File path to input file with tweets, one on each line

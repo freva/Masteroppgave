@@ -4,7 +4,7 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.preprocessors.TweetsNGrams;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
@@ -20,9 +20,9 @@ public class Initialization {
 
     public static void main(String args[]) throws Exception{
         if(generate_ngrams) {
-            TweetsNGrams tweetsNGrams = new TweetsNGrams();
-            ProgressBar.trackProgress(tweetsNGrams, "Generating tweet n-grams...");
-            tweetsNGrams.createNGrams(tweets_file, "res/tweets/ngrams.txt", 0.002);
+            TweetNGrams tweetNGrams = new TweetNGrams();
+            ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
+            tweetNGrams.createNGrams(tweets_file, "res/tweets/ngrams.txt", 0.002);
         }
 
         TweetReader tweetReader = new TweetReader();

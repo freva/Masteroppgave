@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
-public class TweetsNGrams implements Progressable {
+public class TweetNGrams implements Progressable {
     private int totalLines = 0;
     private int lineCounter = 0;
 
