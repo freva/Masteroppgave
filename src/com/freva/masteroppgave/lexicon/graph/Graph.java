@@ -1,16 +1,20 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
+import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.util.*;
 
-public class Graph {
+public class Graph implements Progressable {
     private static final float edgeThreshold = 0.3f;
     private static final int pathLength = 3;
     private static final int neighborLimit = 30;
 
     private HashMap<String, Node> nodes = new HashMap<>();
     private PriorPolarityLexicon priorPolarityLexicon;
+
+    private int currentProgress = 0;
+    private int totalProgress = 0;
 
     /**
      *
@@ -39,9 +43,13 @@ public class Graph {
      */
     public void createAndWeighEdges() {
         List<Node> nodeList = new ArrayList<>(getNodes());
+        totalProgress = nodeList.size() * (nodeList.size()-1) / 2;
+        currentProgress = 0;
+
         for (int i = 0; i < nodeList.size(); i++) {
             for (int j = i + 1; j < nodeList.size(); j++) {
                 checkIfEdge(nodeList.get(i), nodeList.get(j));
+                currentProgress++;
             }
         }
     }
@@ -72,6 +80,8 @@ public class Graph {
      * Each node only propagates sentiment to its x = neighborLimit highest weighted neighbors.
      */
     public void propagateSentiment() {
+        currentProgress = 0;
+        totalProgress = nodes.size();
         for(Node node : nodes.values()) {
             if(priorPolarityLexicon.hasWord(node.getPhrase())) {
                 ArrayList<Node> nodesToCheck = new ArrayList<>();
@@ -93,6 +103,7 @@ public class Graph {
                     nodesToCheck = nodesToCheckNext;
                 }
             }
+            currentProgress++;
         }
 
         //Calculate Beta
@@ -115,5 +126,10 @@ public class Graph {
      */
     public Collection<Node> getNodes() {
         return nodes.values();
+    }
+
+    @Override
+    public double getProgress() {
+        return (totalProgress == 0 ? 0 : 100.0*currentProgress/totalProgress);
     }
 }

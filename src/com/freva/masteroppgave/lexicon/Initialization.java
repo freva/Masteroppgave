@@ -4,9 +4,10 @@ import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.lexicon.utils.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetsNGrams;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.MapUtils;
+import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
@@ -14,14 +15,19 @@ import java.util.*;
 
 
 public class Initialization {
+    private static final String tweets_file = "res/tweets/10k.txt";
+    private static final boolean generate_ngrams = true;
 
     public static void main(String args[]) throws Exception{
+        if(generate_ngrams) {
+            TweetsNGrams tweetsNGrams = new TweetsNGrams();
+            ProgressBar.trackProgress(tweetsNGrams, "Generating tweet n-grams...");
+            tweetsNGrams.createNGrams(tweets_file, "res/tweets/ngrams.txt", 0.002);
+        }
 
-        final long startTime = System.currentTimeMillis();
-
-        //TweetsNGrams.createNGrams("res/tweets/10k.txt", "res/tweets/ngrams.txt", 0.0025);
-
-        final String[] tweets = TweetReader.readAndPreprocessTweets("res/tweets/10k.txt",
+        TweetReader tweetReader = new TweetReader();
+        ProgressBar.trackProgress(tweetReader, "Reading in tweets...");
+        final String[] tweets = tweetReader.readAndPreprocessTweets(tweets_file,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                 Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                 Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
@@ -30,8 +36,6 @@ public class Initialization {
         Graph graph = initializeGraph(tweets);
         Map<String, Double> lexicon = createLexicon(graph);
         writeLexiconToFile("res/tweets/lexicon.txt", lexicon);
-
-        System.out.println("In: " + ((System.currentTimeMillis()-startTime)/1000) + "sec");
     }
 
 
@@ -42,6 +46,7 @@ public class Initialization {
      */
     private static Graph initializeGraph(String[] tweets) throws IOException {
         JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>("res/tweets/ngrams.txt", new TypeToken<Map<String, List<Integer>>>(){}.getType());
+        ProgressBar.trackProgress(ngrams, "Initializing graph...");
         Graph graph = new Graph();
 
         while(ngrams.hasNext()) {
@@ -65,9 +70,9 @@ public class Initialization {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon("res/data/afinn111.json");
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
-        System.out.println("Creating and weighing edges...");
+        ProgressBar.trackProgress(graph, "Creating and weighing edges...");
         graph.createAndWeighEdges();
-        System.out.println("Propagating Sentiment...");
+        ProgressBar.trackProgress(graph, "Propagating Sentiment...");
         graph.propagateSentiment();
 
         return graph.getLexicon();

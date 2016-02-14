@@ -1,15 +1,19 @@
 package com.freva.masteroppgave.utils;
 
+import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class JSONLineByLine<T> {
+public class JSONLineByLine<T> implements Progressable {
+    private int totalLines = 0;
+    private int lineCounter = 0;
     private Scanner scanner;
     private Type type;
 
@@ -18,7 +22,8 @@ public class JSONLineByLine<T> {
      * @param filename File path to line separated JSON file
      * @throws FileNotFoundException
      */
-    public JSONLineByLine(String filename, Type type) throws FileNotFoundException {
+    public JSONLineByLine(String filename, Type type) throws IOException {
+        this.totalLines = FileUtils.countLines(filename);
         this.scanner = new Scanner(new File(filename));
         this.type = type;
     }
@@ -34,6 +39,12 @@ public class JSONLineByLine<T> {
 
 
     public T next() throws JSONException {
+        lineCounter++;
         return new Gson().fromJson(scanner.nextLine(), type);
+    }
+
+    @Override
+    public double getProgress() {
+        return (totalLines == 0 ? 0 : 100.0*lineCounter/totalLines);
     }
 }

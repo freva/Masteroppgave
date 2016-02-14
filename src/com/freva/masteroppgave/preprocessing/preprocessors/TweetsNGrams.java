@@ -3,14 +3,18 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
 import com.freva.masteroppgave.utils.FileUtils;
-import com.freva.masteroppgave.utils.ProgressBar;
+import com.freva.masteroppgave.utils.progressbar.ProgressBar;
+import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 
-public class TweetsNGrams {
+public class TweetsNGrams implements Progressable {
+    private int totalLines = 0;
+    private int lineCounter = 0;
+
     /**
      * Writes all frequent n-grams found in a file to another file in JSON format
      * @param input_filename File path to tweets to generate n-grams for
@@ -18,11 +22,10 @@ public class TweetsNGrams {
      * @param frequencyCutoff Percentage of total number of tweets that n-gram must have appeared in to be included
      * @throws IOException
      */
-    public static void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
+    public void createNGrams(String input_filename, String output_filename, double frequencyCutoff) throws IOException {
+        this.totalLines = FileUtils.countLines(input_filename);
         Map<String, List<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
-        int lineCounter = 0;
-        ProgressBar progress = new ProgressBar(FileUtils.countLines(input_filename));
 
         try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
             for(String line; (line = br.readLine()) != null; lineCounter++) {
@@ -35,7 +38,6 @@ public class TweetsNGrams {
                         Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                         Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText,
                         Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-                progress.printProgress(lineCounter);
 
                 for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
                     if(! containsAlphabet.matcher(nGram).find()) continue;
@@ -67,5 +69,10 @@ public class TweetsNGrams {
                 iter.remove();
             }
         }
+    }
+
+    @Override
+    public double getProgress() {
+        return (totalLines == 0 ? 0 : 100.0*lineCounter/totalLines);
     }
 }
