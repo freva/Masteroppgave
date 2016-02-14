@@ -20,7 +20,7 @@ public class JSONLineByLine<T> implements Progressable {
     /**
      * Class to read JSON strings line by line, where each line contains a <T> entry.
      * @param filename File path to line separated JSON file
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public JSONLineByLine(String filename, Type type) throws IOException {
         this.totalLines = FileUtils.countLines(filename);
@@ -41,6 +41,7 @@ public class JSONLineByLine<T> implements Progressable {
     /**
      * Reads and parses the next JSON entry from file
      * @return Parsed element of type <T>
+     * @throws JSONException
      */
     public T next() throws JSONException {
         lineCounter++;

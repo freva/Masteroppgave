@@ -1,8 +1,5 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
