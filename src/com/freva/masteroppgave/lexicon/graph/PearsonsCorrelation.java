@@ -113,14 +113,9 @@ public class PearsonsCorrelation {
 
 
     private static Map<Point, Double> calculateCosines(double[][] normalized) {
-        double[] rowSqSum = new double[normalized.length];
-        for(int i=0; i<rowSqSum.length; i++) {
-            double[] sqs = new double[normalized[i].length];
-            for(int j=0; j<sqs.length; j++) {
-                sqs[j] = normalized[i][j] * normalized[i][j];
-            }
-            rowSqSum[i] = Arrays.stream(sqs).sum();
-        }
+        double[] rowSqSum = Arrays.stream(normalized)
+                .mapToDouble(row -> IntStream.range(0, row.length).mapToDouble(col -> row[col] * row[col]).sum())
+                .toArray();
 
         Map<Point, Double> cosines = new HashMap<>();
         for(int row = 0; row<normalized.length; row++) {
