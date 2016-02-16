@@ -1,13 +1,15 @@
-package com.freva.masteroppgave.lexicon.graph;
+package com.freva.masteroppgave.lexicon;
 
 
+import com.freva.masteroppgave.LSHCosineSimilarity;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.MapUtils;
+import info.debatty.java.lsh.LSHSuperBit;
+import info.debatty.java.lsh.SuperBit;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -17,19 +19,19 @@ public class PearsonsCorrelation {
     private static final int windowSize = 4;
 
 
-    public static void main(String[] args) throws IOException {
-        String text = FileUtils.readEntireFileIntoString("res/tweets/pg100.txt");
+    public static void main(String[] args) throws Exception {
+        String text = FileUtils.readEntireFileIntoString("res/tweets/1m.txt");
         text = Filters.chain(text,
                 Filters::HTMLUnescape, Filters::normalizeForm, Filters::removeURL, Filters::removeInnerWordCharacters,
                 Filters::removeNonAlphabeticText, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
         PearsonsCorrelation.getCosines(text);
     }
 
-    public static void getCosines(String test) {
+    public static void getCosines(String test) throws Exception {
         long startTime = System.currentTimeMillis();
 
         String[] words = RegexFilters.WHITESPACE.split(test.toLowerCase());
-        String[] sortedWords = getSortedWords(words, 2000);
+        String[] sortedWords = getSortedWords(words, 4000);
         System.out.println("Tracking " + sortedWords.length + " words. Found in: " + ((System.currentTimeMillis()-startTime)/1000) + "sec");
         startTime = System.currentTimeMillis();
 
@@ -40,19 +42,33 @@ public class PearsonsCorrelation {
 
         double[][] normalized = normalize(coOccurrences);
         System.out.println("Normalized matrix in: " + ((System.currentTimeMillis()-startTime)/1000) + "sec");
+
+        startTime = System.currentTimeMillis();
+        Map<Point, Double> cosinesAll = calculateCosines(normalized);
+        long allTime = (System.currentTimeMillis()-startTime)/1000;
         startTime = System.currentTimeMillis();
 
-        Map<Point, Double> cosines = calculateCosines(normalized);
-        System.out.println("Calculated cosine similarities: " + ((System.currentTimeMillis()-startTime)/1000) + "sec");
+        Map<Point, Double> cosines = LSHCosineSimilarity.getAllToAllCosineSimilarity(normalized);
+        long fastTime = (System.currentTimeMillis()-startTime)/1000;
 
+        int compareSize = 100;
+        cosinesAll = MapUtils.getNLargest(cosinesAll, compareSize);
+        cosines = MapUtils.getNLargest(cosines, compareSize);
 
-        int top = 100;
-        cosines = MapUtils.sortMapByValue(cosines);
-        for(Map.Entry<Point, Double> entry: cosines.entrySet()) {
-            if(top-- < 0) break;
-            Point p = entry.getKey();
-            System.out.println(sortedWords[(int) p.getX()] + " + " + sortedWords[(int) p.getY()] + ": " + String.format("%.3f", entry.getValue()));
+        int counter = 0;
+        for(Point p: cosinesAll.keySet()){
+            if(cosines.containsKey(p)) counter++;
         }
+        System.out.println("Matches: " + counter + "/" + compareSize);
+        System.out.println("Time: " + fastTime + "/" + allTime);
+
+//        int top = 100;
+//        cosines = MapUtils.sortMapByValue(cosines);
+//        for(Map.Entry<Point, Double> entry: cosines.entrySet()) {
+//            if(top-- < 0) break;
+//            Point p = entry.getKey();
+//            System.out.println(sortedWords[(int) p.getX()] + " + " + sortedWords[(int) p.getY()] + ": " + String.format("%.3f", entry.getValue()));
+//        }
     }
 
     private static String[] getSortedWords(String[] words, int limit) {
@@ -114,22 +130,27 @@ public class PearsonsCorrelation {
 
     private static Map<Point, Double> calculateCosines(double[][] normalized) {
         double[] rowSqSum = Arrays.stream(normalized)
-                .mapToDouble(row -> IntStream.range(0, row.length).mapToDouble(col -> row[col] * row[col]).sum())
+                .mapToDouble(row -> Math.sqrt(cross(row, row)))
                 .toArray();
 
         Map<Point, Double> cosines = new HashMap<>();
         for(int row = 0; row<normalized.length; row++) {
-            for(int column = 0; column<row; column++) {
-                double mul = cross(normalized[row], normalized[column]);
-                cosines.put(new Point(row, column), mul / Math.sqrt(rowSqSum[row]*rowSqSum[column]));
-            }
+            for(int col = 0; col<row; col++) {
+                double mul = cross(normalized[row], normalized[col]);
+                double cosine = mul / (rowSqSum[row] * rowSqSum[col]);
+                cosines.put(new Point(row, col), Double.isNaN(cosine) ? 0 : cosine);            }
         }
 
         return cosines;
     }
 
     private static double cross(double[] a, double[] b) {
-        return IntStream.range(0, a.length).mapToDouble(i -> a[i]*b[i]).sum();
+        double sum = 0;
+        for(int i=0; i<a.length; i++) {
+            if(a[i] == 0 || b[i] == 0) continue;
+            sum += a[i] * b[i];
+        }
+        return sum;
     }
 
 
