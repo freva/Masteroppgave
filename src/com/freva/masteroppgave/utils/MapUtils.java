@@ -1,6 +1,12 @@
 package com.freva.masteroppgave.utils;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 public class MapUtils {
@@ -84,5 +90,19 @@ public class MapUtils {
         }
 
         return normalizedMap;
+    }
+
+
+    /**
+     * Writes map to file in JSON format
+     * @param map Map to write to file
+     * @param output_filename File path to write to
+     * @throws IOException
+     */
+    public static void writeMapToFileAsJSON(Map map, String output_filename, boolean pretty) throws IOException {
+        try (Writer writer = new FileWriter(output_filename)) {
+            Gson gson = (pretty ? new GsonBuilder().setPrettyPrinting() : new GsonBuilder()).create();
+            gson.toJson(map, writer);
+        }
     }
 }
