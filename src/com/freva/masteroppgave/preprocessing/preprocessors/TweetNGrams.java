@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.utils.NGrams;
+import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.io.*;
@@ -11,29 +12,20 @@ import java.util.regex.Pattern;
 
 public class TweetNGrams implements Progressable {
     private TweetReader tweetReader;
-    private String output_filename;
 
     /**
-     *
-     * @param input_filename File path to tweets to generate n-grams for
-     * @param output_filename File path to write n-grams to
-     * @param filters Set of filters to apply before generating n-grams
+     * Finds all frequent n-grams in a file, treating each new line as a new document.
+     * @param input_filename Path to file with documents to generate n-grams for
+     * @param n Maximum n-gram length
+     * @param frequencyCutoff Smallest required frequency to include n-gram
+     * @param filters List of filters to apply to document before generating n-grams
+     * @return Map of n-grams as key and number of occurrences as value
      * @throws IOException
      */
     @SafeVarargs
-    public TweetNGrams(String input_filename, String output_filename, Function<String, String>... filters) throws IOException {
-        this.output_filename = output_filename;
+    public final Map<String, Integer> getFrequentNGrams(String input_filename, int n, double frequencyCutoff, Function<String, String>... filters) throws IOException {
         this.tweetReader = new TweetReader(input_filename, filters);
-    }
-
-
-    /**
-     * Writes all frequent n-grams found in a file to another file in JSON format
-     * @param frequencyCutoff Percentage of total number of tweets that n-gram must have appeared in to be included
-     * @throws IOException
-     */
-    public void createFrequentNGrams(int n, double frequencyCutoff) throws IOException {
-        Map<String, List<Integer>> nGramsCounter = new HashMap<>();
+        Map<String, Integer> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter;
 
@@ -46,29 +38,20 @@ public class TweetNGrams implements Progressable {
             for(String nGram: NGrams.getSyntacticalNGrams(line, n)) {
                 if(! containsAlphabet.matcher(nGram).find()) continue;
 
-                if(! nGramsCounter.containsKey(nGram)) {
-                    nGramsCounter.put(nGram, new ArrayList<>());
-                }
-
-                nGramsCounter.get(nGram).add(lineCounter);
+                MapUtils.incrementMapValue(nGramsCounter, nGram);
             }
         }
 
         removeEntriesUnderThreshold(nGramsCounter, (int) (frequencyCutoff*lineCounter));
-        try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
-            for(Map.Entry<String, List<Integer>> entry: nGramsCounter.entrySet()) {
-                HashSet<Integer> uniqueIDs = new HashSet<>(entry.getValue());
-                output.write("{\"" + entry.getKey() + "\": " + uniqueIDs + "}\n");
-            }
-        }
+        return nGramsCounter;
     }
 
 
-    private static void removeEntriesUnderThreshold(Map<String, List<Integer>> map, int thresh) {
-        Iterator<Map.Entry<String, List<Integer>>> iter = map.entrySet().iterator();
+    private static void removeEntriesUnderThreshold(Map<String, Integer> map, int thresh) {
+        Iterator<Map.Entry<String, Integer>> iter = map.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, List<Integer>> entry = iter.next();
-            if (entry.getValue().size() < thresh) {
+            Map.Entry<String, Integer> entry = iter.next();
+            if (entry.getValue() < thresh) {
                 iter.remove();
             }
         }
@@ -76,6 +59,6 @@ public class TweetNGrams implements Progressable {
 
     @Override
     public double getProgress() {
-        return tweetReader.getProgress();
+        return tweetReader != null ? tweetReader.getProgress() : 0;
     }
 }
