@@ -105,4 +105,20 @@ public class MapUtils {
             gson.toJson(map, writer);
         }
     }
+
+
+    /**
+     * Removes elements from map that are strictly smaller than the threshold element
+     * @param map Map to remove items from
+     * @param thresh Threshold element
+     */
+    public static<K, V extends Comparable<V>> void removeInfrequentItems(Map<K, V> map, V thresh) {
+        Iterator<Map.Entry<K, V>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<K, V> entry = iter.next();
+            if (entry.getValue().compareTo(thresh) < 0) {
+                iter.remove();
+            }
+        }
+    }
 }

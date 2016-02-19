@@ -31,7 +31,7 @@ public class TweetNGrams implements Progressable {
 
         for(lineCounter=0; tweetReader.hasNext(); lineCounter++) {
             if(lineCounter % 50000 == 0 && lineCounter != 0) {
-                removeEntriesUnderThreshold(nGramsCounter, (int) (frequencyCutoff * lineCounter) / 2);
+                MapUtils.removeInfrequentItems(nGramsCounter, (int) (frequencyCutoff * lineCounter) / 2);
             }
 
             String line = tweetReader.readAndPreprocessNextTweet();
@@ -42,20 +42,10 @@ public class TweetNGrams implements Progressable {
             }
         }
 
-        removeEntriesUnderThreshold(nGramsCounter, (int) (frequencyCutoff*lineCounter));
+        MapUtils.removeInfrequentItems(nGramsCounter, (int) (frequencyCutoff*lineCounter));
         return nGramsCounter;
     }
 
-
-    private static void removeEntriesUnderThreshold(Map<String, Integer> map, int thresh) {
-        Iterator<Map.Entry<String, Integer>> iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, Integer> entry = iter.next();
-            if (entry.getValue() < thresh) {
-                iter.remove();
-            }
-        }
-    }
 
     @Override
     public double getProgress() {
