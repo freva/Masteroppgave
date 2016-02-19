@@ -5,6 +5,7 @@ public class ProgressBar implements Runnable {
     private static final String fullProgress = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
     private static final String noProgress =   "----------------------------------------------------------------------------------------------------";
     private static final int updateResolution = 1000;
+    private static final String format = "%02d:%02d";
 
     private static final Object lock = new Object();
     private static String currentThread = null;
@@ -42,8 +43,8 @@ public class ProgressBar implements Runnable {
 
     private String getProgress(double perc) {
         long secondsElapsed = (System.currentTimeMillis()-taskStart)/1000;
-        String timeElapsed = convertSecondsToMmSs(secondsElapsed);
-        String timeRemaining = perc != 0 ? convertSecondsToMmSs((long) ((100-perc)*secondsElapsed/perc)) : "Infin";
+        String timeElapsed = convertSeconds(secondsElapsed);
+        String timeRemaining = perc != 0 ? convertSeconds((long) ((100-perc)*secondsElapsed/perc)) : "Infin";
         String progress = getProgressBar(perc) + " Elapsed: " + timeElapsed + " | Remaining: " + timeRemaining;
 
         return "\r" + progress;
@@ -55,10 +56,10 @@ public class ProgressBar implements Runnable {
         return "[" + bar.substring(0, 46) + " " + status + " " + bar.substring(54) + "]";
     }
 
-    private static String convertSecondsToMmSs(long seconds) {
+    private static String convertSeconds(long seconds) {
         long sec = seconds % 60;
-        long min = (seconds / 60) % 60;
-        return String.format("%02d:%02d", min, sec);
+        long min = seconds / 60;
+        return String.format(format, min, sec);
     }
 
     @Override
