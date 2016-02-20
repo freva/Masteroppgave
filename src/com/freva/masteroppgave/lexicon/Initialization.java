@@ -2,11 +2,13 @@ package com.freva.masteroppgave.lexicon;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
-import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
+import com.freva.masteroppgave.preprocessing.utils.NGrams;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONLineByLine;
+import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.google.gson.reflect.TypeToken;
@@ -17,36 +19,39 @@ import java.util.function.Function;
 
 
 public class Initialization {
-    private static final File tweets_file = new File("res/tweets/200k.txt");
+    private static final File tweets_file = new File("res/tweets/10k.txt");
     private static final File ngrams_file = new File("res/tweets/ngrams.txt");
+    private static final File context_file = new File("res/tweets/context.txt");
     private static final File afinn_file = new File("res/data/afinn111.json");
+
     private static final boolean use_cached_ngrams = false;
-    private static boolean asd = true;
+    private static final boolean use_cached_contexts = false;
 
     public static void main(String args[]) throws Exception{
-        Map<String, Integer> ngrams;
-        if(! use_cached_ngrams) {
-            ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, 6, 0.00025,
-                    Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-                    Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
-                    Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-                    Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-        } else {
-            ngrams = FileUtils.readObjectFromJSONFile(ngrams_file, new TypeToken<Map<String, Integer>>(){});
+        if(! use_cached_contexts) {
+            Map<String, Integer> ngrams;
+            if (!use_cached_ngrams) {
+                ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, 6, 0.00025,
+                        Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+                        Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
+                        Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
+                        Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+            } else {
+                String JSONNGrams = FileUtils.readEntireFileIntoString(ngrams_file);
+                ngrams = JSONUtils.fromJSON(JSONNGrams, new TypeToken<Map<String, Integer>>(){});
+            }
+
+            TweetContexts tweetContexts = new TweetContexts();
+            ProgressBar.trackProgress(tweetContexts, "Finding context words...");
+            tweetContexts.findContextWords(tweets_file, context_file, ngrams.keySet(),
+                    Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
+                    Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
+                    Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
+                    Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
         }
 
-
-        TweetReader tweetReader = new TweetReader(tweets_file,
-                Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
-                Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
-                Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
-                Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-        ProgressBar.trackProgress(tweetReader, "Reading in tweets...");
-        final String[] tweets = tweetReader.readAndPreprocessAllTweets();
-
-        Graph graph = initializeGraph(tweets);
-        Map<String, Double> lexicon = createLexicon(graph);
-        writeLexiconToFile("res/tweets/lexicon.txt", lexicon);
+//        Graph graph = initializeGraph(tweets);
+//        Map<String, Double> lexicon = createLexicon(graph);
     }
 
 
@@ -58,7 +63,8 @@ public class Initialization {
         Map<String, Integer> ngrams = tweetNGrams.getFrequentNGrams(input, n, frequencyCutoff, filters);
         ngrams = MapUtils.sortMapByValue(ngrams);
 
-        FileUtils.writeObjectToFileAsJSON(ngrams, output, true);
+        String JSONNGrams = JSONUtils.toJSON(ngrams, true);
+        FileUtils.writeToFile(output, JSONNGrams);
         return ngrams;
     }
 
@@ -100,15 +106,5 @@ public class Initialization {
         graph.propagateSentiment();
 
         return graph.getLexicon();
-    }
-
-
-    private static void writeLexiconToFile(String filename, Map<String, Double> lexicon) throws IOException {
-        Map<String, Double> sortedLexicon = MapUtils.sortMapByValue(lexicon);
-        try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"))) {
-            for (Map.Entry<String, Double> entry : sortedLexicon.entrySet()) {
-                output.write(entry.getKey() + "\t" + entry.getValue() + "\n");
-            }
-        }
     }
 }

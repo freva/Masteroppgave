@@ -1,9 +1,5 @@
 package com.freva.masteroppgave.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.*;
 import java.nio.file.Files;
 
@@ -46,29 +42,14 @@ public class FileUtils {
 
 
     /**
-     * Writes object to file in JSON format
-     * @param obj Object to write to file
-     * @param file File to write to
-     * @param pretty Use pretty JSON formatting
+     * Writes String to file. If file contained anything before operation, it will be emptied first.
+     * @param data String to write to file
      * @throws IOException
      */
-    public static void writeObjectToFileAsJSON(Object obj, File file, boolean pretty) throws IOException {
+    public static void writeToFile(File file, String data) throws IOException {
         try (Writer writer = new FileWriter(file)) {
-            Gson gson = (pretty ? new GsonBuilder().setPrettyPrinting() : new GsonBuilder()).create();
-            gson.toJson(obj, writer);
+            writer.write(data);
         }
     }
 
-
-    /**
-     * Reads in object from JSON formatted file
-     * @param file File containing JSON formatted object
-     * @param typeToken Type of object stored in file
-     * @return Object of type specified by typeToken
-     * @throws IOException
-     */
-    public static<T> T readObjectFromJSONFile(File file, TypeToken<T> typeToken) throws IOException {
-        String json = FileUtils.readEntireFileIntoString(file);
-        return new Gson().fromJson(json, typeToken.getType());
-    }
 }
