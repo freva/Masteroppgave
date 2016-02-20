@@ -16,9 +16,9 @@ public class TweetReader implements Progressable {
     private int lineCounter = 0;
 
     @SafeVarargs
-    public TweetReader(String filename, Function<String, String>... filters) throws IOException {
-        this.totalLines = FileUtils.countLines(filename);
-        this.scanner = new Scanner(new File(filename));
+    public TweetReader(File file, Function<String, String>... filters) throws IOException {
+        this.totalLines = FileUtils.countLines(file);
+        this.scanner = new Scanner(file);
         this.filters = filters;
     }
 

@@ -5,6 +5,7 @@ import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
+import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
@@ -12,23 +13,28 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Function;
 
 
 public class Initialization {
-    private static final String tweets_file = "res/tweets/10k.txt";
-    private static final String ngrams_file = "res/tweets/ngrams.txt";
-    private static final boolean generate_ngrams = true;
+    private static final File tweets_file = new File("res/tweets/200k.txt");
+    private static final File ngrams_file = new File("res/tweets/ngrams.txt");
+    private static final File afinn_file = new File("res/data/afinn111.json");
+    private static final boolean use_cached_ngrams = false;
+    private static boolean asd = true;
 
     public static void main(String args[]) throws Exception{
-        if(generate_ngrams) {
-            TweetNGrams tweetNGrams = new TweetNGrams(tweets_file, ngrams_file,
+        Map<String, Integer> ngrams;
+        if(! use_cached_ngrams) {
+            ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, 6, 0.00025,
                     Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
                     Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
                     Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
                     Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-            ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-            tweetNGrams.createFrequentNGrams(6, 0.002);
+        } else {
+            ngrams = FileUtils.readObjectFromJSONFile(ngrams_file, new TypeToken<Map<String, Integer>>(){});
         }
+
 
         TweetReader tweetReader = new TweetReader(tweets_file,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
@@ -44,13 +50,26 @@ public class Initialization {
     }
 
 
+    @SafeVarargs
+    private static Map<String, Integer> getAndCacheFrequentNGrams(File input, File output, int n, double frequencyCutoff,
+                                                                  Function<String, String>... filters) throws IOException {
+        TweetNGrams tweetNGrams = new TweetNGrams();
+        ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
+        Map<String, Integer> ngrams = tweetNGrams.getFrequentNGrams(input, n, frequencyCutoff, filters);
+        ngrams = MapUtils.sortMapByValue(ngrams);
+
+        FileUtils.writeObjectToFileAsJSON(ngrams, output, true);
+        return ngrams;
+    }
+
+
     /**
      * Creation of two phrase-vectors(left of phrase and right of phrase) using a set of tweets containing the phrase.
      * The phrase-vectors should contain the x = phraseVectorSize most frequent words used together with the phrase.
      * @throws IOException
      */
     private static Graph initializeGraph(String[] tweets) throws IOException {
-        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>(ngrams_file, new TypeToken<Map<String, List<Integer>>>(){}.getType());
+        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>(ngrams_file, new TypeToken<Map<String, List<Integer>>>(){});
         ProgressBar.trackProgress(ngrams, "Initializing graph...");
         Graph graph = new Graph();
 
@@ -72,7 +91,7 @@ public class Initialization {
      * @throws IOException
      */
     private static Map<String, Double> createLexicon(Graph graph) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon("res/data/afinn111.json");
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(afinn_file);
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
         ProgressBar.trackProgress(graph, "Creating and weighing edges...");

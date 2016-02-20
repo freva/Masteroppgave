@@ -15,7 +15,7 @@ public class TweetNGrams implements Progressable {
 
     /**
      * Finds all frequent n-grams in a file, treating each new line as a new document.
-     * @param input_filename Path to file with documents to generate n-grams for
+     * @param input File with documents to generate n-grams for
      * @param n Maximum n-gram length
      * @param frequencyCutoff Smallest required frequency to include n-gram
      * @param filters List of filters to apply to document before generating n-grams
@@ -23,8 +23,8 @@ public class TweetNGrams implements Progressable {
      * @throws IOException
      */
     @SafeVarargs
-    public final Map<String, Integer> getFrequentNGrams(String input_filename, int n, double frequencyCutoff, Function<String, String>... filters) throws IOException {
-        this.tweetReader = new TweetReader(input_filename, filters);
+    public final Map<String, Integer> getFrequentNGrams(File input, int n, double frequencyCutoff, Function<String, String>... filters) throws IOException {
+        this.tweetReader = new TweetReader(input, filters);
         Map<String, Integer> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter;

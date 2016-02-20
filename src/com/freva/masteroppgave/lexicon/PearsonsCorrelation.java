@@ -6,10 +6,9 @@ import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.MapUtils;
-import info.debatty.java.lsh.LSHSuperBit;
-import info.debatty.java.lsh.SuperBit;
 
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -20,7 +19,7 @@ public class PearsonsCorrelation {
 
 
     public static void main(String[] args) throws Exception {
-        String text = FileUtils.readEntireFileIntoString("res/tweets/1m.txt");
+        String text = FileUtils.readEntireFileIntoString(new File("res/tweets/1m.txt"));
         text = Filters.chain(text,
                 Filters::HTMLUnescape, Filters::normalizeForm, Filters::removeURL, Filters::removeInnerWordCharacters,
                 Filters::removeNonAlphabeticText, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);

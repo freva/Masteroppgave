@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -19,13 +18,13 @@ public class JSONLineByLine<T> implements Progressable {
 
     /**
      * Class to read JSON strings line by line, where each line contains a <T> entry.
-     * @param filename File path to line separated JSON file
+     * @param file File containing line separated JSON objects
      * @throws IOException
      */
-    public JSONLineByLine(String filename, Type type) throws IOException {
-        this.totalLines = FileUtils.countLines(filename);
-        this.scanner = new Scanner(new File(filename));
-        this.type = type;
+    public JSONLineByLine(File file, TypeToken<T> type) throws IOException {
+        this.totalLines = FileUtils.countLines(file);
+        this.scanner = new Scanner(file);
+        this.type = type.getType();
     }
 
 
