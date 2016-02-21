@@ -1,94 +1,34 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.MapUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class Node implements Comparable<Node> {
-    private static final Pattern punctuation = Pattern.compile("[!?.]");
     private static final int phraseVectorSize = 10;
-    private static final int phraseWindowSize = 6;
 
     private HashMap<String, Integer> rightSideContextWords = new HashMap<>();
     private HashMap<String, Integer> leftSideContextWords = new HashMap<>();
-    private HashMap<String, Double> posValues = new HashMap<>();
-    private HashMap<String, Double> negValues = new HashMap<>();
+    private HashMap<Node, Double> posValues = new HashMap<>();
+    private HashMap<Node, Double> negValues = new HashMap<>();
     private ArrayList<Edge> neighbors = new ArrayList<>();
 
     private ContextWords contextWordsCache;
     private boolean cacheUpToDate = false;
 
-    private String[] phraseWords;
-    private String phrase;
     private double currentScore;
 
-    public Node(String phrase) {
-        this.phrase = phrase;
-        this.phraseWords = RegexFilters.WHITESPACE.split(phrase);
-    }
 
-
-    /**
-     * Finds all occurrences of the phrase withing the given tweet and creates two Strings(phraseWindows).
-     * The phraseWindows contains the x = phraseWindowSize words in front of the phrase and the x words following the
-     * phrase respectively.
-     * Ex: Tweet = "I really don't like that guy", Phrase = "don't like", PhraseWindowSize = 2:
-     * phraseWindows = ["I really don't like", "don't like that guy"]
-     * @param context - The tweet the phrase occurs in.
-     */
-    public void updatePhraseContext(String context) {
-        String[] contextWords = RegexFilters.WHITESPACE.split(context);
-
-        ArrayList<Integer> indexes = new ArrayList<>();
-        for (int j = 0; j < contextWords.length; j++) {
-            if (matchesAtIndex(contextWords, j)) {
-                indexes.add(j);
-            }
-        }
-
-        for(Integer phraseStart: indexes) {
-            for (int i = phraseStart + phraseWords.length - 1; i >= Math.max(0, phraseStart - phraseWindowSize); i--) {
-                if (punctuation.matcher(contextWords[i]).find()) {
-                    break;
-                }
-
-                incrementMapValue(leftSideContextWords, contextWords[i]);
-            }
-
-
-            for (int i = phraseStart; i < Math.min(contextWords.length-1, phraseStart+phraseWords.length+phraseWindowSize); i++) {
-                if(punctuation.matcher(contextWords[i]).find()) {
-                    String wordWithoutPunctuation = punctuation.matcher(contextWords[i]).replaceAll("");
-                    incrementMapValue(rightSideContextWords, wordWithoutPunctuation);
-                    break;
-                }
-
-                incrementMapValue(rightSideContextWords, contextWords[i]);
-            }
+    public void updatePhraseContext(String context, int score) {
+        if(score > 0) {
+            MapUtils.incrementMapByValue(rightSideContextWords, context, score);
+        } else {
+            MapUtils.incrementMapByValue(leftSideContextWords, context, -score);
         }
 
         cacheUpToDate = false;
-    }
-
-
-    private void incrementMapValue(HashMap<String, Integer> map, String contextWord ) {
-        if(!WordFilters.containsStopWord(contextWord)) {
-            MapUtils.incrementMapValue(map, contextWord);
-        }
-    }
-
-
-    /**
-     * Returns the phrase associated with the node.
-     * @return phrase
-     */
-    public String getPhrase() {
-        return phrase;
     }
 
 
@@ -125,7 +65,7 @@ public class Node implements Comparable<Node> {
      */
     public void addNeighbor(Edge neighbor) {
         neighbors.add(neighbor);
-        posValues.put(neighbor.getNeighbor().getPhrase(), 0.0);
+        posValues.put(neighbor.getNeighbor(), 0.0);
     }
 
 
@@ -139,8 +79,9 @@ public class Node implements Comparable<Node> {
         currentScore = score;
         if(score < 0) {
             updateNegScore(score, neighbor);
+        } else {
+            updatePosScore(score, neighbor);
         }
-        else updatePosScore(score, neighbor);
     }
 
 
@@ -151,12 +92,11 @@ public class Node implements Comparable<Node> {
      * @param neighbor - The neighbor node propagating the sentiment score.
      */
     private void updatePosScore(double score, Node neighbor) {
-        if(!posValues.containsKey(neighbor.getPhrase())) {
-            posValues.put(neighbor.getPhrase(), score);
-        }
-        else {
-            double maxScore = Math.max(posValues.get(neighbor.getPhrase()), score);
-            posValues.put(neighbor.getPhrase(), maxScore);
+        if(!posValues.containsKey(neighbor)) {
+            posValues.put(neighbor, score);
+        } else {
+            double maxScore = Math.max(posValues.get(neighbor), score);
+            posValues.put(neighbor, maxScore);
         }
     }
 
@@ -168,12 +108,11 @@ public class Node implements Comparable<Node> {
      * @param neighbor - The neighbor node propagating the sentiment score.
      */
     private void updateNegScore(double score, Node neighbor) {
-        if(!negValues.containsKey(neighbor.getPhrase())) {
-            negValues.put(neighbor.getPhrase(), score);
-        }
-        else {
-            double minScore = Math.min(negValues.get(neighbor.getPhrase()), score);
-            negValues.put(neighbor.getPhrase(), minScore);
+        if(!negValues.containsKey(neighbor)) {
+            negValues.put(neighbor, score);
+        } else {
+            double minScore = Math.min(negValues.get(neighbor), score);
+            negValues.put(neighbor, minScore);
         }
     }
 
@@ -202,32 +141,13 @@ public class Node implements Comparable<Node> {
      * @param scores - HashMap containing sentiment scores
      * @return - The sum of the sentiment scores.
      */
-    private double sumScores(HashMap<String, Double> scores) {
+    private double sumScores(HashMap<Node, Double> scores) {
         double total = 0.0;
         for(Double score : scores.values()) {
             total += score;
         }
         return total;
     }
-
-
-    /**
-     * Checks if a given index is the starting index of a phrase in a contextWords.
-     * @param contextWords - The given contextWords.
-     * @param index - The current index.
-     * @return True if correct index, False else.
-     */
-    private boolean matchesAtIndex(String[] contextWords, int index) {
-        if(index+phraseWords.length > contextWords.length) return false;
-
-        for(int j = 0 ; j < phraseWords.length && index+j < contextWords.length; j++) {
-            if(! contextWords[index+j].equals(phraseWords[j])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 
     @Override
     public int compareTo(Node other) {
