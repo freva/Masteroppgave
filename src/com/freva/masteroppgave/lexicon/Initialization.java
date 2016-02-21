@@ -5,7 +5,6 @@ import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
-import com.freva.masteroppgave.preprocessing.utils.NGrams;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONLineByLine;
 import com.freva.masteroppgave.utils.JSONUtils;
@@ -27,11 +26,15 @@ public class Initialization {
     private static final boolean use_cached_ngrams = false;
     private static final boolean use_cached_contexts = false;
 
+    private static final int max_n_grams_range = 6;
+    private static final int max_context_word_distance = 4;
+    private static final double n_grams_cut_off_frequency = 0.00025;
+
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
             Map<String, Integer> ngrams;
             if (!use_cached_ngrams) {
-                ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, 6, 0.00025,
+                ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, max_n_grams_range, n_grams_cut_off_frequency,
                         Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
                         Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
                         Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
@@ -43,7 +46,7 @@ public class Initialization {
 
             TweetContexts tweetContexts = new TweetContexts();
             ProgressBar.trackProgress(tweetContexts, "Finding context words...");
-            tweetContexts.findContextWords(tweets_file, context_file, ngrams.keySet(),
+            tweetContexts.findContextWords(tweets_file, context_file, ngrams.keySet(), max_context_word_distance,
                     Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                     Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                     Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
