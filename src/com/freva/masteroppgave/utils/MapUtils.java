@@ -48,15 +48,16 @@ public class MapUtils {
 
 
     /**
-     * Increments value of key by 1 if present in the list, otherwise initializes the value to 1.
+     * Increments value of key by increment if present in the list, otherwise initializes the value to increment.
      * @param map Map to increment key for
      * @param key Key to increment
+     * @param increment Value to increment by
      */
-    public static<T> void incrementMapValue(Map<T, Integer> map, T key) {
+    public static<T> void incrementMapByValue(Map<T, Integer> map, T key, int increment) {
         if(! map.containsKey(key)) {
-            map.put(key, 1);
+            map.put(key, increment);
         } else {
-            map.put(key, map.get(key) + 1);
+            map.put(key, map.get(key) + increment);
         }
     }
 

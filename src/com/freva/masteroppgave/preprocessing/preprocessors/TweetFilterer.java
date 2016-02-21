@@ -27,7 +27,7 @@ public class TweetFilterer {
                     }
                     if (! shouldInclude(line) || unique.containsKey(line)) continue;
 
-                    MapUtils.incrementMapValue(unique, line.toLowerCase());
+                    MapUtils.incrementMapByValue(unique, line.toLowerCase(), 1);
                     output.write(line + "\n");
                 }
             }

@@ -73,7 +73,7 @@ public class PearsonsCorrelation {
     private static String[] getSortedWords(String[] words, int limit) {
         HashMap<String, Integer> counter = new HashMap<>();
         for(String word: words) {
-            MapUtils.incrementMapValue(counter, word);
+            MapUtils.incrementMapByValue(counter, word, 1);
         }
         Map<String, Integer> map = MapUtils.getNLargest(counter, limit);
         String[] sorted = map.keySet().toArray(new String[Math.min(map.size(), limit)]);

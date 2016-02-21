@@ -38,7 +38,7 @@ public class TweetNGrams implements Progressable {
             for(String nGram: NGrams.getSyntacticalNGrams(line, n)) {
                 if(! containsAlphabet.matcher(nGram).find()) continue;
 
-                MapUtils.incrementMapValue(nGramsCounter, nGram);
+                MapUtils.incrementMapByValue(nGramsCounter, nGram, 1);
             }
         }
 
