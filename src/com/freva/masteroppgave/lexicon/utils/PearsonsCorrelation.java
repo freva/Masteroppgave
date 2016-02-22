@@ -9,7 +9,7 @@ public class PearsonsCorrelation {
     private Map<String, Integer> wordMappings;
     private double[][] cosines;
 
-    public PearsonsCorrelation(int[][] coOccurrences, List<String> keys) throws Exception {
+    public PearsonsCorrelation(int[][] coOccurrences, List<String> keys){
         wordMappings = getWordMappings(keys);
 
         double[][] normalized = normalize(coOccurrences);

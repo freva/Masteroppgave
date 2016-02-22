@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
+import com.freva.masteroppgave.lexicon.utils.*;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.util.*;
@@ -43,16 +43,21 @@ public class Graph implements Progressable {
      * Comparing each node, checking if there should be an edge between them
      */
     public void createAndWeighEdges() {
-        List<Node> nodeList = new ArrayList<>(nodes.values());
+        List<String> nodeList = new ArrayList<>(nodes.keySet());
         totalProgress = nodeList.size() * (nodeList.size()-1) / 2;
         currentProgress = 0;
-
+        int[][] coOccurrences = new int[nodes.size()][nodes.size()*2];
         for (int i = 0; i < nodeList.size(); i++) {
-            for (int j = i + 1; j < nodeList.size(); j++) {
-                checkIfEdge(nodeList.get(i), nodeList.get(j));
-                currentProgress++;
+            String key1 = nodeList.get(i);
+            for (int j = 0; j < nodeList.size(); j++ ) {
+                String key2 = nodeList.get(j);
+                coOccurrences[i][j*2] = nodes.get(key1).getLeftScoreForWord(key2);
+                coOccurrences[i][j*2+1] = nodes.get(key1).getRightScoreForWord(key2);
             }
         }
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation(coOccurrences, nodeList);
+        createEdges(pearsonsCorrelation, nodeList);
+        currentProgress++;
     }
 
     /**
@@ -60,16 +65,18 @@ public class Graph implements Progressable {
      * @param node1 - first node to be compared
      * @param node2 - second node to be compared
      */
-    private void checkIfEdge(Node node1, Node node2) {
-        ContextWords cw1 = node1.getContextWords();
-        ContextWords cw2 = node2.getContextWords();
-//        double leftSimilarity = calculateSimilarity(createVectors(cw1.getLeftSideContextWords(), cw2.getLeftSideContextWords()));
-//        double rightSimilarity = calculateSimilarity(createVectors(cw1.getRightSideContextWords(), cw2.getRightSideContextWords()));
-        double similarity = cw1.getSimilarity(cw2);
-//        double similarity = Math.max(leftSimilarity, rightSimilarity);
-        if (similarity >= edgeThreshold) {
-            node1.addNeighbor(new Edge(node2, similarity));
-            node2.addNeighbor(new Edge(node1, similarity));
+    private void createEdges(PearsonsCorrelation pearsonsCorrelation, List<String> phrases) {
+        for(int i = 0; i < phrases.size(); i++) {
+            for(int j = i + 1; j < phrases.size(); j++) {
+                double leftSimilarity = pearsonsCorrelation.getLeftSimilarityBetween(phrases.get(i), phrases.get(j));
+                double rightSimilarity = pearsonsCorrelation.getRightSimilarityBetween(phrases.get(i), phrases.get(j));
+                Node node1 = nodes.get(phrases.get(i)), node2 = nodes.get(phrases.get(j));
+                double similarity = Math.max(leftSimilarity, rightSimilarity);
+                if(similarity >= edgeThreshold) {
+                    node1.addNeighbor(new Edge(node2, similarity));
+                    node2.addNeighbor(new Edge(node1, similarity));
+                }
+            }
         }
     }
 

@@ -29,16 +29,16 @@ public class Node implements Comparable<Node> {
     }
 
 
-    public ContextWords getContextWords() {
-        if(! cacheUpToDate) {
-            Map<String, Double> leftSideContext = getFrequentContextWords(leftSideContextWords);
-            Map<String, Double> rightSideContext = getFrequentContextWords(rightSideContextWords);
-            contextWordsCache = new ContextWords(leftSideContext, rightSideContext);
-            cacheUpToDate = true;
-        }
-
-        return contextWordsCache;
-    }
+//    public ContextWords getContextWords() {
+//        if(! cacheUpToDate) {
+//            Map<String, Double> leftSideContext = getFrequentContextWords(leftSideContextWords);
+//            Map<String, Double> rightSideContext = getFrequentContextWords(rightSideContextWords);
+//            contextWordsCache = new ContextWords(leftSideContext, rightSideContext);
+//            cacheUpToDate = true;
+//        }
+//
+//        return contextWordsCache;
+//    }
 
 
     private Map<String, Double> getFrequentContextWords(Map<String, Integer> map) {
@@ -46,6 +46,13 @@ public class Node implements Comparable<Node> {
         return MapUtils.getNLargest(normalizedMap, phraseVectorSize);
     }
 
+    public int getRightScoreForWord(String word) {
+        return rightSideContextWords.containsKey(word) ? rightSideContextWords.get(word) : 0;
+    }
+
+    public int getLeftScoreForWord(String word) {
+        return leftSideContextWords.containsKey(word) ? leftSideContextWords.get(word) : 0;
+    }
 
     /**
      * Returns the nodes neighbors

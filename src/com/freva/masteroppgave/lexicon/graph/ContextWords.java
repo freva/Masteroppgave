@@ -5,27 +5,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContextWords {
-    private Map<String, Double> leftSideContextWords;
-    private Map<String, Double> rightSideContextWords;
+    private Map<String, Integer> leftSideContextWords;
+    private Map<String, Integer> rightSideContextWords;
 
-    public ContextWords(Map<String, Double> leftSideContextWords, Map<String, Double> rightSideContextWords) {
+    public ContextWords(Map<String, Integer> leftSideContextWords, Map<String, Integer> rightSideContextWords) {
         this.leftSideContextWords = leftSideContextWords;
         this.rightSideContextWords = rightSideContextWords;
     }
 
-    public Map<String, Double> getLeftSideContextWords() {
+    public Map<String, Integer> getLeftSideContextWords() {
         return leftSideContextWords;
     }
 
-    public Map<String, Double> getRightSideContextWords() {
+    public Map<String, Integer> getRightSideContextWords() {
         return rightSideContextWords;
     }
 
-    public double getSimilarity(ContextWords other) {
-        double leftSimilarity = calculateSimilarity(other.getLeftSideContextWords(), leftSideContextWords);
-        double rightSimilarity = calculateSimilarity(other.getRightSideContextWords(), rightSideContextWords);
-        return Math.max(leftSimilarity, rightSimilarity);
-    }
+//    public double getSimilarity(ContextWords other) {
+//        double leftSimilarity = calculateSimilarity(other.getLeftSideContextWords(), leftSideContextWords);
+//        double rightSimilarity = calculateSimilarity(other.getRightSideContextWords(), rightSideContextWords);
+//        return Math.max(leftSimilarity, rightSimilarity);
+//    }
 
     /**
      * Calculates the Cosine Similarity between two context vectors
