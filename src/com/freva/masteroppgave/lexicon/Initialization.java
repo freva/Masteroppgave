@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.lexicon;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
+import com.freva.masteroppgave.lexicon.utils.ContextScore;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
@@ -21,20 +22,21 @@ public class Initialization {
     private static final File tweets_file = new File("res/tweets/10k.txt");
     private static final File ngrams_file = new File("res/tweets/ngrams.txt");
     private static final File context_file = new File("res/tweets/context.txt");
+    private static final File lexicon_file = new File("res/tweets/lexicon.txt");
     private static final File afinn_file = new File("res/data/afinn111.json");
 
-    private static final boolean use_cached_ngrams = false;
-    private static final boolean use_cached_contexts = false;
+    private static final boolean use_cached_ngrams = true;
+    private static final boolean use_cached_contexts = true;
 
     private static final int max_n_grams_range = 6;
     private static final int max_context_word_distance = 4;
-    private static final double n_grams_cut_off_frequency = 0.00025;
+    private static final double n_grams_cut_off_frequency = 0.005;
 
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
             Map<String, Integer> ngrams;
             if (!use_cached_ngrams) {
-                ngrams = getAndCacheFrequentNGrams(tweets_file, ngrams_file, max_n_grams_range, n_grams_cut_off_frequency,
+                ngrams = getAndCacheFrequentNGrams(max_n_grams_range, n_grams_cut_off_frequency,
                         Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
                         Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
                         Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
@@ -52,22 +54,25 @@ public class Initialization {
                     Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
                     Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
         }
-
-//        Graph graph = initializeGraph(tweets);
-//        Map<String, Double> lexicon = createLexicon(graph);
+//
+        Graph graph = initializeGraph();
+        Map<String, Double> lexicon = createLexicon(graph);
+        lexicon = MapUtils.sortMapByValue(lexicon);
+        String jsonLexicon = JSONUtils.toJSON(lexicon, true);
+        FileUtils.writeToFile(lexicon_file, jsonLexicon);
     }
 
 
     @SafeVarargs
-    private static Map<String, Integer> getAndCacheFrequentNGrams(File input, File output, int n, double frequencyCutoff,
+    private static Map<String, Integer> getAndCacheFrequentNGrams(int n, double frequencyCutoff,
                                                                   Function<String, String>... filters) throws IOException {
         TweetNGrams tweetNGrams = new TweetNGrams();
         ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-        Map<String, Integer> ngrams = tweetNGrams.getFrequentNGrams(input, n, frequencyCutoff, filters);
+        Map<String, Integer> ngrams = tweetNGrams.getFrequentNGrams(tweets_file, n, frequencyCutoff, filters);
         ngrams = MapUtils.sortMapByValue(ngrams);
 
         String JSONNGrams = JSONUtils.toJSON(ngrams, true);
-        FileUtils.writeToFile(output, JSONNGrams);
+        FileUtils.writeToFile(ngrams_file, JSONNGrams);
         return ngrams;
     }
 
@@ -77,16 +82,17 @@ public class Initialization {
      * The phrase-vectors should contain the x = phraseVectorSize most frequent words used together with the phrase.
      * @throws IOException
      */
-    private static Graph initializeGraph(String[] tweets) throws IOException {
-        JSONLineByLine<Map<String, List<Integer>>> ngrams = new JSONLineByLine<>(ngrams_file, new TypeToken<Map<String, List<Integer>>>(){});
-        ProgressBar.trackProgress(ngrams, "Initializing graph...");
+    private static Graph initializeGraph() throws IOException {
+        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(context_file, new TypeToken<Map<String, Map<String, Integer>>>(){});
+        ProgressBar.trackProgress(contexts, "Initializing graph...");
         Graph graph = new Graph();
 
-        while(ngrams.hasNext()) {
-            Map.Entry<String, List<Integer>> entry = ngrams.next().entrySet().iterator().next();
-            graph.addPhrase(entry.getKey());
-            for(int i = 0; i < entry.getValue().size(); i++) {
-                graph.updatePhraseContext(entry.getKey(), tweets[entry.getValue().get(i)]);
+        while(contexts.hasNext()) {
+            Map<String, Map<String, Integer>> map = contexts.next();
+            ContextScore contextScore = new ContextScore(map);
+            for(Map.Entry<String, String> pair: contextScore.getContextPairs()) {
+                ContextScore.Score score = contextScore.getScore(pair.getKey(), pair.getValue());
+                graph.updatePhraseContext(pair.getKey(), pair.getValue(), score.getLeftScore(), score.getRightScore());
             }
         }
 
