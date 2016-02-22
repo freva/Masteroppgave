@@ -98,8 +98,8 @@ public class TweetContexts implements Progressable {
 
 
     /**
-     * Calculates distance between two ranges (end of the first range to start of the second range)
-     * @return Distance between ranges
+     * Calculates context score between two ranges (end of the first range to start of the second range)
+     * @return Context score between ranges
      */
     private static int getScoreBetweenPoints(Point p1, Point p2, int cutOffDistance) {
         int distance1 = (int) (p2.getY()-p1.getX()), distance2 = (int) (p2.getX()-p1.getY());

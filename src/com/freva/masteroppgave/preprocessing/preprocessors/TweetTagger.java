@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.utils.GatePosTagger;
+import com.freva.masteroppgave.utils.tools.GatePosTagger;
 import java.io.*;
 
 

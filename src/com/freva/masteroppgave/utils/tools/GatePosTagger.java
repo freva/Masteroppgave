@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.preprocessing.utils;
+package com.freva.masteroppgave.utils.tools;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;

@@ -4,7 +4,6 @@ import com.freva.masteroppgave.utils.MapUtils;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class TweetFilterer {

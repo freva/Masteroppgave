@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-import com.freva.masteroppgave.preprocessing.utils.NGrams;
+import com.freva.masteroppgave.utils.tools.NGrams;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 
