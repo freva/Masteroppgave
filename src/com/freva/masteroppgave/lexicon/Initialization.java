@@ -116,10 +116,9 @@ public class Initialization {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(afinn_file);
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
-        int[][] coOccurrences = graph.getCoOccurrences();
         Cosine<Node> cosine = new Cosine<>();
         ProgressBar.trackProgress(cosine, "Calculating cosine similarities...");
-        List<PairSimilarity<Node>> similarities = cosine.getSimilarities(coOccurrences, graph.getNodes());
+        List<PairSimilarity<Node>> similarities = graph.getSimilarities(cosine);
         graph.createEdges(similarities);
 
         ProgressBar.trackProgress(graph, "Propagating Sentiment...");

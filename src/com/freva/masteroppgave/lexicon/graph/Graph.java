@@ -2,6 +2,7 @@ package com.freva.masteroppgave.lexicon.graph;
 
 import com.freva.masteroppgave.lexicon.container.*;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.freva.masteroppgave.utils.similarity.Cosine;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
 import com.freva.masteroppgave.utils.tools.FixedPriorityQueue;
 
@@ -50,7 +51,7 @@ public class Graph implements Progressable {
     /**
      * Comparing each node, checking if there should be an edge between them
      */
-    public int[][] getCoOccurrences() {
+    public List<PairSimilarity<Node>> getSimilarities(Cosine<Node> cosine) {
         List<Node> nodeList = new ArrayList<>(nodes.values());
         int[][] coOccurrences = new int[nodes.size()][nodes.size()*2];
         for (int i = 0; i < nodeList.size(); i++) {
@@ -59,7 +60,8 @@ public class Graph implements Progressable {
                 coOccurrences[i][j*2+1] = nodeList.get(j).getRightScoreForWord(nodeList.get(j).getPhrase());
             }
         }
-        return coOccurrences;
+
+        return cosine.getSimilarities(coOccurrences, nodeList);
     }
 
 
@@ -120,9 +122,6 @@ public class Graph implements Progressable {
         return lexicon;
     }
 
-    public List<Node> getNodes() {
-        return new ArrayList<>(nodes.values());
-    }
 
     @Override
     public double getProgress() {
