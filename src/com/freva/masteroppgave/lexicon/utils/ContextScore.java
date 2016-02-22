@@ -13,8 +13,14 @@ public class ContextScore implements JsonSerializer<ContextScore> {
 
     public ContextScore() {}
 
-    public ContextScore(Map<String, Map<String, Score>> scores) {
-        this.scores = scores;
+    public ContextScore(Map<String, Map<String, Integer>> values) {
+        for(Map.Entry<String, Map<String, Integer>> entry1: values.entrySet()) {
+            Map<String, Score> temp = new HashMap<>();
+            for(Map.Entry<String, Integer> entry2: entry1.getValue().entrySet()) {
+                temp.put(entry2.getKey(), new Score(entry2.getValue()));
+            }
+            scores.put(entry1.getKey(), temp);
+        }
     }
 
     /**
@@ -31,11 +37,11 @@ public class ContextScore implements JsonSerializer<ContextScore> {
         }
     }
 
-    public int getScore(String token1, String token2) {
+    public Score getScore(String token1, String token2) {
         if(token1.compareTo(token2) < 0) {
-            return scores.get(token1).get(token2).getRightScore();
+            return scores.get(token1).get(token2);
         } else {
-            return scores.get(token2).get(token1).getLeftScore();
+            return scores.get(token2).get(token1).getRotated();
         }
     }
 
@@ -78,10 +84,10 @@ public class ContextScore implements JsonSerializer<ContextScore> {
         return jsonObject;
     }
 
-    private class Score {
+    public class Score {
         private static final int field_length = 4;
         private static final int field_mask = 0xF;
-        int score;
+        private int score;
 
         public Score(int score) {
             this.score = score;
@@ -101,6 +107,11 @@ public class ContextScore implements JsonSerializer<ContextScore> {
 
         public int getRightScore() {
             return score & field_mask;
+        }
+
+        public Score getRotated() {
+            int rotated = ((score&field_mask)<<field_length) | ((score>>field_length)&field_mask);
+            return new Score(rotated);
         }
     }
 }
