@@ -46,11 +46,6 @@
             <version>3.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.tdebatty</groupId>
-            <artifactId>java-LSH</artifactId>
-            <version>v0.8</version>
-        </dependency>
-        <dependency>
             <groupId>edu.stanford</groupId>
             <artifactId>nlp</artifactId>
             <version>1.0</version>
