@@ -16,17 +16,18 @@ public class Graph implements Progressable {
     private int currentProgress = 0;
     private int totalProgress = 0;
 
-    /**
-     *
-     * @param phrase Phrase to add to graph
-     */
-    public void addPhrase(String phrase) {
-        nodes.put(phrase, new Node(phrase));
-    }
 
+    public void updatePhraseContext(String token1, String token2, int scoreLeft, int scoreRight) {
+        if(! nodes.containsKey(token1)) {
+            nodes.put(token1, new Node());
+        }
 
-    public void updatePhraseContext(String phrase, String context) {
-        nodes.get(phrase).updatePhraseContext(context);
+        if(! nodes.containsKey(token2)) {
+            nodes.put(token2, new Node());
+        }
+
+        nodes.get(token1).updatePhraseContext(token2, scoreLeft, scoreRight);
+        nodes.get(token2).updatePhraseContext(token1, scoreRight, scoreLeft);
     }
 
 
@@ -42,7 +43,7 @@ public class Graph implements Progressable {
      * Comparing each node, checking if there should be an edge between them
      */
     public void createAndWeighEdges() {
-        List<Node> nodeList = new ArrayList<>(getNodes());
+        List<Node> nodeList = new ArrayList<>(nodes.values());
         totalProgress = nodeList.size() * (nodeList.size()-1) / 2;
         currentProgress = 0;
 
@@ -82,11 +83,11 @@ public class Graph implements Progressable {
     public void propagateSentiment() {
         currentProgress = 0;
         totalProgress = nodes.size();
-        for(Node node : nodes.values()) {
-            if(priorPolarityLexicon.hasWord(node.getPhrase())) {
+        for(Map.Entry<String, Node> entry: nodes.entrySet()) {
+            if(priorPolarityLexicon.hasWord(entry.getKey())) {
                 ArrayList<Node> nodesToCheck = new ArrayList<>();
-                nodesToCheck.add(node);
-                node.updateSentimentScore((double) priorPolarityLexicon.getPolarity(node.getPhrase()), node);
+                nodesToCheck.add(entry.getValue());
+                entry.getValue().updateSentimentScore((double) priorPolarityLexicon.getPolarity(entry.getKey()), entry.getValue());
                 for(int i = 0; i < pathLength; i++) {
                     ArrayList<Node> nodesToCheckNext = new ArrayList<>();
                     for(Node nodeToCheck : nodesToCheck) {
@@ -113,19 +114,11 @@ public class Graph implements Progressable {
 
     public Map<String, Double> getLexicon() {
         Map<String, Double> lexicon = new HashMap<>();
-        for(Node node: getNodes()) {
-            lexicon.put(node.getPhrase(), node.getSentimentScore());
+        for(Map.Entry<String, Node> entry: nodes.entrySet()) {
+            lexicon.put(entry.getKey(), entry.getValue().getSentimentScore());
         }
 
         return lexicon;
-    }
-
-    /**
-     * Returns all nodes in the graph
-     * @return - All nodes
-     */
-    public Collection<Node> getNodes() {
-        return nodes.values();
     }
 
     @Override

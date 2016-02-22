@@ -1,7 +1,11 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.utils.MapUtils;
+
 import java.io.*;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class TweetFilterer {
     /**
@@ -11,16 +15,19 @@ public class TweetFilterer {
      * @throws IOException
      */
     public static void rawTweetCleaner(String input_filename, String output_filename) throws IOException {
-        final HashSet<String> unique = new HashSet<>();
+        final Map<String, Integer> unique = new HashMap<>();
         int lineCounter = 0;
 
         try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
             try (BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for (String line; (line = br.readLine()) != null; lineCounter++) {
-                    if (lineCounter % 100000 == 0) System.out.print("\r" + lineCounter);
-                    if (! shouldInclude(line) || unique.contains(line)) continue;
+                    if (lineCounter % 100000 == 0) {
+                        if(lineCounter % 10000000 == 0) MapUtils.removeInfrequentItems(unique, 2);
+                        System.out.print("\r" + lineCounter);
+                    }
+                    if (! shouldInclude(line) || unique.containsKey(line)) continue;
 
-                    unique.add(line.toLowerCase());
+                    MapUtils.incrementMapByValue(unique, line.toLowerCase(), 1);
                     output.write(line + "\n");
                 }
             }

@@ -1,30 +1,27 @@
 package com.freva.masteroppgave.utils;
 
 import com.freva.masteroppgave.utils.progressbar.Progressable;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class JSONLineByLine<T> implements Progressable {
     private int totalLines = 0;
     private int lineCounter = 0;
     private Scanner scanner;
-    private Type type;
+    private TypeToken<T> type;
 
     /**
      * Class to read JSON strings line by line, where each line contains a <T> entry.
-     * @param filename File path to line separated JSON file
+     * @param file File containing line separated JSON objects
      * @throws IOException
      */
-    public JSONLineByLine(String filename, Type type) throws IOException {
-        this.totalLines = FileUtils.countLines(filename);
-        this.scanner = new Scanner(new File(filename));
+    public JSONLineByLine(File file, TypeToken<T> type) throws IOException {
+        this.totalLines = FileUtils.countLines(file);
+        this.scanner = new Scanner(file);
         this.type = type;
     }
 
@@ -45,7 +42,7 @@ public class JSONLineByLine<T> implements Progressable {
      */
     public T next() throws JSONException {
         lineCounter++;
-        return new Gson().fromJson(scanner.nextLine(), type);
+        return JSONUtils.fromJSON(scanner.nextLine(), type);
     }
 
     @Override

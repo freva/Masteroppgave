@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.utils;
 
-
 import java.util.*;
 
 public class MapUtils {
@@ -49,15 +48,16 @@ public class MapUtils {
 
 
     /**
-     * Increments value of key by 1 if present in the list, otherwise initializes the value to 1.
+     * Increments value of key by increment if present in the list, otherwise initializes the value to increment.
      * @param map Map to increment key for
      * @param key Key to increment
+     * @param increment Value to increment by
      */
-    public static<T> void incrementMapValue(Map<T, Integer> map, T key) {
+    public static<T> void incrementMapByValue(Map<T, Integer> map, T key, int increment) {
         if(! map.containsKey(key)) {
-            map.put(key, 1);
+            map.put(key, increment);
         } else {
-            map.put(key, map.get(key) + 1);
+            map.put(key, map.get(key) + increment);
         }
     }
 
@@ -84,5 +84,21 @@ public class MapUtils {
         }
 
         return normalizedMap;
+    }
+
+
+    /**
+     * Removes elements from map that are strictly smaller than the threshold element
+     * @param map Map to remove items from
+     * @param thresh Threshold element
+     */
+    public static<K, V extends Comparable<V>> void removeInfrequentItems(Map<K, V> map, V thresh) {
+        Iterator<Map.Entry<K, V>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<K, V> entry = iter.next();
+            if (entry.getValue().compareTo(thresh) < 0) {
+                iter.remove();
+            }
+        }
     }
 }
