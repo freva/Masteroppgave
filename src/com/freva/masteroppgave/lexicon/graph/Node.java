@@ -21,12 +21,9 @@ public class Node implements Comparable<Node> {
     private double currentScore;
 
 
-    public void updatePhraseContext(String context, int score) {
-        if(score > 0) {
-            MapUtils.incrementMapByValue(rightSideContextWords, context, score);
-        } else {
-            MapUtils.incrementMapByValue(leftSideContextWords, context, -score);
-        }
+    public void updatePhraseContext(String context, int scoreLeft, int scoreRight) {
+        MapUtils.incrementMapByValue(rightSideContextWords, context, scoreLeft);
+        MapUtils.incrementMapByValue(leftSideContextWords, context, scoreRight);
 
         cacheUpToDate = false;
     }

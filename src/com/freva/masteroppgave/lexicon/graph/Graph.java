@@ -17,7 +17,7 @@ public class Graph implements Progressable {
     private int totalProgress = 0;
 
 
-    public void updatePhraseContext(String token1, String token2, int score) {
+    public void updatePhraseContext(String token1, String token2, int scoreLeft, int scoreRight) {
         if(! nodes.containsKey(token1)) {
             nodes.put(token1, new Node());
         }
@@ -26,8 +26,8 @@ public class Graph implements Progressable {
             nodes.put(token2, new Node());
         }
 
-        nodes.get(token1).updatePhraseContext(token2, score);
-        nodes.get(token2).updatePhraseContext(token1, -score);
+        nodes.get(token1).updatePhraseContext(token2, scoreLeft, scoreRight);
+        nodes.get(token2).updatePhraseContext(token1, scoreRight, scoreLeft);
     }
 
 
