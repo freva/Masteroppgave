@@ -1,5 +1,7 @@
 package com.freva.masteroppgave.utils;
 
+import com.freva.masteroppgave.utils.tools.FixedPriorityQueue;
+
 import java.util.*;
 
 public class MapUtils {
@@ -29,18 +31,10 @@ public class MapUtils {
      */
     public static<K, V extends Comparable<V>> Map<K, V> getNLargest(Map<K, V> map, int n) {
         Comparator<Map.Entry<K, V>> comparator = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
-        PriorityQueue<Map.Entry<K, V>> largest = new PriorityQueue<>(n, comparator);
-
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            largest.offer(entry);
-            while (largest.size() > n) {
-                largest.poll();
-            }
-        }
+        FixedPriorityQueue<Map.Entry<K, V>> largest = new FixedPriorityQueue<>(n, comparator, map.entrySet());
 
         Map<K, V> result = new HashMap<>();
-        while (largest.size() > 0) {
-            Map.Entry<K, V> entry = largest.poll();
+        for(Map.Entry<K, V> entry: largest) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;

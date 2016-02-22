@@ -2,19 +2,26 @@ package com.freva.masteroppgave.lexicon.graph;
 
 import com.freva.masteroppgave.lexicon.utils.*;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.freva.masteroppgave.utils.tools.FixedPriorityQueue;
 
 import java.util.*;
 
 public class Graph implements Progressable {
-    private static final float edgeThreshold = 0.3f;
-    private static final int pathLength = 3;
-    private static final int neighborLimit = 30;
-
     private HashMap<String, Node> nodes = new HashMap<>();
     private PriorPolarityLexicon priorPolarityLexicon;
 
+    private int neighborLimit;
+    private int pathLength;
+    private float edgeThreshold;
+
     private int currentProgress = 0;
     private int totalProgress = 0;
+
+    public Graph(int neighborLimit, int pathLength, float edgeThreshold) {
+        this.neighborLimit = neighborLimit;
+        this.pathLength = pathLength;
+        this.edgeThreshold = edgeThreshold;
+    }
 
 
     public void updatePhraseContext(String token1, String token2, int scoreLeft, int scoreRight) {
@@ -72,29 +79,29 @@ public class Graph implements Progressable {
      * Each node only propagates sentiment to its x = neighborLimit highest weighted neighbors.
      */
     public void propagateSentiment() {
+        Set<String> subjectiveNGrams = priorPolarityLexicon.getSubjectiveWords();
+        subjectiveNGrams.retainAll(nodes.keySet());
+
         currentProgress = 0;
-        totalProgress = nodes.size();
-        for(Map.Entry<String, Node> entry: nodes.entrySet()) {
-            if(priorPolarityLexicon.hasWord(entry.getKey())) {
-                ArrayList<Node> nodesToCheck = new ArrayList<>();
-                nodesToCheck.add(entry.getValue());
-                entry.getValue().updateSentimentScore((double) priorPolarityLexicon.getPolarity(entry.getKey()), entry.getValue());
-                for(int i = 0; i < pathLength; i++) {
-                    ArrayList<Node> nodesToCheckNext = new ArrayList<>();
-                    for(Node nodeToCheck : nodesToCheck) {
-                        ArrayList<Edge> neighbors = nodeToCheck.getNeighbors();
-                        Collections.sort(neighbors);
-                        int counter = 0;
-                        for (Edge edge : neighbors) {
-                            if(counter >= neighborLimit) break;
-                            edge.getNeighbor().updateSentimentScore(nodeToCheck.getCurrentScore()*edge.getWeight(), nodeToCheck);
-                            nodesToCheckNext.add(edge.getNeighbor());
-                            counter++;
-                        }
+        totalProgress = subjectiveNGrams.size();
+
+        for(String subjectiveNGram: subjectiveNGrams) {
+            Node subjectiveNode = nodes.get(subjectiveNGram);
+            LinkedList<Node> nodesToCheck = new LinkedList<>(Collections.singletonList(subjectiveNode));
+
+            subjectiveNode.updateSentimentScore(subjectiveNode, priorPolarityLexicon.getPolarity(subjectiveNGram));
+            for (int i = 0; i < pathLength; i++) {
+                for (int size=nodesToCheck.size(); size > 0; size--) {
+                    Node nodeToCheck = nodesToCheck.pop();
+                    FixedPriorityQueue<Edge> neighbors = new FixedPriorityQueue<>(neighborLimit, nodeToCheck.getNeighbors());
+
+                    for (Edge edge : neighbors.sortedItems()) {
+                        edge.getNeighbor().updateSentimentScore(nodeToCheck, nodeToCheck.getCurrentScore()*edge.getWeight());
+                        nodesToCheck.addLast(edge.getNeighbor());
                     }
-                    nodesToCheck = nodesToCheckNext;
                 }
             }
+
             currentProgress++;
         }
 
