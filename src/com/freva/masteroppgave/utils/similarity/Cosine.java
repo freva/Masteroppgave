@@ -10,13 +10,25 @@ public class Cosine<T> implements Progressable {
     private int totalProgress;
     private int currentProgress = 0;
 
+
+    /**
+     * Calculates cosine similarity between elements in 2D-array
+     * @param coOccurrences Elements array, first dimension for elements, second for element values
+     * @param entries Entries being compared, assumed same order as rows
+     * @return List of PairSimilarities storing similarity for each pair of nodes
+     */
     public List<PairSimilarity<T>> getSimilarities(int[][] coOccurrences, List<T> entries){
         totalProgress = (coOccurrences.length*(coOccurrences.length-1))/2;
         double[][] normalized = normalize(coOccurrences);
         return calculateCosines(normalized, entries);
     }
 
-    //First index: row | Second index: column
+
+    /**
+     * Performs Pearson Correlation normalization on weighted co-occurrence array
+     * @param values Co-occurrence array
+     * @return Normalized co-occurrence array
+     */
     private static double[][] normalize(int[][] values) {
         int T = sumArray(values);
         double[][] normalized = new double[values.length][values[0].length];

@@ -26,6 +26,12 @@ public class FixedPriorityQueue<T> extends PriorityQueue<T> {
     }
 
 
+    /**
+     * Adds element to a priority queue, if queue already has maxSize number of elements, head will be removed before
+     * new element is added.
+     * @param element Element to add to queue
+     * @return true (as specified by {@link Queue#offer})
+     */
     public boolean add(T element) {
         while (size() > maxSize) {
             poll();
@@ -33,6 +39,12 @@ public class FixedPriorityQueue<T> extends PriorityQueue<T> {
         return offer(element);
     }
 
+
+    /**
+     * Adds all elements in collection to priority queue while maintaining maxSize
+     * @param collection Collections of elements to add
+     * @return true (as specified by {@link Queue#offer})
+     */
     public boolean addAll(Collection<? extends T> collection) {
         collection.forEach(this::add);
         return true;

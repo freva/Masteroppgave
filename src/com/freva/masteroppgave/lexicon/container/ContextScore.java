@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ContextScore implements JsonSerializer<ContextScore> {
     private Map<String, Map<String, Score>> scores = new HashMap<>();
@@ -22,6 +23,7 @@ public class ContextScore implements JsonSerializer<ContextScore> {
             scores.put(entry1.getKey(), temp);
         }
     }
+
 
     /**
      * Stores distance between two tokens in an efficient manner.
@@ -59,12 +61,17 @@ public class ContextScore implements JsonSerializer<ContextScore> {
         distancesFrom.get(key2).incrementScore(score);
     }
 
+
+    /**
+     * Returns pairs of scores stored by this instance, useful to iterate over all scores together with getScore()
+     * @return Set of Map entries with key pairs stored
+     */
     public Set<Map.Entry<String, String>> getContextPairs() {
         Set<Map.Entry<String, String>> pairs = new HashSet<>();
         for(Map.Entry<String, Map<String, Score>> entry: scores.entrySet()) {
-            for(String key2: entry.getValue().keySet()) {
-                pairs.add(new AbstractMap.SimpleEntry<>(entry.getKey(), key2));
-            }
+            pairs.addAll(entry.getValue().keySet().stream()
+                    .map(key2 -> new AbstractMap.SimpleEntry<>(entry.getKey(), key2))
+                    .collect(Collectors.toList()));
         }
 
         return pairs;
@@ -84,6 +91,9 @@ public class ContextScore implements JsonSerializer<ContextScore> {
         return jsonObject;
     }
 
+    /**
+     * Stores right score in first field_length bits, and left score in the following field_length bits
+     */
     public class Score {
         private static final int field_length = 4;
         private static final int field_mask = 0xF;
