@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon.utils;
+package com.freva.masteroppgave.lexicon.container;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

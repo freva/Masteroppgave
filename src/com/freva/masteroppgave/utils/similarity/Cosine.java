@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon.utils;
+package com.freva.masteroppgave.utils.similarity;
 
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 
@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 
-public class PearsonsCorrelation<T> implements Progressable {
+public class Cosine<T> implements Progressable {
     private int totalProgress;
     private int currentProgress = 0;
 

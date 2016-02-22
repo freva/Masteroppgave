@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon.utils;
+package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;

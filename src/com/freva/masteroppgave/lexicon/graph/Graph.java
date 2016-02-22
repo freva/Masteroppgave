@@ -1,7 +1,8 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-import com.freva.masteroppgave.lexicon.utils.*;
+import com.freva.masteroppgave.lexicon.container.*;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.freva.masteroppgave.utils.similarity.PairSimilarity;
 import com.freva.masteroppgave.utils.tools.FixedPriorityQueue;
 
 import java.util.*;

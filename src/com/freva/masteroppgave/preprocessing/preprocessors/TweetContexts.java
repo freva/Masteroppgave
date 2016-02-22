@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-import com.freva.masteroppgave.lexicon.utils.ContextScore;
-import com.freva.masteroppgave.lexicon.utils.PhraseTree;
+import com.freva.masteroppgave.lexicon.container.ContextScore;
+import com.freva.masteroppgave.lexicon.container.PhraseTree;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;

@@ -2,10 +2,10 @@ package com.freva.masteroppgave.lexicon;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
-import com.freva.masteroppgave.lexicon.utils.ContextScore;
-import com.freva.masteroppgave.lexicon.utils.PairSimilarity;
-import com.freva.masteroppgave.lexicon.utils.PearsonsCorrelation;
-import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
+import com.freva.masteroppgave.lexicon.container.ContextScore;
+import com.freva.masteroppgave.utils.similarity.PairSimilarity;
+import com.freva.masteroppgave.utils.similarity.Cosine;
+import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
@@ -34,6 +34,10 @@ public class Initialization {
     private static final int max_n_grams_range = 6;
     private static final int max_context_word_distance = 4;
     private static final double n_grams_cut_off_frequency = 0.005;
+
+    private static final int neighborLimit = 30;
+    private static final int pathLength = 3;
+    private static final float edgeThreshold = 0.3f;
 
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
@@ -88,7 +92,7 @@ public class Initialization {
     private static Graph initializeGraph() throws IOException {
         JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(context_file, new TypeToken<Map<String, Map<String, Integer>>>(){});
         ProgressBar.trackProgress(contexts, "Initializing graph...");
-        Graph graph = new Graph();
+        Graph graph = new Graph(neighborLimit, pathLength, edgeThreshold);
 
         while(contexts.hasNext()) {
             Map<String, Map<String, Integer>> map = contexts.next();
@@ -113,9 +117,9 @@ public class Initialization {
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
         int[][] coOccurrences = graph.getCoOccurrences();
-        PearsonsCorrelation<Node> pearsonsCorrelation = new PearsonsCorrelation<>();
-        ProgressBar.trackProgress(pearsonsCorrelation, "Calculating cosine similarities...");
-        List<PairSimilarity<Node>> similarities = pearsonsCorrelation.getSimilarities(coOccurrences, graph.getNodes());
+        Cosine<Node> cosine = new Cosine<>();
+        ProgressBar.trackProgress(cosine, "Calculating cosine similarities...");
+        List<PairSimilarity<Node>> similarities = cosine.getSimilarities(coOccurrences, graph.getNodes());
         graph.createEdges(similarities);
 
         ProgressBar.trackProgress(graph, "Propagating Sentiment...");

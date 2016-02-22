@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon.utils;
+package com.freva.masteroppgave.utils.similarity;
 
 public class PairSimilarity<T> implements Comparable<PairSimilarity<T>> {
     private T entry1, entry2;
