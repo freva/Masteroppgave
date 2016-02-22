@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon;
+package com.freva.masteroppgave.lexicon.utils;
 
 import java.util.*;
 import java.util.List;
