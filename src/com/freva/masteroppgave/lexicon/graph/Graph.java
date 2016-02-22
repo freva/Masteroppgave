@@ -19,11 +19,11 @@ public class Graph implements Progressable {
 
     public void updatePhraseContext(String token1, String token2, int scoreLeft, int scoreRight) {
         if(! nodes.containsKey(token1)) {
-            nodes.put(token1, new Node());
+            nodes.put(token1, new Node(token1));
         }
 
         if(! nodes.containsKey(token2)) {
-            nodes.put(token2, new Node());
+            nodes.put(token2, new Node(token2));
         }
 
         nodes.get(token1).updatePhraseContext(token2, scoreLeft, scoreRight);
@@ -42,41 +42,25 @@ public class Graph implements Progressable {
     /**
      * Comparing each node, checking if there should be an edge between them
      */
-    public void createAndWeighEdges() {
-        List<String> nodeList = new ArrayList<>(nodes.keySet());
-        totalProgress = nodeList.size() * (nodeList.size()-1) / 2;
-        currentProgress = 0;
+    public int[][] getCoOccurrences() {
+        List<Node> nodeList = new ArrayList<>(nodes.values());
         int[][] coOccurrences = new int[nodes.size()][nodes.size()*2];
         for (int i = 0; i < nodeList.size(); i++) {
-            String key1 = nodeList.get(i);
             for (int j = 0; j < nodeList.size(); j++ ) {
-                String key2 = nodeList.get(j);
-                coOccurrences[i][j*2] = nodes.get(key1).getLeftScoreForWord(key2);
-                coOccurrences[i][j*2+1] = nodes.get(key1).getRightScoreForWord(key2);
+                coOccurrences[i][j*2] = nodeList.get(i).getLeftScoreForWord(nodeList.get(j).getPhrase());
+                coOccurrences[i][j*2+1] = nodeList.get(j).getRightScoreForWord(nodeList.get(j).getPhrase());
             }
         }
-        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation(coOccurrences, nodeList);
-        createEdges(pearsonsCorrelation, nodeList);
-        currentProgress++;
+        return coOccurrences;
     }
 
-    /**
-     * Compares a pair of nodes and adds them as neighbors if their similarity is larger than set edgeThreshold
-     * @param node1 - first node to be compared
-     * @param node2 - second node to be compared
-     */
-    private void createEdges(PearsonsCorrelation pearsonsCorrelation, List<String> phrases) {
-        for(int i = 0; i < phrases.size(); i++) {
-            for(int j = i + 1; j < phrases.size(); j++) {
-                double leftSimilarity = pearsonsCorrelation.getLeftSimilarityBetween(phrases.get(i), phrases.get(j));
-                double rightSimilarity = pearsonsCorrelation.getRightSimilarityBetween(phrases.get(i), phrases.get(j));
-                Node node1 = nodes.get(phrases.get(i)), node2 = nodes.get(phrases.get(j));
-                double similarity = Math.max(leftSimilarity, rightSimilarity);
-                if(similarity >= edgeThreshold) {
-                    node1.addNeighbor(new Edge(node2, similarity));
-                    node2.addNeighbor(new Edge(node1, similarity));
-                }
-            }
+
+    public void createEdges(List<PairSimilarity<Node>> similarities) {
+        for(PairSimilarity<Node> p : similarities) {
+            if(p.getSimilarity() < edgeThreshold) continue;
+
+            p.getEntry1().addNeighbor(new Edge(p.getEntry2(), p.getSimilarity()));
+            p.getEntry2().addNeighbor(new Edge(p.getEntry1(), p.getSimilarity()));
         }
     }
 
@@ -126,6 +110,10 @@ public class Graph implements Progressable {
         }
 
         return lexicon;
+    }
+
+    public List<Node> getNodes() {
+        return new ArrayList<>(nodes.values());
     }
 
     @Override

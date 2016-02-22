@@ -1,46 +1,28 @@
 package com.freva.masteroppgave.lexicon.utils;
 
+import com.freva.masteroppgave.utils.progressbar.Progressable;
+
 import java.util.*;
-import java.util.List;
 import java.util.stream.IntStream;
 
 
-public class PearsonsCorrelation {
-    private Map<String, Integer> wordMappings;
-    private double[][] cosines;
+public class PearsonsCorrelation<T> implements Progressable {
+    private int totalProgress;
+    private int currentProgress = 0;
 
-    public PearsonsCorrelation(int[][] coOccurrences, List<String> keys){
-        wordMappings = getWordMappings(keys);
-
+    public List<PairSimilarity<T>> getSimilarities(int[][] coOccurrences, List<T> entries){
+        totalProgress = (coOccurrences.length*(coOccurrences.length-1))/2;
         double[][] normalized = normalize(coOccurrences);
-        cosines = calculateCosines(normalized);
+        return calculateCosines(normalized, entries);
     }
-
-    public double getLeftSimilarityBetween(String word1, String word2) {
-        return cosines[wordMappings.get(word1)][2 * wordMappings.get(word2)];
-    }
-
-    public double getRightSimilarityBetween(String word1, String word2) {
-        return cosines[wordMappings.get(word1)][2 * wordMappings.get(word2) + 1];
-    }
-
-
-    private static Map<String, Integer> getWordMappings(List<String> words) {
-        Map<String, Integer> indexMapper = new HashMap<>();
-        for(int i=0; i<words.size(); i++) {
-            indexMapper.put(words.get(i), i);
-        }
-        return indexMapper;
-    }
-
 
     //First index: row | Second index: column
     private static double[][] normalize(int[][] values) {
         int T = sumArray(values);
         double[][] normalized = new double[values.length][values[0].length];
 
-        int[] columnSums = IntStream.range(0, values.length).map(i -> sumColumn(values, i)).toArray();
-        int[] rowSums = IntStream.range(0, values[0].length).map(i -> sumRow(values, i)).toArray();
+        int[] columnSums = IntStream.range(0, values[0].length).map(i -> sumColumn(values, i)).toArray();
+        int[] rowSums = IntStream.range(0, values.length).map(i -> sumRow(values, i)).toArray();
 
         for(int row = 0; row<values.length; row++) {
             //normalized[row] = new double[row+1];
@@ -55,21 +37,22 @@ public class PearsonsCorrelation {
     }
 
 
-    private static double[][] calculateCosines(double[][] normalized) {
+    private List<PairSimilarity<T>> calculateCosines(double[][] normalized, List<T> entries) {
         double[] rowSqSum = Arrays.stream(normalized)
                 .mapToDouble(row -> Math.sqrt(cross(row, row)))
                 .toArray();
 
-        double[][] cosines = new double[normalized.length][normalized[0].length];
+        List<PairSimilarity<T>> similarities = new ArrayList<>();
         for(int row = 0; row<normalized.length; row++) {
-            for(int col = 0; col<row; col++) {
+            for(int col = 0; col<row; col++, currentProgress++) {
                 double mul = cross(normalized[row], normalized[col]);
                 double cosine = mul / (rowSqSum[row] * rowSqSum[col]);
-                cosines[row][col] = Double.isNaN(cosine) ? 0 : cosine;
+                double similarity = Double.isNaN(cosine) ? 0 : cosine;
+                similarities.add(new PairSimilarity<>(entries.get(row), entries.get(col), similarity));
             }
         }
 
-        return cosines;
+        return similarities;
     }
 
     private static double cross(double[] a, double[] b) {
@@ -92,5 +75,10 @@ public class PearsonsCorrelation {
 
     private static int sumRow(int[][] array, int row) {
         return Arrays.stream(array[row]).sum();
+    }
+
+    @Override
+    public double getProgress() {
+        return (totalProgress == 0 ? 0 : 100.0*currentProgress/totalProgress);
     }
 }

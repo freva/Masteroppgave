@@ -19,7 +19,11 @@ public class Node implements Comparable<Node> {
     private boolean cacheUpToDate = false;
 
     private double currentScore;
+    private String phrase;
 
+    public Node(String phrase) {
+        this.phrase = phrase;
+    }
 
     public void updatePhraseContext(String context, int scoreLeft, int scoreRight) {
         MapUtils.incrementMapByValue(rightSideContextWords, context, scoreLeft);
@@ -151,6 +155,10 @@ public class Node implements Comparable<Node> {
             total += score;
         }
         return total;
+    }
+
+    public String getPhrase() {
+        return phrase;
     }
 
     @Override

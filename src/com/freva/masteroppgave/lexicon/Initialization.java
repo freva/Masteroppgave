@@ -1,7 +1,10 @@
 package com.freva.masteroppgave.lexicon;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
+import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.utils.ContextScore;
+import com.freva.masteroppgave.lexicon.utils.PairSimilarity;
+import com.freva.masteroppgave.lexicon.utils.PearsonsCorrelation;
 import com.freva.masteroppgave.lexicon.utils.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
@@ -54,7 +57,7 @@ public class Initialization {
                     Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
                     Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
         }
-//
+
         Graph graph = initializeGraph();
         Map<String, Double> lexicon = createLexicon(graph);
         lexicon = MapUtils.sortMapByValue(lexicon);
@@ -109,8 +112,12 @@ public class Initialization {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(afinn_file);
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
-        ProgressBar.trackProgress(graph, "Creating and weighing edges...");
-        graph.createAndWeighEdges();
+        int[][] coOccurrences = graph.getCoOccurrences();
+        PearsonsCorrelation<Node> pearsonsCorrelation = new PearsonsCorrelation<>();
+        ProgressBar.trackProgress(pearsonsCorrelation, "Calculating cosine similarities...");
+        List<PairSimilarity<Node>> similarities = pearsonsCorrelation.getSimilarities(coOccurrences, graph.getNodes());
+        graph.createEdges(similarities);
+
         ProgressBar.trackProgress(graph, "Propagating Sentiment...");
         graph.propagateSentiment();
 
