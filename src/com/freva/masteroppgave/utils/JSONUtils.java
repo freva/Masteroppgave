@@ -18,6 +18,19 @@ public class JSONUtils {
 
 
     /**
+     * Converts object to JSON formatted string with typeToken adapter
+     * @param object Object to convert to JSON
+     * @param typeToken Adapter to use for conversion
+     * @param pretty Use pretty formatting or not
+     * @return JSON formatted String
+     */
+    public static String toJSON(Object object, TypeToken typeToken, boolean pretty) {
+        Gson gson = (pretty ? new GsonBuilder().setPrettyPrinting() : new GsonBuilder()).registerTypeAdapter(typeToken.getType(), object).create();
+        return gson.toJson(object);
+    }
+
+
+    /**
      * Parses JSON String and returns corresponding instance
      * @param typeToken Type of object in JSON
      * @return Object of type specified by typeToken
