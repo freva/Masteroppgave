@@ -32,7 +32,7 @@ public class TweetNGrams implements Progressable {
      * @param frequencyCutoff Percentage of total number of tweets that n-gram must have appeared in to be included
      * @throws IOException
      */
-    public void createFrequentNGrams(double frequencyCutoff) throws IOException {
+    public void createFrequentNGrams(int n, double frequencyCutoff) throws IOException {
         Map<String, List<Integer>> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
         int lineCounter;
@@ -43,7 +43,7 @@ public class TweetNGrams implements Progressable {
             }
 
             String line = tweetReader.readAndPreprocessNextTweet();
-            for(String nGram: NGrams.getSyntacticalNGrams(line, 6)) {
+            for(String nGram: NGrams.getSyntacticalNGrams(line, n)) {
                 if(! containsAlphabet.matcher(nGram).find()) continue;
 
                 if(! nGramsCounter.containsKey(nGram)) {

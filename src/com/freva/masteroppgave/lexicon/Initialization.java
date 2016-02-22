@@ -27,7 +27,7 @@ public class Initialization {
                     Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
                     Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
             ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-            tweetNGrams.createFrequentNGrams(0.002);
+            tweetNGrams.createFrequentNGrams(6, 0.002);
         }
 
         TweetReader tweetReader = new TweetReader(tweets_file,
