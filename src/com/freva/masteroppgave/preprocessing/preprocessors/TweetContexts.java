@@ -1,10 +1,11 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-import com.freva.masteroppgave.lexicon.utils.ContextDistance;
+import com.freva.masteroppgave.lexicon.utils.ContextScore;
 import com.freva.masteroppgave.lexicon.utils.PhraseTree;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.google.gson.reflect.TypeToken;
 
 import java.awt.*;
 import java.io.BufferedWriter;
@@ -31,23 +32,24 @@ public class TweetContexts implements Progressable {
     public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, Function<String, String>... filters) throws IOException {
         this.tweetReader = new TweetReader(input, filters);
         PhraseTree tree = new PhraseTree(tracked);
+        TypeToken typeToken = new TypeToken<ContextScore>(){};
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
             while(tweetReader.hasNext()) {
                 String tweet = tweetReader.readAndPreprocessNextTweet();
-                ContextDistance trackedDistances = getTrackedDistances(tweet, tree, cutOffDistance);
-                String JSONTrackedDistances = JSONUtils.toJSON(trackedDistances, false);
+                ContextScore trackedDistances = getTrackedDistances(tweet, tree, cutOffDistance);
+                String JSONTrackedDistances = JSONUtils.toJSON(trackedDistances, typeToken, false);
                 writer.write(JSONTrackedDistances + "\n");
             }
         }
     }
 
 
-    private static ContextDistance getTrackedDistances(String line, PhraseTree tree, int cutOffDistance) {
+    private static ContextScore getTrackedDistances(String line, PhraseTree tree, int cutOffDistance) {
         String[] tokens = RegexFilters.WHITESPACE.split(line);
         Map<Point, String> trackedWords = findTrackedWords(tokens, tree);
         List<Point> phraseBounds = new ArrayList<>(trackedWords.keySet());
-        ContextDistance contextDistance = new ContextDistance();
+        ContextScore contextScore = new ContextScore();
 
         for(int i=0; i<phraseBounds.size(); i++) {
             Point p1 = phraseBounds.get(i);
@@ -55,12 +57,12 @@ public class TweetContexts implements Progressable {
                 Point p2 = phraseBounds.get(j);
                 if(rangesOverlap(p1, p2)) continue;
 
-                int distance = getDistanceBetweenPoints(p1, p2);
-                if(Math.abs(distance) > cutOffDistance) continue;
-                contextDistance.addDistance(trackedWords.get(p1), trackedWords.get(p2), distance);
+                int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
+                if(score == 0) continue;
+                contextScore.addDistance(trackedWords.get(p1), trackedWords.get(p2), score);
             }
         }
-        return contextDistance;
+        return contextScore;
     }
 
     private static Map<Point, String> findTrackedWords(String[] tokens, PhraseTree tree) {
@@ -99,12 +101,13 @@ public class TweetContexts implements Progressable {
      * Calculates distance between two ranges (end of the first range to start of the second range)
      * @return Distance between ranges
      */
-    private static int getDistanceBetweenPoints(Point p1, Point p2) {
+    private static int getScoreBetweenPoints(Point p1, Point p2, int cutOffDistance) {
         int distance1 = (int) (p2.getY()-p1.getX()), distance2 = (int) (p2.getX()-p1.getY());
-        if(Math.abs(distance1) < Math.abs(distance2)) {
-            return distance1;
+        int absDist1 = Math.abs(distance1), absDist2 = Math.abs(distance2);
+        if(absDist1 < absDist2) {
+            return (int) Math.signum(distance1) * (cutOffDistance + 1 - absDist1);
         } else {
-            return distance2;
+            return (int) Math.signum(distance2) * (cutOffDistance + 1 - absDist2);
         }
     }
 
