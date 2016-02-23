@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 
 public class Initialization {
-    private static final File tweets_file = new File("res/tweets/10k.txt");
+    private static final File tweets_file = new File("res/tweets/1m.txt");
     private static final File ngrams_file = new File("res/tweets/ngrams.txt");
     private static final File context_file = new File("res/tweets/context.txt");
     private static final File lexicon_file = new File("res/tweets/lexicon.txt");
@@ -33,7 +33,7 @@ public class Initialization {
 
     private static final int max_n_grams_range = 6;
     private static final int max_context_word_distance = 4;
-    private static final double n_grams_cut_off_frequency = 0.005;
+    private static final double n_grams_cut_off_frequency = 0.0025;
 
     private static final int neighborLimit = 30;
     private static final int pathLength = 3;
@@ -63,7 +63,7 @@ public class Initialization {
         }
 
         Graph graph = initializeGraph();
-        Map<String, Double> lexicon = createLexicon(graph);
+        Map<String, Integer> lexicon = createLexicon(graph);
         lexicon = MapUtils.sortMapByValue(lexicon);
         String jsonLexicon = JSONUtils.toJSON(lexicon, true);
         FileUtils.writeToFile(lexicon_file, jsonLexicon);
@@ -112,7 +112,7 @@ public class Initialization {
      * Initializes a graph of phrases, before starting the sentiment propagation within the graph resulting in a sentiment lexicon.
      * @throws IOException
      */
-    private static Map<String, Double> createLexicon(Graph graph) throws IOException {
+    private static Map<String, Integer> createLexicon(Graph graph) throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(afinn_file);
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 

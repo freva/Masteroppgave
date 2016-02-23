@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import com.freva.masteroppgave.lexicon.container.*;
+import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.similarity.Cosine;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
@@ -14,12 +15,13 @@ public class Graph implements Progressable {
 
     private int neighborLimit;
     private int pathLength;
-    private float edgeThreshold;
+    private double edgeThreshold;
+    private double beta;
 
     private int currentProgress = 0;
     private int totalProgress = 0;
 
-    public Graph(int neighborLimit, int pathLength, float edgeThreshold) {
+    public Graph(int neighborLimit, int pathLength, double edgeThreshold) {
         this.neighborLimit = neighborLimit;
         this.pathLength = pathLength;
         this.edgeThreshold = edgeThreshold;
@@ -59,7 +61,7 @@ public class Graph implements Progressable {
                 coOccurrences[i][j*2] = nodeList.get(i).getLeftScoreForWord(nodeList.get(j).getPhrase());
                 coOccurrences[i][j*2+1] = nodeList.get(j).getRightScoreForWord(nodeList.get(j).getPhrase());
             }
-            int max = Arrays.stream(coOccurrences[i]).max().getAsInt();
+            int max = Arrays.stream(coOccurrences[i]).max().getAsInt()/2;
             coOccurrences[i][2*i] = max;
             coOccurrences[i][2*i+1] = max;
         }
@@ -111,18 +113,25 @@ public class Graph implements Progressable {
             currentProgress++;
         }
 
-        //Calculate Beta
-        //Normalize scores
+        double sumPos = nodes.values().parallelStream().mapToDouble(Node::getPositiveSentimentScore).sum();
+        double sumNeg = nodes.values().parallelStream().mapToDouble(Node::getNegativeSentimentScore).sum();
+        beta = sumPos/sumNeg;
     }
 
 
-    public Map<String, Double> getLexicon() {
+    public Map<String, Integer> getLexicon() {
         Map<String, Double> lexicon = new HashMap<>();
         for(Map.Entry<String, Node> entry: nodes.entrySet()) {
-            lexicon.put(entry.getKey(), entry.getValue().getSentimentScore());
+            lexicon.put(entry.getKey(), entry.getValue().getSentimentScore(beta));
+        }
+        //lexicon = MapUtils.normalizeMapBetween(lexicon, -7, 7);
+
+        Map<String, Integer> roundedLexicon = new HashMap<>();
+        for(String key: lexicon.keySet()) {
+            roundedLexicon.put(key, (int) Math.round(lexicon.get(key)));
         }
 
-        return lexicon;
+        return roundedLexicon;
     }
 
 

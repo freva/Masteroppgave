@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Node implements Comparable<Node> {
+public class Node {
     private HashMap<String, Integer> rightSideContextWords = new HashMap<>();
     private HashMap<String, Integer> leftSideContextWords = new HashMap<>();
     private HashMap<Node, Double> posValues = new HashMap<>();
@@ -81,8 +81,17 @@ public class Node implements Comparable<Node> {
      * Returns the overall sentiment score of the node.
      * @return - Sentiment score.
      */
-    public double getSentimentScore() {
-        return sumScores(posValues) + sumScores(negValues);
+    public double getSentimentScore(double beta) {
+        return getPositiveSentimentScore()-beta*getNegativeSentimentScore();
+    }
+
+
+    public double getPositiveSentimentScore() {
+        return sumScores(posValues);
+    }
+
+    public double getNegativeSentimentScore() {
+        return sumScores(negValues);
     }
 
 
@@ -107,11 +116,5 @@ public class Node implements Comparable<Node> {
 
     public String getPhrase() {
         return phrase;
-    }
-
-    @Override
-    public int compareTo(Node other) {
-        if(other == null) return -1;
-        else return (int) Math.signum(other.getSentimentScore()-this.getSentimentScore());
     }
 }
