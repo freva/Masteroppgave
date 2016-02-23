@@ -59,6 +59,9 @@ public class Graph implements Progressable {
                 coOccurrences[i][j*2] = nodeList.get(i).getLeftScoreForWord(nodeList.get(j).getPhrase());
                 coOccurrences[i][j*2+1] = nodeList.get(j).getRightScoreForWord(nodeList.get(j).getPhrase());
             }
+            int max = Arrays.stream(coOccurrences[i]).max().getAsInt();
+            coOccurrences[i][2*i] = max;
+            coOccurrences[i][2*i+1] = max;
         }
 
         return cosine.getSimilarities(coOccurrences, nodeList);
