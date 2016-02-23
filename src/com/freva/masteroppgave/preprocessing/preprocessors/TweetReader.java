@@ -15,10 +15,15 @@ public class TweetReader implements Progressable {
     private int totalLines = 0;
     private int lineCounter = 0;
 
-    @SafeVarargs
-    public TweetReader(File file, Function<String, String>... filters) throws IOException {
+
+    public TweetReader(File file) throws IOException {
         this.totalLines = FileUtils.countLines(file);
         this.scanner = new Scanner(file);
+    }
+
+    @SafeVarargs
+    public TweetReader(File file, Function<String, String>... filters) throws IOException {
+        this(file);
         this.filters = filters;
     }
 
@@ -32,7 +37,7 @@ public class TweetReader implements Progressable {
         String[] tweets = new String[totalLines];
 
         while (scanner.hasNext()) {
-            tweets[lineCounter++] = Filters.chain(scanner.nextLine(), filters);
+            tweets[lineCounter-1] = readAndPreprocessNextTweet();
         }
 
         return tweets;
@@ -45,7 +50,13 @@ public class TweetReader implements Progressable {
      */
     public String readAndPreprocessNextTweet() {
         lineCounter++;
-        return Filters.chain(scanner.nextLine(), filters);
+        return filters == null ? scanner.nextLine() : Filters.chain(scanner.nextLine(), filters);
+    }
+
+
+    public DataSetEntry readAndPreprocessNextDataSetEntry(int tweetIndex, int classIndex) {
+        lineCounter++;
+        return new DataSetEntry(scanner.nextLine(), tweetIndex, classIndex);
     }
 
 
