@@ -2,6 +2,7 @@ package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 
+import java.awt.*;
 import java.util.*;
 
 public class PhraseTree {
@@ -43,6 +44,33 @@ public class PhraseTree {
         }
 
         return tree.isEndOfPhrase() ? true : null;
+    }
+
+
+    /**
+     * Finds word-ranges all phrases in tokens stored in PhraseTree
+     * @param tokens Sequence of tokens to find phrases in
+     * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of phrase, and
+     * String which stores the actual phrase found
+     */
+    public Map<Point, String> findTrackedWords(String[] tokens) {
+        Map<Point, String> trackedWords = new HashMap<>();
+
+        for(int i=0; i<tokens.length; i++) {
+            for(int j=i+1; j<tokens.length; j++) {
+                String[] phrase = Arrays.copyOfRange(tokens, i, j);
+                Boolean status = hasPhrase(phrase);
+
+                if(status == null) {
+                    continue;
+                } if(status.equals(true)) {
+                    trackedWords.put(new Point(i, j-1), String.join(" ", phrase));
+                } else if(status.equals(false)) {
+                    break;
+                }
+            }
+        }
+        return trackedWords;
     }
 
 

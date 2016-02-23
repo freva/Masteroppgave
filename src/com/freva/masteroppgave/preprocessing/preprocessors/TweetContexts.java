@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class TweetContexts implements Progressable {
+    private static final Pattern punctuation = Pattern.compile("[!?.]");
     private TweetReader tweetReader;
 
     /**
@@ -46,43 +48,27 @@ public class TweetContexts implements Progressable {
 
 
     private static ContextScore getTrackedDistances(String line, PhraseTree tree, int cutOffDistance) {
-        String[] tokens = RegexFilters.WHITESPACE.split(line);
-        Map<Point, String> trackedWords = findTrackedWords(tokens, tree);
-        List<Point> phraseBounds = new ArrayList<>(trackedWords.keySet());
         ContextScore contextScore = new ContextScore();
 
-        for(int i=0; i<phraseBounds.size(); i++) {
-            Point p1 = phraseBounds.get(i);
-            for(int j=0; j<i; j++) {
-                Point p2 = phraseBounds.get(j);
-                if(rangesOverlap(p1, p2)) continue;
+        for(String sentence: punctuation.split(line)) {
+            String[] tokens = RegexFilters.WHITESPACE.split(sentence);
+            Map<Point, String> trackedWords = tree.findTrackedWords(tokens);
+            List<Point> phraseBounds = new ArrayList<>(trackedWords.keySet());
 
-                int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
-                if(score == 0) continue;
-                contextScore.addDistance(trackedWords.get(p1), trackedWords.get(p2), score);
-            }
-        }
-        return contextScore;
-    }
+            for (int i = 0; i < phraseBounds.size(); i++) {
+                Point p1 = phraseBounds.get(i);
+                for (int j = 0; j < i; j++) {
+                    Point p2 = phraseBounds.get(j);
+                    if (rangesOverlap(p1, p2)) continue;
 
-    private static Map<Point, String> findTrackedWords(String[] tokens, PhraseTree tree) {
-        Map<Point, String> trackedWords = new HashMap<>();
-
-        for(int i=0; i<tokens.length; i++) {
-            for(int j=i+1; j<tokens.length; j++) {
-                String[] phrase = Arrays.copyOfRange(tokens, i, j);
-                Boolean status = tree.hasPhrase(phrase);
-
-                if(status == null) {
-                    continue;
-                } if(status.equals(true)) {
-                    trackedWords.put(new Point(i, j-1), String.join(" ", phrase));
-                } else if(status.equals(false)) {
-                    break;
+                    int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
+                    if (score == 0) continue;
+                    contextScore.addDistance(trackedWords.get(p1), trackedWords.get(p2), score);
                 }
             }
         }
-        return trackedWords;
+
+        return contextScore;
     }
 
 
