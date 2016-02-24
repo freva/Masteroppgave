@@ -11,8 +11,10 @@ public final class ClassificationMetrics {
     private static final String columnFormat = "%" + columnWidth + "s";
     private static final String numberFormat = "%" + columnWidth + ".4f";
 
+    private final Map<Object, Integer> inverseLabels = new HashMap<>();
     private final int[][] confusionMatrix;
     private final Object[] labels;
+    private boolean cacheUpToDate = false;
 
     private final double[] classPrecision;
     private final double[] classRecall;
@@ -26,8 +28,15 @@ public final class ClassificationMetrics {
      * @param yPred Predicted values
      */
     public ClassificationMetrics(Object[] yTrue, Object[] yPred) {
-        if(yTrue.length != yPred.length) throw new IllegalArgumentException("yTrue and yPred of different lengths!");
-        labels = uniqueLabels(yTrue, yPred);
+        this(uniqueLabels(yTrue, yPred));
+
+        for(int i=0; i<yTrue.length; i++) {
+            updateEvidence(yTrue[i], yPred[i]);
+        }
+    }
+
+    public ClassificationMetrics(Object[] labels) {
+        this.labels = labels;
         confusionMatrix = new int[labels.length][labels.length];
 
         classPrecision = new double[labels.length];
@@ -35,21 +44,20 @@ public final class ClassificationMetrics {
         classF1Score = new double[labels.length];
         classSupport = new int[labels.length];
 
-        Map<Object, Integer> inverseLabels = new HashMap<>();
         for(int i = 0; i<labels.length; i++) {
             inverseLabels.put(labels[i], i);
         }
+    }
 
-        for(int i=0; i<yTrue.length; i++) {
-            confusionMatrix[inverseLabels.get(yTrue[i])][inverseLabels.get(yPred[i])]++;
-            classSupport[inverseLabels.get(yTrue[i])]++;
-        }
 
-        for(int i=0; i<labels.length; i++) {
-            classPrecision[i] = (double) confusionMatrix[i][i] / ArrayUtils.sumColumn(confusionMatrix, i);
-            classRecall[i] = (double) confusionMatrix[i][i] / ArrayUtils.sumRow(confusionMatrix, i);
-            classF1Score[i] = 2 * classPrecision[i] * classRecall[i] / (classPrecision[i] + classRecall[i]);
-        }
+    /**
+     * Adds another result to metric
+     * @param yTrue The true result
+     * @param yPred The predicted result
+     */
+    public void updateEvidence(Object yTrue, Object yPred) {
+        confusionMatrix[inverseLabels.get(yTrue)][inverseLabels.get(yPred)]++;
+        cacheUpToDate = false;
     }
 
 
@@ -58,6 +66,7 @@ public final class ClassificationMetrics {
      * @return Classification precision, double in range [0, 1]
      */
     public double getPrecision() {
+        if(! cacheUpToDate) updateCache();
         return ArrayUtils.dotProduct(classSupport, classPrecision) / ArrayUtils.sum(classSupport);
     }
 
@@ -67,6 +76,7 @@ public final class ClassificationMetrics {
      * @return Classification recall, double in range [0, 1]
      */
     public double getRecall() {
+        if(! cacheUpToDate) updateCache();
         return ArrayUtils.dotProduct(classSupport, classRecall) / ArrayUtils.sum(classSupport);
     }
 
@@ -76,6 +86,7 @@ public final class ClassificationMetrics {
      * @return Classification F1-Score, double in range[0, 1]
      */
     public double getF1Score() {
+        if(! cacheUpToDate) updateCache();
         return ArrayUtils.dotProduct(classSupport, classF1Score) / ArrayUtils.sum(classSupport);
     }
 
@@ -96,6 +107,7 @@ public final class ClassificationMetrics {
      * @return String with the classification results
      */
     public String getClassificationReport() {
+        if(! cacheUpToDate) updateCache();
         String[] headers = {"", "Precision", "Recall", "F1-Score", "Support"};
 
         StringBuilder sb = new StringBuilder();
@@ -147,6 +159,20 @@ public final class ClassificationMetrics {
     }
 
 
+    /**
+     * Updates the internal cache result for class precision, recall, support and f1-scores.
+     */
+    private void updateCache() {
+        for(int i=0; i<labels.length; i++) {
+            classSupport[i] = ArrayUtils.sumRow(confusionMatrix, i);
+            classRecall[i] = (double) confusionMatrix[i][i] / classSupport[i];
+            classPrecision[i] = (double) confusionMatrix[i][i] / ArrayUtils.sumColumn(confusionMatrix, i);
+            classF1Score[i] = 2 * classPrecision[i] * classRecall[i] / (classPrecision[i] + classRecall[i]);
+        }
+        cacheUpToDate = true;
+    }
+
+
     private double[][] getPercentageDistributionConfusionMatrix() {
         double[][] normalized = new double[labels.length][labels.length];
         int total = Arrays.stream(confusionMatrix).mapToInt(row -> Arrays.stream(row).sum()).sum();
@@ -160,8 +186,8 @@ public final class ClassificationMetrics {
     }
 
 
-
-    private Object[] uniqueLabels(Object[] yTrue, Object[] yPred) {
+    private static Object[] uniqueLabels(Object[] yTrue, Object[] yPred) {
+        if(yTrue.length != yPred.length) throw new IllegalArgumentException("yTrue and yPred of different lengths!");
         Set<Object> set = new HashSet<>();
 
         for(int i=0; i<yTrue.length; i++) {
