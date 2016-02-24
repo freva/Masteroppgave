@@ -28,8 +28,8 @@ public class Initialization {
     private static final File lexicon_file = new File("res/tweets/lexicon.txt");
     private static final File afinn_file = new File("res/data/afinn111.json");
 
-    private static final boolean use_cached_ngrams = true;
-    private static final boolean use_cached_contexts = true;
+    private static final Boolean use_cached_ngrams = true;
+    private static final Boolean use_cached_contexts = true;
 
     private static final int max_n_grams_range = 6;
     private static final int max_context_word_distance = 4;
