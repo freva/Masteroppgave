@@ -15,10 +15,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
-import java.util.regex.Pattern;
+
 
 public class TweetContexts implements Progressable {
-    private static final Pattern punctuation = Pattern.compile("[!?.]");
     private TweetReader tweetReader;
 
     /**
@@ -50,9 +49,8 @@ public class TweetContexts implements Progressable {
     private static ContextScore getTrackedDistances(String line, PhraseTree tree, int cutOffDistance) {
         ContextScore contextScore = new ContextScore();
 
-        for(String sentence: punctuation.split(line)) {
-            String[] tokens = RegexFilters.WHITESPACE.split(sentence);
-            Map<Point, String> trackedWords = tree.findTrackedWords(tokens);
+        for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(line)) {
+            Map<Point, String> trackedWords = tree.findTrackedWords(sentence);
             List<Point> phraseBounds = new ArrayList<>(trackedWords.keySet());
 
             for (int i = 0; i < phraseBounds.size(); i++) {

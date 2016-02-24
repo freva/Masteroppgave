@@ -48,7 +48,19 @@ public class PhraseTree {
 
 
     /**
-     * Finds word-ranges all phrases in tokens stored in PhraseTree
+     * Finds word-ranges all of phrases in tokens stored in PhraseTree
+     * @param sentence Sentence to search for phrases
+     * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of phrase, and
+     * String which stores the actual phrase found
+     */
+    public Map<Point, String> findTrackedWords(String sentence) {
+        String[] tokens = RegexFilters.WHITESPACE.split(sentence);
+        return findTrackedWords(tokens);
+    }
+
+
+    /**
+     * Finds word-ranges all of phrases in tokens stored in PhraseTree
      * @param tokens Sequence of tokens to find phrases in
      * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of phrase, and
      * String which stores the actual phrase found
