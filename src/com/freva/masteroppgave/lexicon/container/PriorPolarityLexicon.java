@@ -12,14 +12,14 @@ import java.util.Set;
 
 
 public class PriorPolarityLexicon {
-    private HashMap<String, Integer> polarityLexicon;
+    private HashMap<String, Double> polarityLexicon;
 
     public PriorPolarityLexicon(File file) throws IOException {
         String json = FileUtils.readEntireFileIntoString(file);
-        polarityLexicon = JSONUtils.fromJSON(json, new TypeToken<HashMap<String, Integer>>(){});
+        polarityLexicon = JSONUtils.fromJSON(json, new TypeToken<HashMap<String, Double>>(){});
     }
 
-    public int getPolarity(String phrase) {
+    public double getPolarity(String phrase) {
         if(polarityLexicon.containsKey(phrase)) {
             return polarityLexicon.get(phrase);
         }
