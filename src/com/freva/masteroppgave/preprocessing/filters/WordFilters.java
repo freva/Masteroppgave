@@ -15,11 +15,6 @@ public class WordFilters {
             "lacking", "lacks", "no", "nor", "not", "shouldnt", "shouldnt", "wasnt", "wasnt",
             "wont", "wont", "wouldnt", "wouldnt"};
 
-    public static final String[] intensifiers = {};
-
-
-    private static final String intensifierPattern = "\\b(" + StringUtils.join(intensifiers, "|") + ")\\b";
-    private static final Pattern intensifierRegex = Pattern.compile(intensifierPattern);
 
     private static final String negatorPattern = "\\b(" + StringUtils.join(negators, "|") + ")\\b";
     private static final Pattern negatorRegex = Pattern.compile(negatorPattern);
@@ -35,11 +30,8 @@ public class WordFilters {
         return stopWordsRegex.matcher(text).find();
     }
 
-    public static boolean isNegator(String word) {
+    public static boolean containsNegation(String word) {
         return negatorRegex.matcher(word).find();
     }
 
-    public static boolean isIntensifier(String word) {
-        return intensifierRegex.matcher(word).find();
-    }
 }
