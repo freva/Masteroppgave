@@ -8,8 +8,24 @@ public class WordFilters {
     public static final String[] stopWords = {"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if",
             "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there",
             "these", "they", "this", "to", "was", "will", "with"};
-    private static final String pattern = "\\b(" + StringUtils.join(stopWords, "|") + ")\\b";
-    private static final Pattern stopWordsRegex = Pattern.compile(pattern);
+
+    public static final String[] negators = {"aint", "aint", "anit", "cant", "cannot", "cant", "couldnt",
+            "couldnt", "didnt", "didnt", "dnt", "doesnt", "doesnt", "doesnt", "dont", "dont",
+            "hadnt", "hasnt", "hasnt", "havent", "havent havnt", "havnt", "isnt", "isnt", "lack",
+            "lacking", "lacks", "no", "nor", "not", "shouldnt", "shouldnt", "wasnt", "wasnt",
+            "wont", "wont", "wouldnt", "wouldnt"};
+
+    public static final String[] intensifiers = {};
+
+
+    private static final String intensifierPattern = "\\b(" + StringUtils.join(intensifiers, "|") + ")\\b";
+    private static final Pattern intensifierRegex = Pattern.compile(intensifierPattern);
+
+    private static final String negatorPattern = "\\b(" + StringUtils.join(negators, "|") + ")\\b";
+    private static final Pattern negatorRegex = Pattern.compile(negatorPattern);
+
+    private static final String stopWordsPattern = "\\b(" + StringUtils.join(stopWords, "|") + ")\\b";
+    private static final Pattern stopWordsRegex = Pattern.compile(stopWordsPattern);
 
     public static String replaceStopWords(String text, String replace) {
         return stopWordsRegex.matcher(text.toLowerCase()).replaceAll(replace);
@@ -17,5 +33,13 @@ public class WordFilters {
 
     public static boolean containsStopWord(String text) {
         return stopWordsRegex.matcher(text).find();
+    }
+
+    public static boolean isNegator(String word) {
+        return negatorRegex.matcher(word).find();
+    }
+
+    public static boolean isIntensifier(String word) {
+        return intensifierRegex.matcher(word).find();
     }
 }
