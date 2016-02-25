@@ -1,7 +1,6 @@
 package com.freva.masteroppgave.lexicon.graph;
 
 import com.freva.masteroppgave.lexicon.container.*;
-import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.similarity.Cosine;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
@@ -119,19 +118,13 @@ public class Graph implements Progressable {
     }
 
 
-    public Map<String, Integer> getLexicon() {
+    public Map<String, Double> getLexicon() {
         Map<String, Double> lexicon = new HashMap<>();
         for(Map.Entry<String, Node> entry: nodes.entrySet()) {
             lexicon.put(entry.getKey(), entry.getValue().getSentimentScore(beta));
         }
-        //lexicon = MapUtils.normalizeMapBetween(lexicon, -7, 7);
 
-        Map<String, Integer> roundedLexicon = new HashMap<>();
-        for(String key: lexicon.keySet()) {
-            roundedLexicon.put(key, (int) Math.round(lexicon.get(key)));
-        }
-
-        return roundedLexicon;
+        return lexicon;
     }
 
 
