@@ -3,8 +3,12 @@ package com.freva.masteroppgave.classifier;
 
 import com.freva.masteroppgave.lexicon.container.PhraseTree;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
+import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
+import java.awt.*;
+import java.util.Map;
 import java.util.function.Function;
 
 public class Classifier {
@@ -20,7 +24,12 @@ public class Classifier {
     }
 
     public DataSetEntry.Class classify(String tweet) {
-        DataSetEntry.Class[] classes = DataSetEntry.Class.values();
-        return classes[(int) (Math.random()*classes.length)];
+        tweet = Filters.chain(tweet, filters);
+
+        for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
+            Map<Point, String> ngrams = phraseTree.findTrackedWords(sentence);
+        }
+
+        return null;
     }
 }

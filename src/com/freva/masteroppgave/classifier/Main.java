@@ -33,5 +33,7 @@ public class Main {
         }
 
         System.out.println(classificationMetrics.getClassificationReport());
+        System.out.println();
+        System.out.println(classificationMetrics.getNormalizedConfusionMatrixReport());;
     }
 }
