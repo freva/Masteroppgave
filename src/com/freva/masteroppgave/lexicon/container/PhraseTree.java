@@ -69,7 +69,7 @@ public class PhraseTree {
         List<Phrase> trackedWords = new ArrayList<>();
 
         for(int i=0; i<tokens.length; i++) {
-            for(int j=i+1; j<tokens.length; j++) {
+            for(int j=i+1; j<=tokens.length; j++) {
                 String[] phrase = Arrays.copyOfRange(tokens, i, j);
                 Boolean status = hasPhrase(phrase);
 
@@ -125,6 +125,10 @@ public class PhraseTree {
         public int compareTo(Phrase other) {
             int sizeDiff = other.getPhraseLength() - this.getPhraseLength();
             return sizeDiff != 0 ? sizeDiff : other.getStartIndex() - this.getStartIndex();
+        }
+
+        public String toString() {
+            return "(" + phrase + ", " + startIndex + ", " + endIndex + ")";
         }
     }
 
