@@ -12,8 +12,19 @@ public class MapUtils {
      * @return Sorted map
      */
     public static<K, V extends Comparable<V>> Map<K, V> sortMapByValue(Map<K, V> map) {
+        return sortMapWithComparator(map, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+    }
+
+
+    /**
+     * Sorts map given a comparator
+     * @param map Map to sort
+     * @param comparator Comparator used to sort elements
+     * @return Sorted map
+     */
+    public static<K, V> Map<K, V> sortMapWithComparator(Map<K, V> map, Comparator<Map.Entry<K, V>> comparator) {
         List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-        Collections.sort(list, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        Collections.sort(list, comparator);
 
         Map<K, V> sortedHashMap = new LinkedHashMap<>();
         for (Map.Entry<K, V> entry : list) {
