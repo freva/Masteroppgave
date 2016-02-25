@@ -3,7 +3,7 @@ package com.freva.masteroppgave.classifier.sentence;
 public class LexicalToken {
 
     private final float intensificationValue = 1.5f;
-    private final float negationValue = -0.75f;
+    private final float negationValue = 4;
 
     private int lexicalValue;
     private String phrase;
@@ -48,7 +48,7 @@ public class LexicalToken {
             sentimentValue *= intensificationValue;
         }
         if(inNegatedContext) {
-            sentimentValue = (sentimentValue > 0) ? sentimentValue - 4 : sentimentValue + 4;
+            sentimentValue = (sentimentValue > 0) ? sentimentValue - negationValue : sentimentValue + negationValue;
         }
         return sentimentValue;
     }
