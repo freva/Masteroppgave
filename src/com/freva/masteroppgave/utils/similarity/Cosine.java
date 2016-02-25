@@ -44,7 +44,7 @@ public class Cosine<T> implements Progressable {
                 double temp = over / Math.sqrt(under);
 
                 if(temp > 0) {
-                    normalized[row][column] = Math.sqrt(normalized[row][column]);
+                    normalized[row][column] = Math.sqrt(temp);
                 }
             }
         }
