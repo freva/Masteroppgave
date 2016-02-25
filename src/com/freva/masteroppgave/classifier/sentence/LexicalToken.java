@@ -64,4 +64,8 @@ public class LexicalToken {
     public boolean isUnderIntensification() {
         return underIntensification;
     }
+
+    public String toString() {
+        return "[" + phrase + (inLexicon ? "*" : "") + "]";
+    }
 }
