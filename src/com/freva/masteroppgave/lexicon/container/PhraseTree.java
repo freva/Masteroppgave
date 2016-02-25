@@ -2,8 +2,8 @@ package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 
-import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class PhraseTree {
     private Node root = new Node();
@@ -53,7 +53,7 @@ public class PhraseTree {
      * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of phrase, and
      * String which stores the actual phrase found
      */
-    public Map<Point, String> findTrackedWords(String sentence) {
+    public List<Phrase> findTrackedWords(String sentence) {
         String[] tokens = RegexFilters.WHITESPACE.split(sentence);
         return findTrackedWords(tokens);
     }
@@ -65,8 +65,8 @@ public class PhraseTree {
      * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of phrase, and
      * String which stores the actual phrase found
      */
-    public Map<Point, String> findTrackedWords(String[] tokens) {
-        Map<Point, String> trackedWords = new HashMap<>();
+    public List<Phrase> findTrackedWords(String[] tokens) {
+        List<Phrase> trackedWords = new ArrayList<>();
 
         for(int i=0; i<tokens.length; i++) {
             for(int j=i+1; j<tokens.length; j++) {
@@ -76,13 +76,56 @@ public class PhraseTree {
                 if(status == null) {
                     continue;
                 } if(status.equals(true)) {
-                    trackedWords.put(new Point(i, j-1), String.join(" ", phrase));
+                    trackedWords.add(new Phrase(String.join(" ", phrase), i, j-1));
                 } else if(status.equals(false)) {
                     break;
                 }
             }
         }
         return trackedWords;
+    }
+
+
+    public class Phrase implements Comparable<Phrase> {
+        private final int startIndex, endIndex;
+        private final String phrase;
+
+        public Phrase(String phrase, int startIndex, int endIndex) {
+            this.phrase = phrase;
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+        }
+
+        public String getPhrase() {
+            return phrase;
+        }
+
+        public int getStartIndex() {
+            return startIndex;
+        }
+
+        public int getEndIndex() {
+            return endIndex;
+        }
+
+        public int getPhraseLength() {
+            return endIndex-startIndex;
+        }
+
+        /**
+         * Checks if two phrases overlap
+         * @param other The other phrase
+         * @return true if overlap, false otherwise
+         */
+        public boolean overlapsWith(Phrase other) {
+            return this.getStartIndex() <= other.getEndIndex() && other.getStartIndex() <= this.getEndIndex();
+        }
+
+        @Override
+        public int compareTo(Phrase other) {
+            int sizeDiff = other.getPhraseLength() - this.getPhraseLength();
+            return sizeDiff != 0 ? sizeDiff : other.getStartIndex() - this.getStartIndex();
+        }
     }
 
 
