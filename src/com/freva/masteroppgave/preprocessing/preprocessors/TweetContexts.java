@@ -7,7 +7,6 @@ import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.google.gson.reflect.TypeToken;
 
-import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -50,18 +49,17 @@ public class TweetContexts implements Progressable {
         ContextScore contextScore = new ContextScore();
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(line)) {
-            Map<Point, String> trackedWords = tree.findTrackedWords(sentence);
-            List<Point> phraseBounds = new ArrayList<>(trackedWords.keySet());
+            List<PhraseTree.Phrase> phrases = tree.findTrackedWords(sentence);
 
-            for (int i = 0; i < phraseBounds.size(); i++) {
-                Point p1 = phraseBounds.get(i);
+            for (int i = 0; i < phrases.size(); i++) {
+                PhraseTree.Phrase p1 = phrases.get(i);
                 for (int j = 0; j < i; j++) {
-                    Point p2 = phraseBounds.get(j);
-                    if (rangesOverlap(p1, p2)) continue;
+                    PhraseTree.Phrase p2 = phrases.get(j);
+                    if (p1.overlapsWith(p2)) continue;
 
                     int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
                     if (score == 0) continue;
-                    contextScore.addDistance(trackedWords.get(p1), trackedWords.get(p2), score);
+                    contextScore.addDistance(p1.getPhrase(), p2.getPhrase(), score);
                 }
             }
         }
@@ -71,22 +69,11 @@ public class TweetContexts implements Progressable {
 
 
     /**
-     * Checks if two ranges overlap
-     * @param p1 First range (from x to and including y)
-     * @param p2 Second range
-     * @return true if overlap, false otherwise
-     */
-    private static boolean rangesOverlap(Point p1, Point p2) {
-        return p1.getX() <= p2.getY() && p2.getX() <= p1.getY();
-    }
-
-
-    /**
      * Calculates context score between two ranges (end of the first range to start of the second range)
      * @return Context score between ranges
      */
-    private static int getScoreBetweenPoints(Point p1, Point p2, int cutOffDistance) {
-        int distance1 = (int) (p2.getY()-p1.getX()), distance2 = (int) (p2.getX()-p1.getY());
+    private static int getScoreBetweenPoints(PhraseTree.Phrase p1, PhraseTree.Phrase p2, int cutOffDistance) {
+        int distance1 = p2.getEndIndex()-p1.getStartIndex(), distance2 = p2.getStartIndex()-p1.getEndIndex();
         int absDist1 = Math.abs(distance1), absDist2 = Math.abs(distance2);
         if(absDist1 < absDist2) {
             return (int) Math.signum(distance1) * (cutOffDistance + 1 - absDist1);
