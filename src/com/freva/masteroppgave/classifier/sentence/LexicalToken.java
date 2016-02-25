@@ -48,7 +48,7 @@ public class LexicalToken {
             sentimentValue *= intensificationValue;
         }
         if(inNegatedContext) {
-            sentimentValue *= negationValue;
+            sentimentValue = (sentimentValue > 0) ? sentimentValue - 4 : sentimentValue + 4;
         }
         return sentimentValue;
     }
