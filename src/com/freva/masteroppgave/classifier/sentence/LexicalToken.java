@@ -1,16 +1,16 @@
 package com.freva.masteroppgave.classifier.sentence;
 
 public class LexicalToken {
+    private static final double negationValue = 4;
 
-    private final float intensificationValue = 1.5f;
-    private final float negationValue = 4;
-
-    private int lexicalValue;
     private String phrase;
+    private double lexicalValue;
+    private double intensification;
+
     private boolean inLexicon = false;
     private boolean inNegatedContext;
     private boolean atEndOfSentence;
-    private boolean underIntensification;
+
 
     public LexicalToken(String phrase, boolean inLexicon) {
         this.phrase = phrase;
@@ -22,11 +22,11 @@ public class LexicalToken {
         return phrase;
     }
 
-    public void setLexicalValue(int lexicalValue) {
+    public void setLexicalValue(double lexicalValue) {
         this.lexicalValue = lexicalValue;
     }
 
-    public int getLexicalValue() {
+    public double getLexicalValue() {
         return lexicalValue;
     }
 
@@ -38,15 +38,16 @@ public class LexicalToken {
         this.atEndOfSentence = atEndOfSentence;
     }
 
-    public void setUnderIntensification(boolean underIntensification) {
-        this.underIntensification = underIntensification;
+    public void setIntensification(double intensification) {
+        this.intensification = intensification;
     }
 
     public double getSentimentValue() {
         double sentimentValue = lexicalValue;
-        if(underIntensification) {
-            sentimentValue *= intensificationValue;
+        if(isUnderIntensification()) {
+            sentimentValue *= intensification;
         }
+
         if(inNegatedContext) {
             sentimentValue = (sentimentValue > 0) ? sentimentValue - negationValue : sentimentValue + negationValue;
         }
@@ -62,10 +63,15 @@ public class LexicalToken {
     }
 
     public boolean isUnderIntensification() {
-        return underIntensification;
+        return intensification != 0;
+    }
+
+    public boolean isInLexicon() {
+        return inLexicon;
     }
 
     public String toString() {
-        return "[" + phrase + (inLexicon ? "*" : "") + "]";
+        return "[" + phrase + " | Value: " + lexicalValue + " | Negated: " + inNegatedContext + " | Intesification: " +
+                intensification + " | At the end: " + atEndOfSentence + "]";
     }
 }

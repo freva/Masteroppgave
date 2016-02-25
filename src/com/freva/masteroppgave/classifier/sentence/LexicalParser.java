@@ -22,10 +22,7 @@ public class LexicalParser {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
 
             List<PhraseTree.Phrase> phraseRanges = phraseTree.findTrackedWords(sentenceTokens);
-            Collections.sort(phraseRanges);
-
-            phraseRanges = findOptimalAllocation(phraseRanges, 1);
-            Collections.sort(phraseRanges, ((o1, o2) -> o1.getStartIndex()-o2.getStartIndex()));
+            phraseRanges = findOptimalAllocation(phraseRanges);
 
             int setIndex = 0;
             for(PhraseTree.Phrase phrase: phraseRanges) {
@@ -39,9 +36,20 @@ public class LexicalParser {
             while(setIndex < sentenceTokens.length) {
                 lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++], false));
             }
+
+            lexicalTokens.get(lexicalTokens.size()-1).setAtEndOfSentence(true);
         }
 
         return lexicalTokens;
+    }
+
+
+    private static List<PhraseTree.Phrase> findOptimalAllocation(List<PhraseTree.Phrase> phraseRanges) {
+        Collections.sort(phraseRanges);
+
+        phraseRanges = findOptimalAllocation(phraseRanges, 1);
+        Collections.sort(phraseRanges, ((o1, o2) -> o1.getStartIndex()-o2.getStartIndex()));
+        return phraseRanges;
     }
 
 

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class Main {
     private static final File semeval_file = new File("res/semeval/2013-2-test-gold-B.tsv");
-    private static final File lexicon_file = new File("res/tweets/lexicon.txt");
+    private static final File lexicon_file = new File("res/data/afinn111.json");
 
     public static void main(String[] args) throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(lexicon_file);
@@ -33,7 +33,6 @@ public class Main {
         }
 
         System.out.println(classificationMetrics.getClassificationReport());
-        System.out.println();
-        System.out.println(classificationMetrics.getNormalizedConfusionMatrixReport());;
+        System.out.println(classificationMetrics.getNormalizedConfusionMatrixReport());
     }
 }
