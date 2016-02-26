@@ -35,6 +35,7 @@ public class RegexFilters {
     public static final Pattern NON_ALPHABETIC_TEXT = Pattern.compile("[^a-zA-Z ]");
     public static final Pattern NON_POS_TAGGED_ALPHABETICAL_TEXT = Pattern.compile("[^a-zA-Z_ ]");
     public static final Pattern FREE_DIGITS = Pattern.compile("(\\s|^)[0-9]+(\\s|$)");
+    public static final Pattern NON_ASCII_CHARACTERS = Pattern.compile("[^\\p{ASCII}]");
 
     private static final Pattern freeUnderscores = Pattern.compile(" _|_ ");
     private static final Pattern fixSyntacticalGrammar = Pattern.compile("\\s*([!?,.]+(?:\\s+[!?,.]+)*)\\s*");
@@ -98,6 +99,9 @@ public class RegexFilters {
         return FREE_DIGITS.matcher(text).replaceAll(replace);
     }
 
+    public static String replaceNonASCII(String text, String replace) {
+        return NON_ASCII_CHARACTERS.matcher(text).replaceAll(replace);
+    }
 
     public static String fixSyntacticalPunctuationGrammar(String text) {
         StringBuffer resultString = new StringBuffer();

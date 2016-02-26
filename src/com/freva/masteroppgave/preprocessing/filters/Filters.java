@@ -40,10 +40,10 @@ public class Filters {
     /**
      * Normalizes String to Latin characters if possible
      * @param text String to format (f.ex. "A strîng wìth fúnny chäracters")
-     * @return The formatted String (f.ex. "A strîng wìth fúnny chäracters")
+     * @return The formatted String (f.ex. "A string with funny characters")
      */
     public static String normalizeForm(String text) {
-        return Normalizer.normalize(text, Normalizer.Form.NFKD);
+        return RegexFilters.replaceNonASCII(Normalizer.normalize(text, Normalizer.Form.NFD), "");
     }
 
     /**
