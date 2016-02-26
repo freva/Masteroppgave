@@ -1,8 +1,10 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.tools.NGrams;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.*;
@@ -35,8 +37,11 @@ public class TweetNGrams implements Progressable {
             }
 
             String line = tweetReader.readAndPreprocessNextTweet();
-            for(String nGram: NGrams.getSyntacticalNGrams(line, n)) {
+            for(String[] nGramTokens: NGrams.getSyntacticalNGrams(line, n)) {
+                String nGram = StringUtils.join(nGramTokens, " ");
                 if(! containsAlphabet.matcher(nGram).find()) continue;
+                if(WordFilters.containsIntensifier(nGramTokens) || WordFilters.containsNegation(nGramTokens)) continue;
+                if(WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
 
                 MapUtils.incrementMapByValue(nGramsCounter, nGram, 1);
             }

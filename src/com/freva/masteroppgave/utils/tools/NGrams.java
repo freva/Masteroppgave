@@ -18,7 +18,7 @@ public class NGrams {
      * @param n Maximum n-gram length
      * @return String array with all n-grams
      */
-    public static String[] getNGrams(String text, int n) {
+    public static String[][] getNGrams(String text, int n) {
         String[] words = RegexFilters.WHITESPACE.split(text);
         return getNGrams(words, n);
     }
@@ -28,14 +28,14 @@ public class NGrams {
      * Generates all the n-grams on already split up tokens.
      * @param tokens Tokens to generate n-gram for
      * @param n Maximum n-gram length
-     * @return String with all n-grams
+     * @return String array with all n-grams
      */
-    public static String[] getNGrams(String[] tokens, int n) {
-        String[] nGrams = new String[getNumberNGrams(tokens.length, n)];
+    public static String[][] getNGrams(String[] tokens, int n) {
+        String[][] nGrams = new String[getNumberNGrams(tokens.length, n)][];
 
         for(int offset=0, numNGrams=0; offset<tokens.length; offset++) {
             for(int range=offset+1; range<=offset+n && range<=tokens.length; range++)  {
-                nGrams[numNGrams++] = StringUtils.join(Arrays.copyOfRange(tokens, offset, range), " ");
+                nGrams[numNGrams++] = Arrays.copyOfRange(tokens, offset, range);
             }
         }
         return nGrams;
@@ -53,16 +53,16 @@ public class NGrams {
      * @param n Maximum n-gram length
      * @return String array with all n-grams
      */
-    public static String[] getSyntacticalNGrams(String text, int n) {
+    public static String[][] getSyntacticalNGrams(String text, int n) {
         String[] subParts = punctuation.split(text);
-        String[][] nGramParts = new String[subParts.length][];
+        String[][][] nGramParts = new String[subParts.length][][];
         int length = 0;
         for(int i=0; i<subParts.length; i++) {
             nGramParts[i] = getNGrams(subParts[i].trim(), n);
             length += nGramParts[i].length;
         }
 
-        String[] nGrams = new String[length];
+        String[][] nGrams = new String[length][];
         for(int i=0, offset=0; i<subParts.length; i++) {
             System.arraycopy(nGramParts[i], 0, nGrams, offset, nGramParts[i].length);
             offset += nGramParts[i].length;
