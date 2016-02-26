@@ -9,14 +9,12 @@ import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
 public class Classifier {
     private Function<String, String>[] filters;
-    private PriorPolarityLexicon intensifiers;
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
 
@@ -25,7 +23,6 @@ public class Classifier {
 
     @SafeVarargs
     public Classifier(PriorPolarityLexicon lexicon, Function<String, String>... filters) throws IOException {
-        this.intensifiers = new PriorPolarityLexicon(new File("res/data/intensifiers.json"));
         this.lexicon = lexicon;
         this.filters = filters;
         this.phraseTree = new PhraseTree(lexicon.getSubjectiveWords());
@@ -57,12 +54,12 @@ public class Classifier {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
             }
 
-            if(WordFilters.containsNegation(phrase)) {
+            if(WordFilters.isStopWord(phrase)) {
                 propagateNegation(lexicalTokens, i);
             }
 
-            if(intensifiers.hasWord(phrase)) {
-                intensifyNext(lexicalTokens, i, intensifiers.getPolarity(phrase));
+            if(WordFilters.isIntensifier(phrase)) {
+                intensifyNext(lexicalTokens, i, WordFilters.getIntensifierValue(phrase));
             }
         }
     }
