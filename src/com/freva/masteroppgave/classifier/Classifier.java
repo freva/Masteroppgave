@@ -18,7 +18,7 @@ public class Classifier {
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
 
-    private static final double neutralThreshold = 1.5;
+    private static final double neutralThreshold = 1.65;
 
 
     @SafeVarargs
@@ -54,7 +54,7 @@ public class Classifier {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
             }
 
-            if(WordFilters.isStopWord(phrase)) {
+            if(WordFilters.isNegation(phrase)) {
                 propagateNegation(lexicalTokens, i);
             }
 

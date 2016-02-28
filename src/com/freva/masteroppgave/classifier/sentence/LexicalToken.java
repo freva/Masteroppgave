@@ -71,7 +71,7 @@ public class LexicalToken {
     }
 
     public String toString() {
-        return "[" + phrase + " | Value: " + lexicalValue + " | Negated: " + inNegatedContext + " | Intesification: " +
+        return "[" + phrase + " | Value: " + getSentimentValue() + " | Negated: " + inNegatedContext + " | Intesification: " +
                 intensification + " | At the end: " + atEndOfSentence + "]";
     }
 }
