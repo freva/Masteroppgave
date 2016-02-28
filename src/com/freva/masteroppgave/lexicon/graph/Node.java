@@ -3,6 +3,7 @@ package com.freva.masteroppgave.lexicon.graph;
 import com.freva.masteroppgave.utils.MapUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,16 +83,18 @@ public class Node {
      * @return - Sentiment score.
      */
     public double getSentimentScore(double beta) {
-        return getPositiveSentimentScore()-beta*getNegativeSentimentScore();
+        return getPositiveSentimentScore() - beta*getNegativeSentimentScore();
     }
 
 
     public double getPositiveSentimentScore() {
-        return sumScores(posValues);
+        if(posValues.values().size() == 0) return 0;
+        return Collections.max(posValues.values());
     }
 
     public double getNegativeSentimentScore() {
-        return sumScores(negValues);
+        if(negValues.values().size() == 0) return 0;
+        return Collections.min(negValues.values());
     }
 
 
@@ -103,16 +106,6 @@ public class Node {
         return currentScore;
     }
 
-
-    /**
-     * Sums up the sentiment scores contained in a HashMap. This method is called once for the HashMaps containing
-     * positive and negative sentiment scores respectively.
-     * @param scores - HashMap containing sentiment scores
-     * @return - The sum of the sentiment scores.
-     */
-    private double sumScores(HashMap<Node, Double> scores) {
-        return scores.values().parallelStream().reduce(0.0, Double::sum);
-    }
 
     public String getPhrase() {
         return phrase;
