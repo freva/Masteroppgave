@@ -34,8 +34,8 @@ public class RegexFilters {
     public static final Pattern NON_ALPHANUMERIC_TEXT = Pattern.compile("[^a-zA-Z0-9 ]");
     public static final Pattern NON_ALPHABETIC_TEXT = Pattern.compile("[^a-zA-Z ]");
     public static final Pattern NON_POS_TAGGED_ALPHABETICAL_TEXT = Pattern.compile("[^a-zA-Z_ ]");
-    public static final Pattern FREE_DIGITS = Pattern.compile("(\\s|^)[0-9]+(\\s|$)");
     public static final Pattern NON_ASCII_CHARACTERS = Pattern.compile("[^\\p{ASCII}]");
+    public static final Pattern FREE_DIGITS = Pattern.compile("([^\\w]|^)[0-9]+([^\\w]+[0-9]+)*([^\\w]|$)");
 
     private static final Pattern freeUnderscores = Pattern.compile(" _|_ ");
     private static final Pattern fixSyntacticalGrammar = Pattern.compile("\\s*([!?,.]+(?:\\s+[!?,.]+)*)\\s*");
