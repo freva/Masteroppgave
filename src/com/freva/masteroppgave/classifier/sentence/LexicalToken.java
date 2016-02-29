@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.classifier.sentence;
 
 public class LexicalToken {
-    private static final double negationValue = 4;
+    private static final double negationValue = 2;
 
     private String phrase;
     private double lexicalValue;
@@ -48,7 +48,7 @@ public class LexicalToken {
             sentimentValue *= intensification;
         }
 
-        if(inNegatedContext) {
+        if(inNegatedContext && sentimentValue != 0) {
             sentimentValue = (sentimentValue > 0) ? sentimentValue - negationValue : sentimentValue + negationValue;
         }
         return sentimentValue;
@@ -71,7 +71,7 @@ public class LexicalToken {
     }
 
     public String toString() {
-        return "[" + phrase + " | Value: " + getSentimentValue() + " | Negated: " + inNegatedContext + " | Intesification: " +
-                intensification + " | At the end: " + atEndOfSentence + "]";
+        return "[" + phrase + (inNegatedContext ? "_NEG" : "") + " | " + getSentimentValue() + " | " +
+                intensification + "]";
     }
 }

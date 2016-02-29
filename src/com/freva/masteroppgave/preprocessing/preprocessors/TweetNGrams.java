@@ -41,7 +41,7 @@ public class TweetNGrams implements Progressable {
                 String nGram = StringUtils.join(nGramTokens, " ");
                 if(! containsAlphabet.matcher(nGram).find()) continue;
                 if(WordFilters.containsIntensifier(nGramTokens) || WordFilters.containsNegation(nGramTokens)) continue;
-                if(WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
+                if(WordFilters.isStopWord(nGramTokens[0]) || WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
 
                 MapUtils.incrementMapByValue(nGramsCounter, nGram, 1);
             }

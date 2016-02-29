@@ -5,18 +5,16 @@ import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
+import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main {
-    private static final File semeval_file = new File("res/semeval/2013-2-test-gold-B.tsv");
-    private static final File lexicon_file = new File("res/data/afinn111.json");
 
     public static void main(String[] args) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(lexicon_file);
-        TweetReader tweetReader = new TweetReader(semeval_file);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.OUR_LEXICON);
+        TweetReader tweetReader = new TweetReader(Resources.SEMEVAL_2013_TEST);
         Classifier classifier = new Classifier(priorPolarityLexicon,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
                 Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
