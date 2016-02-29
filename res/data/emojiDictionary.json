@@ -1,0 +1,1211 @@
+{
+  "no_entry": [
+    "limit"
+  ],
+  "droplet": [
+    "water"
+  ],
+  "speech_balloon": [
+    "comment"
+  ],
+  "egg": [
+    "breakfast"
+  ],
+  "ring": [
+    "wedding",
+    "marriage",
+    "engaged"
+  ],
+  "innocent": [
+    "angel"
+  ],
+  "rocket": [
+    "ship",
+    "launch"
+  ],
+  "scream": [
+    "horror",
+    "shocked"
+  ],
+  "kiss": [
+    "lipstick"
+  ],
+  "couple_with_heart_man_man": [
+    "couple",
+    "heart",
+    "man"
+  ],
+  "hamburger": [
+    "burger"
+  ],
+  "family_woman_woman_boy_boy": [
+    "family",
+    "woman",
+    "boy"
+  ],
+  "tea": [
+    "green",
+    "breakfast"
+  ],
+  "cake": [
+    "dessert"
+  ],
+  "rabbit": [
+    "bunny"
+  ],
+  "hourglass": [
+    "time"
+  ],
+  "speedboat": [
+    "ship"
+  ],
+  "recycle": [
+    "environment",
+    "green"
+  ],
+  "fire": [
+    "burn"
+  ],
+  "cinema": [
+    "film",
+    "movie"
+  ],
+  "runner": [
+    "exercise",
+    "workout",
+    "marathon"
+  ],
+  "beer": [
+    "drink"
+  ],
+  "smiley": [
+    "happy",
+    "joy",
+    "haha"
+  ],
+  "sunglasses": [
+    "cool"
+  ],
+  "game_die": [
+    "dice",
+    "gambling"
+  ],
+  "person_with_blond_hair": [
+    "boy"
+  ],
+  "hamster": [
+    "pet"
+  ],
+  "family_man_woman_girl_girl": [
+    "family",
+    "man",
+    "woman",
+    "girl"
+  ],
+  "zap": [
+    "lightning",
+    "thunder"
+  ],
+  "poultry_leg": [
+    "meat",
+    "chicken"
+  ],
+  "bust_in_silhouette": [
+    "user"
+  ],
+  "mute": [
+    "sound",
+    "volume"
+  ],
+  "angry": [
+    "mad",
+    "annoyed"
+  ],
+  "haircut": [
+    "beauty"
+  ],
+  "no_mouth": [
+    "mute",
+    "silence"
+  ],
+  "footprints": [
+    "feet",
+    "tracks"
+  ],
+  "round_pushpin": [
+    "location"
+  ],
+  "toilet": [
+    "wc"
+  ],
+  "wink": [
+    "flirt"
+  ],
+  "closed_lock_with_key": [
+    "security"
+  ],
+  "person_frowning": [
+    "sad"
+  ],
+  "running_shirt_with_sash": [
+    "marathon"
+  ],
+  "newspaper": [
+    "press"
+  ],
+  "shower": [
+    "bath"
+  ],
+  "fried_shrimp": [
+    "tempura"
+  ],
+  "tired_face": [
+    "upset",
+    "whine"
+  ],
+  "spaghetti": [
+    "pasta"
+  ],
+  "nail_care": [
+    "beauty",
+    "manicure"
+  ],
+  "fist": [
+    "power"
+  ],
+  "high_heel": [
+    "shoe"
+  ],
+  "battery": [
+    "power"
+  ],
+  "eyes": [
+    "look",
+    "see",
+    "watch"
+  ],
+  "closed_umbrella": [
+    "weather",
+    "rain"
+  ],
+  "open_mouth": [
+    "surprise",
+    "impressed",
+    "wow"
+  ],
+  "dollar": [
+    "money"
+  ],
+  "sweat_smile": [
+    "hot"
+  ],
+  "1234": [
+    "numbers"
+  ],
+  "anguished": [
+    "stunned"
+  ],
+  "partly_sunny": [
+    "weather",
+    "cloud"
+  ],
+  "baggage_claim": [
+    "airport"
+  ],
+  "worried": [
+    "nervous"
+  ],
+  "wedding": [
+    "marriage"
+  ],
+  "trophy": [
+    "award",
+    "contest",
+    "winner"
+  ],
+  "family_woman_woman_girl_boy": [
+    "family",
+    "woman",
+    "girl",
+    "boy"
+  ],
+  "key": [
+    "lock",
+    "password"
+  ],
+  "email": [
+    "letter"
+  ],
+  "hushed": [
+    "silence",
+    "speechless"
+  ],
+  "hand": [
+    "highfive",
+    "stop"
+  ],
+  "calendar": [
+    "schedule"
+  ],
+  "see_no_evil": [
+    "monkey",
+    "blind",
+    "ignore"
+  ],
+  "triumph": [
+    "smug"
+  ],
+  "art": [
+    "design",
+    "paint"
+  ],
+  "abc": [
+    "alphabet"
+  ],
+  "weary": [
+    "tired"
+  ],
+  "sandal": [
+    "shoe"
+  ],
+  "speak_no_evil": [
+    "monkey",
+    "mute",
+    "hush"
+  ],
+  "movie_camera": [
+    "film",
+    "video"
+  ],
+  "dromedary_camel": [
+    "desert"
+  ],
+  "cupid": [
+    "love",
+    "heart"
+  ],
+  "family_man_man_girl": [
+    "family",
+    "man",
+    "girl"
+  ],
+  "vertical_traffic_light": [
+    "semaphore"
+  ],
+  "lips": [
+    "kiss"
+  ],
+  "handbag": [
+    "bag"
+  ],
+  "tropical_drink": [
+    "summer",
+    "vacation"
+  ],
+  "watch": [
+    "time"
+  ],
+  "v": [
+    "victory",
+    "peace"
+  ],
+  "clap": [
+    "praise",
+    "applause"
+  ],
+  "family_man_woman_boy": [
+    "family",
+    "man",
+    "woman",
+    "boy"
+  ],
+  "calling": [
+    "call",
+    "incoming"
+  ],
+  "bar_chart": [
+    "stats",
+    "metrics"
+  ],
+  "tm": [
+    "trademark"
+  ],
+  "jack_o_lantern": [
+    "halloween"
+  ],
+  "eyeglasses": [
+    "glasses"
+  ],
+  "astonished": [
+    "amazed",
+    "gasp"
+  ],
+  "laughing": [
+    "happy",
+    "haha"
+  ],
+  "couple": [
+    "date"
+  ],
+  "notes": [
+    "music"
+  ],
+  "dancers": [
+    "bunny"
+  ],
+  "family_woman_woman_girl": [
+    "family",
+    "woman",
+    "girl"
+  ],
+  "headphones": [
+    "music",
+    "earphones"
+  ],
+  "exclamation": [
+    "bang"
+  ],
+  "bomb": [
+    "boom"
+  ],
+  "family_man_man_girl_girl": [
+    "family",
+    "man",
+    "girl"
+  ],
+  "busts_in_silhouette": [
+    "users",
+    "group",
+    "team"
+  ],
+  "disappointed": [
+    "sad"
+  ],
+  "leaves": [
+    "leaf"
+  ],
+  "blush": [
+    "proud"
+  ],
+  "warning": [
+    "wip"
+  ],
+  "microphone": [
+    "sing"
+  ],
+  "crystal_ball": [
+    "fortune"
+  ],
+  "four_leaf_clover": [
+    "luck"
+  ],
+  "unlock": [
+    "security"
+  ],
+  "no_entry_sign": [
+    "block",
+    "forbidden"
+  ],
+  "love_letter": [
+    "email",
+    "envelope"
+  ],
+  "hankey": [
+    "crap"
+  ],
+  "girl": [
+    "child"
+  ],
+  "mortar_board": [
+    "education",
+    "college",
+    "university",
+    "graduation"
+  ],
+  "baby_bottle": [
+    "milk"
+  ],
+  "ocean": [
+    "sea"
+  ],
+  "shell": [
+    "sea",
+    "beach"
+  ],
+  "raised_hands": [
+    "hooray"
+  ],
+  "family_woman_woman_girl_girl": [
+    "family",
+    "woman",
+    "girl"
+  ],
+  "steam_locomotive": [
+    "train"
+  ],
+  "video_game": [
+    "play",
+    "controller",
+    "console"
+  ],
+  "construction_worker": [
+    "helmet"
+  ],
+  "wheelchair": [
+    "accessibility"
+  ],
+  "mobile_phone_off": [
+    "mute",
+    "off"
+  ],
+  "sparkles": [
+    "shiny"
+  ],
+  "boom": [
+    "explode"
+  ],
+  "loud_sound": [
+    "volume"
+  ],
+  "chart_with_upwards_trend": [
+    "graph",
+    "metrics"
+  ],
+  "lipstick": [
+    "makeup"
+  ],
+  "wc": [
+    "toilet",
+    "restroom"
+  ],
+  "sleeping": [
+    "zzz"
+  ],
+  "wave": [
+    "goodbye"
+  ],
+  "jeans": [
+    "pants"
+  ],
+  "santa": [
+    "christmas"
+  ],
+  "yum": [
+    "tongue",
+    "lick"
+  ],
+  "family_man_man_boy": [
+    "family",
+    "man",
+    "boy"
+  ],
+  "cocktail": [
+    "drink"
+  ],
+  "rotating_light": [
+    "911",
+    "emergency"
+  ],
+  "satellite": [
+    "signal"
+  ],
+  "sleepy": [
+    "tired"
+  ],
+  "bath": [
+    "shower"
+  ],
+  "pushpin": [
+    "location"
+  ],
+  "mask": [
+    "sick",
+    "ill"
+  ],
+  "umbrella": [
+    "rain",
+    "weather"
+  ],
+  "tulip": [
+    "flower"
+  ],
+  "football": [
+    "sports"
+  ],
+  "seedling": [
+    "plant"
+  ],
+  "guitar": [
+    "rock"
+  ],
+  "cold_sweat": [
+    "nervous"
+  ],
+  "scissors": [
+    "cut"
+  ],
+  "sun_with_face": [
+    "summer"
+  ],
+  "fork_and_knife": [
+    "cutlery"
+  ],
+  "coffee": [
+    "cafe",
+    "espresso"
+  ],
+  "airplane": [
+    "flight"
+  ],
+  "stuck_out_tongue_winking_eye": [
+    "prank",
+    "silly"
+  ],
+  "baby": [
+    "child",
+    "newborn"
+  ],
+  "vulcan_salute": [
+    "vulcan",
+    "salute"
+  ],
+  "family": [
+    "home",
+    "parents",
+    "child"
+  ],
+  "couple_with_heart_woman_woman": [
+    "couple",
+    "heart",
+    "woman"
+  ],
+  "kissing_heart": [
+    "flirt"
+  ],
+  "gift": [
+    "present",
+    "birthday",
+    "christmas"
+  ],
+  "alarm_clock": [
+    "morning"
+  ],
+  "no_bell": [
+    "volume",
+    "off"
+  ],
+  "hear_no_evil": [
+    "monkey",
+    "deaf"
+  ],
+  "memo": [
+    "document",
+    "note"
+  ],
+  "pill": [
+    "health",
+    "medicine"
+  ],
+  "arrows_counterclockwise": [
+    "sync"
+  ],
+  "athletic_shoe": [
+    "sneaker",
+    "sport",
+    "running"
+  ],
+  "maple_leaf": [
+    "canada"
+  ],
+  "lock": [
+    "security",
+    "private"
+  ],
+  "princess": [
+    "blonde",
+    "crown",
+    "royal"
+  ],
+  "clapper": [
+    "film"
+  ],
+  "performing_arts": [
+    "theater",
+    "drama"
+  ],
+  "eggplant": [
+    "aubergine"
+  ],
+  "crown": [
+    "king",
+    "queen",
+    "royal"
+  ],
+  "dizzy": [
+    "star"
+  ],
+  "couplekiss_woman_woman": [
+    "couple",
+    "kiss",
+    "woman"
+  ],
+  "bulb": [
+    "idea",
+    "light"
+  ],
+  "scroll": [
+    "document"
+  ],
+  "twisted_rightwards_arrows": [
+    "shuffle"
+  ],
+  "iphone": [
+    "smartphone",
+    "mobile"
+  ],
+  "bell": [
+    "sound",
+    "notification"
+  ],
+  "dancer": [
+    "dress"
+  ],
+  "earth_americas": [
+    "globe",
+    "world",
+    "international"
+  ],
+  "books": [
+    "library"
+  ],
+  "ramen": [
+    "noodle"
+  ],
+  "globe_with_meridians": [
+    "world",
+    "global",
+    "international"
+  ],
+  "cherry_blossom": [
+    "flower",
+    "spring"
+  ],
+  "family_woman_woman_boy": [
+    "family",
+    "woman",
+    "boy"
+  ],
+  "telephone_receiver": [
+    "phone",
+    "call"
+  ],
+  "baseball": [
+    "sports"
+  ],
+  "green_apple": [
+    "fruit"
+  ],
+  "zzz": [
+    "sleeping"
+  ],
+  "japanese_ogre": [
+    "monster"
+  ],
+  "necktie": [
+    "shirt",
+    "formal"
+  ],
+  "dog": [
+    "pet"
+  ],
+  "hash": [
+    "number"
+  ],
+  "capital_abcd": [
+    "letters"
+  ],
+  "gun": [
+    "shoot",
+    "weapon"
+  ],
+  "woman": [
+    "girls"
+  ],
+  "tongue": [
+    "taste"
+  ],
+  "space_invader": [
+    "game",
+    "retro"
+  ],
+  "moyai": [
+    "stone"
+  ],
+  "fireworks": [
+    "festival",
+    "celebration"
+  ],
+  "alien": [
+    "ufo"
+  ],
+  "gem": [
+    "diamond"
+  ],
+  "smirk": [
+    "smug"
+  ],
+  "file_folder": [
+    "directory"
+  ],
+  "unamused": [
+    "meh"
+  ],
+  "dart": [
+    "target"
+  ],
+  "computer": [
+    "desktop",
+    "screen"
+  ],
+  "mag": [
+    "search",
+    "zoom"
+  ],
+  "evergreen_tree": [
+    "wood"
+  ],
+  "ghost": [
+    "halloween"
+  ],
+  "bikini": [
+    "beach"
+  ],
+  "ear": [
+    "hear",
+    "sound",
+    "listen"
+  ],
+  "man": [
+    "mustache",
+    "father",
+    "dad"
+  ],
+  "camera": [
+    "photo"
+  ],
+  "money_with_wings": [
+    "dollar"
+  ],
+  "relieved": [
+    "whew"
+  ],
+  "smiling_imp": [
+    "devil",
+    "evil",
+    "horns"
+  ],
+  "restroom": [
+    "toilet"
+  ],
+  "snowflake": [
+    "winter",
+    "cold",
+    "weather"
+  ],
+  "bread": [
+    "toast"
+  ],
+  "two_men_holding_hands": [
+    "couple",
+    "date"
+  ],
+  "tophat": [
+    "hat",
+    "classy"
+  ],
+  "question": [
+    "confused"
+  ],
+  "pouch": [
+    "bag"
+  ],
+  "+1": [
+    "approve",
+    "ok"
+  ],
+  "strawberry": [
+    "fruit"
+  ],
+  "tennis": [
+    "sports"
+  ],
+  "family_man_woman_boy_boy": [
+    "family",
+    "man",
+    "woman",
+    "boy"
+  ],
+  "credit_card": [
+    "subscription"
+  ],
+  "8ball": [
+    "pool",
+    "billiards"
+  ],
+  "anchor": [
+    "ship"
+  ],
+  "rage": [
+    "angry"
+  ],
+  "moneybag": [
+    "dollar",
+    "cream"
+  ],
+  "family_man_woman_girl": [
+    "family",
+    "man",
+    "woman",
+    "girl"
+  ],
+  "rose": [
+    "flower"
+  ],
+  "persevere": [
+    "struggling"
+  ],
+  "date": [
+    "calendar",
+    "schedule"
+  ],
+  "crying_cat_face": [
+    "sad",
+    "tear"
+  ],
+  "bride_with_veil": [
+    "marriage",
+    "wedding"
+  ],
+  "snail": [
+    "slow"
+  ],
+  "snowman": [
+    "winter",
+    "christmas"
+  ],
+  "cop": [
+    "police",
+    "law"
+  ],
+  "cherries": [
+    "fruit"
+  ],
+  "sob": [
+    "sad",
+    "cry",
+    "bawling"
+  ],
+  "sound": [
+    "volume"
+  ],
+  "grinning": [
+    "smile",
+    "happy"
+  ],
+  "anger": [
+    "angry"
+  ],
+  "sweat_drops": [
+    "water",
+    "workout"
+  ],
+  "pray": [
+    "please",
+    "hope",
+    "wish"
+  ],
+  "cyclone": [
+    "swirl"
+  ],
+  "family_man_man_boy_boy": [
+    "family",
+    "man",
+    "boy"
+  ],
+  "smile": [
+    "happy",
+    "joy",
+    "pleased"
+  ],
+  "neutral_face": [
+    "meh"
+  ],
+  "radio": [
+    "podcast"
+  ],
+  "bullettrain_front": [
+    "train"
+  ],
+  "fallen_leaf": [
+    "autumn"
+  ],
+  "basketball": [
+    "sports"
+  ],
+  "whale": [
+    "sea"
+  ],
+  "sos": [
+    "help",
+    "emergency"
+  ],
+  "signal_strength": [
+    "wifi"
+  ],
+  "massage": [
+    "spa"
+  ],
+  "sunny": [
+    "weather"
+  ],
+  "tada": [
+    "party"
+  ],
+  "deciduous_tree": [
+    "wood"
+  ],
+  "leftwards_arrow_with_hook": [
+    "return"
+  ],
+  "banana": [
+    "fruit"
+  ],
+  "new": [
+    "fresh"
+  ],
+  "package": [
+    "shipping"
+  ],
+  "-1": [
+    "disapprove",
+    "bury"
+  ],
+  "turtle": [
+    "slow"
+  ],
+  "briefcase": [
+    "business"
+  ],
+  "two_women_holding_hands": [
+    "couple",
+    "date"
+  ],
+  "facepunch": [
+    "attack"
+  ],
+  "bouquet": [
+    "flowers"
+  ],
+  "couplekiss_man_man": [
+    "couple",
+    "kiss",
+    "man"
+  ],
+  "heart": [
+    "love"
+  ],
+  "hocho": [
+    "cut",
+    "chop"
+  ],
+  "wrench": [
+    "tool"
+  ],
+  "heart_eyes": [
+    "love",
+    "crush"
+  ],
+  "rainbow": [
+    "pride"
+  ],
+  "musical_keyboard": [
+    "piano"
+  ],
+  "loudspeaker": [
+    "announcement"
+  ],
+  "thought_balloon": [
+    "thinking"
+  ],
+  "racehorse": [
+    "speed"
+  ],
+  "earth_africa": [
+    "globe",
+    "world",
+    "international"
+  ],
+  "no_good": [
+    "stop",
+    "halt"
+  ],
+  "dash": [
+    "wind",
+    "blow",
+    "fast"
+  ],
+  "birthday": [
+    "party"
+  ],
+  "tent": [
+    "camping"
+  ],
+  "scream_cat": [
+    "horror"
+  ],
+  "hammer": [
+    "tool"
+  ],
+  "candy": [
+    "sweet"
+  ],
+  "family_man_man_girl_boy": [
+    "family",
+    "man",
+    "girl",
+    "boy"
+  ],
+  "bow": [
+    "respect",
+    "thanks"
+  ],
+  "imp": [
+    "angry",
+    "devil",
+    "evil",
+    "horns"
+  ],
+  "boy": [
+    "child"
+  ],
+  "microscope": [
+    "science",
+    "laboratory",
+    "investigate"
+  ],
+  "bike": [
+    "bicycle"
+  ],
+  "relaxed": [
+    "blush",
+    "pleased"
+  ],
+  "syringe": [
+    "health",
+    "hospital",
+    "needle"
+  ],
+  "beetle": [
+    "bug"
+  ],
+  "checkered_flag": [
+    "milestone",
+    "finish"
+  ],
+  "stuck_out_tongue_closed_eyes": [
+    "prank"
+  ],
+  "joy": [
+    "tears"
+  ],
+  "muscle": [
+    "flex",
+    "bicep",
+    "strong",
+    "workout"
+  ],
+  "cat": [
+    "pet"
+  ],
+  "smoking": [
+    "cigarette"
+  ],
+  "beers": [
+    "drinks"
+  ],
+  "repeat": [
+    "loop"
+  ],
+  "gift_heart": [
+    "chocolates"
+  ],
+  "construction": [
+    "wip"
+  ],
+  "skull": [
+    "dead",
+    "danger",
+    "poison"
+  ],
+  "ok": [
+    "yes"
+  ],
+  "page_facing_up": [
+    "document"
+  ],
+  "nose": [
+    "smell"
+  ],
+  "hourglass_flowing_sand": [
+    "time"
+  ],
+  "crescent_moon": [
+    "night"
+  ],
+  "foggy": [
+    "karl"
+  ],
+  "soccer": [
+    "sports"
+  ],
+  "balloon": [
+    "party",
+    "birthday"
+  ],
+  "poodle": [
+    "dog"
+  ],
+  "floppy_disk": [
+    "save"
+  ],
+  "bullettrain_side": [
+    "train"
+  ],
+  "disappointed_relieved": [
+    "phew",
+    "sweat",
+    "nervous"
+  ],
+  "chart_with_downwards_trend": [
+    "graph",
+    "metrics"
+  ],
+  "cry": [
+    "sad",
+    "tear"
+  ],
+  "fearful": [
+    "scared",
+    "shocked",
+    "oops"
+  ],
+  "100": [
+    "score",
+    "perfect"
+  ],
+  "earth_asia": [
+    "globe",
+    "world",
+    "international"
+  ]
+}
