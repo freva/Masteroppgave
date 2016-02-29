@@ -3,16 +3,14 @@ package com.freva.masteroppgave.lexicon;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.container.ContextScore;
+import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
+import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
 import com.freva.masteroppgave.utils.similarity.Cosine;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetContexts;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGrams;
-import com.freva.masteroppgave.utils.FileUtils;
-import com.freva.masteroppgave.utils.JSONLineByLine;
-import com.freva.masteroppgave.utils.JSONUtils;
-import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,11 +20,7 @@ import java.util.function.Function;
 
 
 public class Initialization {
-    private static final File tweets_file = new File("res/tweets/200k.txt");
-    private static final File ngrams_file = new File("res/tweets/ngrams.txt");
-    private static final File context_file = new File("res/tweets/context.txt");
-    private static final File lexicon_file = new File("res/tweets/lexicon.txt");
-    private static final File afinn_file = new File("res/data/afinn111.json");
+    private static final File tweets_file = Resources.DATASET_10k;
 
     private static final Boolean use_cached_ngrams = false;
     private static final Boolean use_cached_contexts = false;
@@ -49,13 +43,13 @@ public class Initialization {
                         Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
                         Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
             } else {
-                String JSONNGrams = FileUtils.readEntireFileIntoString(ngrams_file);
+                String JSONNGrams = FileUtils.readEntireFileIntoString(Resources.TEMP_NGRAMS);
                 ngrams = JSONUtils.fromJSON(JSONNGrams, new TypeToken<Map<String, Integer>>(){});
             }
 
             TweetContexts tweetContexts = new TweetContexts();
             ProgressBar.trackProgress(tweetContexts, "Finding context words...");
-            tweetContexts.findContextWords(tweets_file, context_file, ngrams.keySet(), max_context_word_distance,
+            tweetContexts.findContextWords(tweets_file, Resources.TEMP_CONTEXT, ngrams.keySet(), max_context_word_distance,
                     Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm,
                     Filters::removeURL, Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername,
                     Filters::removeEmoticons, Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus,
@@ -66,7 +60,7 @@ public class Initialization {
         Map<String, Double> lexicon = createLexicon(graph);
         lexicon = MapUtils.sortMapByValue(lexicon);
         String jsonLexicon = JSONUtils.toJSON(lexicon, true);
-        FileUtils.writeToFile(lexicon_file, jsonLexicon);
+        FileUtils.writeToFile(Resources.OUR_LEXICON, jsonLexicon);
     }
 
 
@@ -79,7 +73,7 @@ public class Initialization {
         ngrams = MapUtils.sortMapByValue(ngrams);
 
         String JSONNGrams = JSONUtils.toJSON(ngrams, true);
-        FileUtils.writeToFile(ngrams_file, JSONNGrams);
+        FileUtils.writeToFile(Resources.TEMP_NGRAMS, JSONNGrams);
         return ngrams;
     }
 
@@ -90,7 +84,7 @@ public class Initialization {
      * @throws IOException
      */
     private static Graph initializeGraph() throws IOException {
-        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(context_file, new TypeToken<Map<String, Map<String, Integer>>>(){});
+        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(Resources.TEMP_CONTEXT, new TypeToken<Map<String, Map<String, Integer>>>(){});
         ProgressBar.trackProgress(contexts, "Initializing graph...");
         Graph graph = new Graph(neighborLimit, pathLength, edgeThreshold);
 
@@ -113,7 +107,7 @@ public class Initialization {
      * @throws IOException
      */
     private static Map<String, Double> createLexicon(Graph graph) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(afinn_file);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
         Cosine<Node> cosine = new Cosine<>();
