@@ -6,7 +6,6 @@ public class Resources {
     public static final File AFINN_LEXICON = new File("res/data/afinn111.json");
     public static final File OUR_LEXICON = new File("res/tweets/lexicon.txt");
     public static final File EMOTICON_LEXICON = new File("res/data/emoticonDictionary.json");
-    public static final File EMOJI_LEXICON = new File("res/data/emojiLexicon.json");
 
     public static final File SPECIAL_WORDS = new File("res/data/words.json");
 
