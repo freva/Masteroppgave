@@ -27,9 +27,9 @@ public class RegexFilters {
     public static final Pattern WHITESPACE = Pattern.compile("\\s+");
     public static final Pattern POS_TAG = Pattern.compile("_[A-Z$]+");
     public static final Pattern INNER_WORD_CHAR = Pattern.compile("['`´’]");
-    public static final Pattern NON_SYNTACTICAL_TEXT = Pattern.compile("[^a-zA-Z.,!? ]");
-    public static final Pattern NON_SYNTACTICAL_TEXT_PLUS = Pattern.compile("[^a-zA-Z.!? ]");
-    public static final Pattern SENTENCE_END_PUNCTUATION = Pattern.compile("[!?.]");
+    public static final Pattern NON_SYNTACTICAL_TEXT = Pattern.compile("[^a-z ?!.,]", Pattern.CASE_INSENSITIVE);
+    public static final Pattern NON_SYNTACTICAL_TEXT_PLUS = Pattern.compile("[^a-z ?!.]", Pattern.CASE_INSENSITIVE);
+    public static final Pattern SENTENCE_END_PUNCTUATION = Pattern.compile("[!?,.]");
 
     public static final Pattern NON_ALPHANUMERIC_TEXT = Pattern.compile("[^a-zA-Z0-9 ]");
     public static final Pattern NON_ALPHABETIC_TEXT = Pattern.compile("[^a-zA-Z ]");
@@ -39,6 +39,8 @@ public class RegexFilters {
 
     private static final Pattern freeUnderscores = Pattern.compile(" _|_ ");
     private static final Pattern fixSyntacticalGrammar = Pattern.compile("\\s*([!?,.]+(?:\\s+[!?,.]+)*)\\s*");
+    private static final Pattern fixQuotationToSentence = Pattern.compile("([\"*(])((?:\\w+ )+\\w+ \\w+)(?:\\1|\\))");
+
 
 
     public static String replaceEmoticons(String text, String replace) {
@@ -101,6 +103,11 @@ public class RegexFilters {
 
     public static String replaceNonASCII(String text, String replace) {
         return NON_ASCII_CHARACTERS.matcher(text).replaceAll(replace);
+    }
+
+
+    public static String fixQuotationSentence(String text) {
+        return fixQuotationToSentence.matcher(text).replaceAll("$2.");
     }
 
     public static String fixSyntacticalPunctuationGrammar(String text) {

@@ -191,6 +191,10 @@ public class Filters {
         return RegexFilters.fixSyntacticalPunctuationGrammar(text);
     }
 
+    public static String fixQuotationSentence(String text) {
+        return RegexFilters.fixQuotationSentence(text);
+    }
+
 
     /**
      * Removes English stop words, replacing them with "_"
@@ -202,6 +206,6 @@ public class Filters {
     }
 
     public static String replaceEmoticons(String text){
-        return EmoticonLexicon.getInstance().replaceEmoticons(text);
+        return EmoticonLexicon.replaceEmoticons(text);
     }
 }
