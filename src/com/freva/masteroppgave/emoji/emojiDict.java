@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class emojiDict {
+public class EmojiDict {
 
     private static final File emojisFile = new File("res/data/emojis.json");
     private static final File afinnFile = new File("res/data/afinn111.json");
