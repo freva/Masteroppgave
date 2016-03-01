@@ -1,63 +1,37 @@
 package com.freva.masteroppgave.lexicon.container;
 
-import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.Resources;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.function.Function;
+import java.util.Map;
 
 public class EmoticonLexicon {
+    private static Map<String, String> lexicon;
 
-    private static HashMap<String, String> lexicon;
-    private static EmoticonLexicon instance = null;
-
-    private EmoticonLexicon(){
-        String JsonLexicon = null;
+    static {
         try {
-            JsonLexicon = FileUtils.readEntireFileIntoString(Resources.EMOTICON_LEXICON);
+            String json = FileUtils.readEntireFileIntoString(Resources.EMOTICON_LEXICON);
+            lexicon = JSONUtils.fromJSON(json, new TypeToken<Map<String, String>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
-        lexicon = JSONUtils.fromJSON(JsonLexicon, new TypeToken<HashMap<String, String>>(){});
     }
 
-    public static EmoticonLexicon getInstance(){
-        if(instance == null) {
-            instance = new EmoticonLexicon();
-        }
-        return instance;
-    }
 
-    public String replaceEmoticons(String text) {
-        String[] tokens = text.split(" ");
-        String replacementText = "";
-        for(String token : tokens) {
+    public static String replaceEmoticons(String text) {
+        StringBuilder replacementText = new StringBuilder();
+        for(String token : RegexFilters.WHITESPACE.split(text)) {
+            replacementText.append(" ");
             if(lexicon.containsKey(token)) {
-                replacementText += lexicon.get(token)+ " ";
-            }
-            else {
-                replacementText += token + " ";
+                replacementText.append(lexicon.get(token));
+            } else {
+                replacementText.append(token);
             }
         }
-        return replacementText.trim();
-    }
-
-    private void filters (String text, Function<String, String>... filters) {
-        text = Filters.chain(text, filters);
-        System.out.println(text);
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        String test = "Chicago Bulls.. :-) And yes, Im watching it.. Dreams to come true.. :-) :-) :-) to make it more sweeter, ";
-        EmoticonLexicon.getInstance().filters(test, Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-                Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername,
-                Filters::removeInnerWordCharacters, Filters::removeFreeDigits, Filters::replaceEmoticons,
-                Filters::removeNonAlphanumericalText, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
-
+        return replacementText.toString().substring(1);
     }
 }

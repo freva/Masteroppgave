@@ -6,24 +6,18 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
-public class PriorPolarityLexicon {
-    private HashMap<String, Double> polarityLexicon;
+public class PriorPolarityLexicon implements Iterable<String> {
+    private Map<String, Double> polarityLexicon;
 
     public PriorPolarityLexicon(File file) throws IOException {
-        String json = FileUtils.readEntireFileIntoString(file);
-        polarityLexicon = JSONUtils.fromJSON(json, new TypeToken<HashMap<String, Double>>(){});
+        polarityLexicon = readLexicon(file);
     }
 
     public double getPolarity(String phrase) {
-        if(polarityLexicon.containsKey(phrase)) {
-            return polarityLexicon.get(phrase);
-        }
-        return 0;
+        return polarityLexicon.get(phrase);
     }
 
     public boolean hasWord(String word) {
@@ -32,5 +26,16 @@ public class PriorPolarityLexicon {
 
     public Set<String> getSubjectiveWords() {
         return new HashSet<>(polarityLexicon.keySet());
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return polarityLexicon.keySet().iterator();
+    }
+
+
+    public static Map<String, Double> readLexicon(File file) throws IOException {
+        String json = FileUtils.readEntireFileIntoString(file);
+        return JSONUtils.fromJSON(json, new TypeToken<HashMap<String, Double>>(){});
     }
 }
