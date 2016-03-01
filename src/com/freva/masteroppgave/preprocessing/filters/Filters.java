@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.preprocessing.filters;
 
+import com.freva.masteroppgave.lexicon.container.EmoticonLexicon;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -198,5 +199,9 @@ public class Filters {
      */
     public static String removeStopWords(String text) {
         return WordFilters.replaceStopWords(text, "_");
+    }
+
+    public static String replaceEmoticons(String text){
+        return EmoticonLexicon.getInstance().replaceEmoticons(text);
     }
 }
