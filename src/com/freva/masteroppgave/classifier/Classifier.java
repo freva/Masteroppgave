@@ -10,13 +10,19 @@ import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class Classifier {
     private Function<String, String>[] filters;
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
+
+    private final String[] emotes = {"emoteneg", "emotepos", "emoteneutral"};
+    private final Set<String> possibleEmotes = new HashSet<>(Arrays.asList(emotes));
 
     private static final double neutralThreshold = 1.65;
 
@@ -29,20 +35,24 @@ public class Classifier {
     }
 
 
-    public DataSetEntry.Class classify(String tweet) {
+    public DataSetEntry.Class classify(String tweet, DataSetEntry.Class correct) {
         tweet = Filters.chain(tweet, filters);
         List<LexicalToken> lexicalTokens = LexicalParser.lexicallyParseTweet(tweet, phraseTree);
-
         analyseTokens(lexicalTokens);
         double tweetSentimentScore = lexicalTokens.stream().mapToDouble(LexicalToken::getSentimentValue).sum();
-
+        DataSetEntry.Class predicted;
         if (Math.abs(tweetSentimentScore) > neutralThreshold) {
             if (tweetSentimentScore > 0) {
-                return DataSetEntry.Class.POSITIVE;
+                predicted = DataSetEntry.Class.POSITIVE;
             }
-            return DataSetEntry.Class.NEGATIVE;
+            else {
+                predicted = DataSetEntry.Class.NEGATIVE;
+            }
         }
-        return DataSetEntry.Class.NEUTRAL;
+        else {
+            predicted = DataSetEntry.Class.NEUTRAL;
+        }
+        return predicted;
     }
 
     private void analyseTokens(List<LexicalToken> lexicalTokens) {
@@ -52,6 +62,10 @@ public class Classifier {
 
             if(token.isInLexicon()) {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
+            }
+
+            if(isEmote(phrase)) {
+                token.setLexicalValue(getEmoteScore(phrase));
             }
 
             if(WordFilters.isNegation(phrase)) {
@@ -77,5 +91,28 @@ public class Classifier {
         if(! lexicalTokens.get(index).isAtTheEndOfSentence()){
             lexicalTokens.get(index+1).setIntensification(intensification);
         }
+    }
+
+    private boolean isEmote(String token) {
+        if(possibleEmotes.contains(token)) {
+            return true;
+        }
+        return false;
+    }
+
+    private double getEmoteScore(String emote) {
+        double score = 0;
+        switch (emote) {
+            case "emotepos":
+                score = 1;
+                break;
+            case "emoteneg":
+                score = -1;
+                break;
+            case "emoteneutral":
+                score = 0;
+                break;
+        }
+        return score;
     }
 }

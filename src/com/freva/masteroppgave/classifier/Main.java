@@ -17,7 +17,7 @@ public class Main {
         TweetReader tweetReader = new TweetReader(Resources.SEMEVAL_2013_TEST);
         Classifier classifier = new Classifier(priorPolarityLexicon,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-                Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
+                Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
                 Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
                 Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
@@ -26,7 +26,7 @@ public class Main {
         while (tweetReader.hasNext()) {
             DataSetEntry entry = tweetReader.readAndPreprocessNextDataSetEntry(3, 2);
 
-            DataSetEntry.Class predicted = classifier.classify(entry.getTweet());
+            DataSetEntry.Class predicted = classifier.classify(entry.getTweet(), entry.getClassification());
             classificationMetrics.updateEvidence(entry.getClassification(), predicted);
         }
 
