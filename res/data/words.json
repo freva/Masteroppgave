@@ -27,6 +27,12 @@
     "slightly": 0.50
   },
 
+  "emotes" : {
+    "clfemotepositive": 1,
+    "clfemoteneutral": 0,
+    "clfemotenegaive": -1
+  },
+
   "negators": ["aint", "aint", "anit", "cant", "cannot", "cant", "couldnt", "couldnt", "didnt", "didnt", "dnt", "doesnt",
     "doesnt", "doesnt", "dont", "dont", "hadnt", "hasnt", "hasnt", "havent", "havent havnt", "havnt", "isnt", "isnt",
     "lack", "lacking", "lacks", "no", "nor", "not", "shouldnt", "shouldnt", "wasnt", "wasnt", "wont", "wont", "wouldnt",

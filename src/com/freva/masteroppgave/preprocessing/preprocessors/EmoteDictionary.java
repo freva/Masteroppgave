@@ -16,7 +16,7 @@ import java.util.Map;
 public class EmoteDictionary {
     private static final File emoticonLexiconFile = new File("res/data/EmoticonSentimentLexicon.json");
     private static final File emoticonDictionaryFile = new File("res/data/emoticonDictionary.json");
-    private static final String[] emoteClasses = {"emoteNEG", "emoteNEU", "emotePOS"};
+    private static final String[] emoteClasses = {"clfemotepositive", "clfemoteneutral", "clfemotenegative"};
 
     public static void updateLexicon() throws IOException {
         Map<String, Double> emoteLexicon = PriorPolarityLexicon.readLexicon(emoticonLexiconFile);

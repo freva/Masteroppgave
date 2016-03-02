@@ -10,19 +10,13 @@ import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 public class Classifier {
     private Function<String, String>[] filters;
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
-
-    private final String[] emotes = {"emoteneg", "emotepos", "emoteneutral"};
-    private final Set<String> possibleEmotes = new HashSet<>(Arrays.asList(emotes));
 
     private static final double neutralThreshold = 1.65;
 
@@ -44,12 +38,10 @@ public class Classifier {
         if (Math.abs(tweetSentimentScore) > neutralThreshold) {
             if (tweetSentimentScore > 0) {
                 predicted = DataSetEntry.Class.POSITIVE;
-            }
-            else {
+            } else {
                 predicted = DataSetEntry.Class.NEGATIVE;
             }
-        }
-        else {
+        } else {
             predicted = DataSetEntry.Class.NEUTRAL;
         }
         return predicted;
@@ -62,17 +54,14 @@ public class Classifier {
 
             if(token.isInLexicon()) {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
-            }
 
-            if(isEmote(phrase)) {
-                token.setLexicalValue(getEmoteScore(phrase));
-            }
+            } else if(WordFilters.isEmoteClass(phrase)) {
+                token.setLexicalValue(WordFilters.getEmoteClassValue(phrase));
 
-            if(WordFilters.isNegation(phrase)) {
+            } else if(WordFilters.isNegation(phrase)) {
                 propagateNegation(lexicalTokens, i);
-            }
 
-            if(WordFilters.isIntensifier(phrase)) {
+            } else if(WordFilters.isIntensifier(phrase)) {
                 intensifyNext(lexicalTokens, i, WordFilters.getIntensifierValue(phrase));
             }
         }
@@ -88,31 +77,8 @@ public class Classifier {
     }
 
     private void intensifyNext(List<LexicalToken> lexicalTokens, int index, double intensification) {
-        if(! lexicalTokens.get(index).isAtTheEndOfSentence()){
-            lexicalTokens.get(index+1).setIntensification(intensification);
+        if (! lexicalTokens.get(index).isAtTheEndOfSentence()) {
+            lexicalTokens.get(index + 1).setIntensification(intensification);
         }
-    }
-
-    private boolean isEmote(String token) {
-        if(possibleEmotes.contains(token)) {
-            return true;
-        }
-        return false;
-    }
-
-    private double getEmoteScore(String emote) {
-        double score = 0;
-        switch (emote) {
-            case "emotepos":
-                score = 1;
-                break;
-            case "emoteneg":
-                score = -1;
-                break;
-            case "emoteneutral":
-                score = 0;
-                break;
-        }
-        return score;
     }
 }
