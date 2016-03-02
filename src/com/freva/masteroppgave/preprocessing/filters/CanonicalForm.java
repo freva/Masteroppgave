@@ -43,20 +43,23 @@ public class CanonicalForm {
             out.append(" ").append(correctWordViaCanonical(word));
         }
 
-        return out.toString().substring(1);
+        return out.toString().trim();
     }
 
 
     public static String correctWordViaCanonical(String text) {
         String canonical = reduceToCanonicalForm(text);
 
-        int closestDist = Integer.MAX_VALUE;
-        String closestString = canonical;
         Set<String> candidates = dictionary.get(canonical);
         if(candidates == null) {
-            return canonical;
+            return text;
+        } else if(candidates.size() == 1) {
+            return candidates.iterator().next();
         }
 
+
+        int closestDist = Integer.MAX_VALUE;
+        String closestString = canonical;
         for(String candidate: candidates) {
             int dist = levenshteinDistance(text, candidate);
             if(dist < closestDist) {

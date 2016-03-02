@@ -11,14 +11,10 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CanonicalDictionary implements Progressable {
-    private static final double correctFrequency = 0.05;
-    private static final double termFrequency = 0.0005;
     private TweetReader tweetReader;
 
 
@@ -30,7 +26,7 @@ public class CanonicalDictionary implements Progressable {
      * @param output File to write dictionary to
      * @throws IOException
      */
-    public void createCanonicalDictionary(File input, File output) throws IOException {
+    public void createCanonicalDictionary(File input, File output, double correctFrequency, double termFrequency) throws IOException {
         tweetReader = new TweetReader(input,
                 Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
                 Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
@@ -55,10 +51,9 @@ public class CanonicalDictionary implements Progressable {
 
 
         removeInfrequent(counter, (int) (iteration*termFrequency), correctFrequency);
-        Map<String, Set<String>> options = new HashMap<>();
-        for(Map.Entry<String, Map<String, Integer>> entry: counter.entrySet()) {
-            options.put(entry.getKey(), entry.getValue().keySet());
-        }
+        Map<String, Set<String>> options = counter.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e-> e.getValue().keySet()));
+
         String json = JSONUtils.toJSON(options, true);
         FileUtils.writeToFile(output, json);
     }
@@ -69,22 +64,18 @@ public class CanonicalDictionary implements Progressable {
 
         while(canonicals.hasNext()) {
             Map.Entry<String, Map<String, Integer>> canonical = canonicals.next();
-            Iterator<Map.Entry<String, Integer>> originals = canonical.getValue().entrySet().iterator();
             int termCounter = canonical.getValue().values().stream().mapToInt(Integer::intValue).sum();
 
-            if (termCounter < termLimit) {
+            if (canonical.getValue().size() < 5 || termCounter <= termLimit) {
                 canonicals.remove();
                 continue;
             }
 
+            Iterator<Map.Entry<String, Integer>> originals = canonical.getValue().entrySet().iterator();
             while(originals.hasNext()) {
                 if(originals.next().getValue() < termCounter*cutoff) {
                     originals.remove();
                 }
-            }
-
-            if(canonical.getValue().size() == 1 && canonical.getValue().keySet().contains(canonical.getKey())) {
-                canonicals.remove();
             }
         }
     }
