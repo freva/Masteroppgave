@@ -13,7 +13,7 @@ public class TweetFilterer {
      * @param output_filename File path to write the filtered tweets
      * @throws IOException
      */
-    public static void rawTweetCleaner(String input_filename, String output_filename) throws IOException {
+    public static void rawTweetCleaner(File input_filename, File output_filename) throws IOException {
         final Map<String, Integer> unique = new HashMap<>();
         int lineCounter = 0;
 
