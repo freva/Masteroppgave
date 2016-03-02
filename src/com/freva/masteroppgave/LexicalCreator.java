@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.lexicon;
+package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
@@ -19,14 +19,14 @@ import java.util.*;
 import java.util.function.Function;
 
 
-public class Initialization {
-    private static final File tweets_file = Resources.DATASET_10k;
+public class LexicalCreator {
+    private static final File tweets_file = Resources.DATASET_200k;
 
     private static final Boolean use_cached_ngrams = false;
     private static final Boolean use_cached_contexts = false;
 
     private static final int max_n_grams_range = 6;
-    private static final int max_context_word_distance = 4;
+    private static final int max_context_word_distance = 6;
     private static final double n_grams_cut_off_frequency = 0.0005;
 
     private static final int neighborLimit = 30;

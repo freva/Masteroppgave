@@ -1,6 +1,7 @@
-package com.freva.masteroppgave.classifier;
+package com.freva.masteroppgave;
 
 
+import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
@@ -10,7 +11,7 @@ import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 
 import java.io.IOException;
 
-public class Main {
+public class LexicalClassifier {
 
     public static void main(String[] args) throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.OUR_LEXICON);
