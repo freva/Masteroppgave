@@ -10,17 +10,22 @@ import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 public class LexicalClassifier {
+    public static final List<Function<String, String>> filters = Arrays.asList(
+            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
+            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
+            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+
 
     public static void main(String[] args) throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.OUR_LEXICON);
         TweetReader tweetReader = new TweetReader(Resources.SEMEVAL_2013_TEST);
-        Classifier classifier = new Classifier(priorPolarityLexicon,
-                Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-                Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
-                Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-                Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+        Classifier classifier = new Classifier(priorPolarityLexicon, filters);
 
 
         ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());

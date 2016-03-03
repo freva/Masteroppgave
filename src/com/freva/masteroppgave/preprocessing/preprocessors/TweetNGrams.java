@@ -24,8 +24,7 @@ public class TweetNGrams implements Progressable {
      * @return Map of n-grams as key and number of occurrences as value
      * @throws IOException
      */
-    @SafeVarargs
-    public final Map<String, Integer> getFrequentNGrams(File input, int n, double frequencyCutoff, Function<String, String>... filters) throws IOException {
+    public final Map<String, Integer> getFrequentNGrams(File input, int n, double frequencyCutoff, List<Function<String, String>> filters) throws IOException {
         this.tweetReader = new TweetReader(input, filters);
         Map<String, Integer> nGramsCounter = new HashMap<>();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");

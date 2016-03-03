@@ -5,6 +5,7 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.Normalizer;
+import java.util.List;
 import java.util.function.Function;
 
 public class Filters {
@@ -22,6 +23,12 @@ public class Filters {
      */
     @SafeVarargs
     public static String chain(String text, Function<String, String>... filters) {
+        for (Function<String, String> filter : filters)
+            text = filter.apply(text);
+        return text;
+    }
+
+    public static String chain(String text, Iterable<Function<String, String>> filters) {
         for (Function<String, String> filter : filters)
             text = filter.apply(text);
         return text;

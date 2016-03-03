@@ -12,9 +12,16 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CanonicalDictionary implements Progressable {
+    public static final List<Function<String, String>> filters = Arrays.asList(
+            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
+            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
+            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+
     private TweetReader tweetReader;
 
 
@@ -27,11 +34,7 @@ public class CanonicalDictionary implements Progressable {
      * @throws IOException
      */
     public void createCanonicalDictionary(File input, File output, double correctFrequency, double termFrequency) throws IOException {
-        tweetReader = new TweetReader(input,
-                Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-                Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
-                Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-                Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+        tweetReader = new TweetReader(input, filters);
 
         int iteration = 0;
         Map<String, Map<String, Integer>> counter = new HashMap<>();

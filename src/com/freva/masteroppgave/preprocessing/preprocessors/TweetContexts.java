@@ -28,8 +28,7 @@ public class TweetContexts implements Progressable {
      * @param filters List of filters to apply to document before generating context
      * @throws IOException
      */
-    @SafeVarargs
-    public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, Function<String, String>... filters) throws IOException {
+    public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, List<Function<String, String>> filters) throws IOException {
         this.tweetReader = new TweetReader(input, filters);
         PhraseTree tree = new PhraseTree(tracked);
         TypeToken typeToken = new TypeToken<ContextScore>(){};

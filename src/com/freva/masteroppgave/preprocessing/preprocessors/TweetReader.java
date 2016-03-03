@@ -6,11 +6,12 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
 
 public class TweetReader implements Progressable {
-    private Function<String, String>[] filters;
+    private List<Function<String, String>> filters;
     private Scanner scanner;
     private int totalLines = 0;
     private int lineCounter = 0;
@@ -21,8 +22,7 @@ public class TweetReader implements Progressable {
         this.scanner = new Scanner(file);
     }
 
-    @SafeVarargs
-    public TweetReader(File file, Function<String, String>... filters) throws IOException {
+    public TweetReader(File file, List<Function<String, String>> filters) throws IOException {
         this(file);
         this.filters = filters;
     }

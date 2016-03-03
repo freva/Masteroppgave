@@ -14,15 +14,14 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Classifier {
-    private Function<String, String>[] filters;
+    private List<Function<String, String>> filters;
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
 
     private static final double neutralThreshold = 1.65;
 
 
-    @SafeVarargs
-    public Classifier(PriorPolarityLexicon lexicon, Function<String, String>... filters) throws IOException {
+    public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
         this.lexicon = lexicon;
         this.filters = filters;
         this.phraseTree = new PhraseTree(lexicon.getSubjectiveWords());
