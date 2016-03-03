@@ -32,6 +32,6 @@ public class EmoticonLexicon {
                 replacementText.append(token);
             }
         }
-        return replacementText.toString().substring(1);
+        return replacementText.toString().trim();
     }
 }
