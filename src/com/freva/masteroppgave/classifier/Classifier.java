@@ -18,7 +18,8 @@ public class Classifier {
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
 
-    private static final double neutralThreshold = 1.65;
+    private static final double neutralLowerThreshold = -1.65;
+    private static final double neutralHighThreshold = 1.65;
 
 
     public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
@@ -30,12 +31,10 @@ public class Classifier {
     public DataSetEntry.Class classify(String tweet) {
         double sentimentValue = calculateSentiment(tweet);
 
-        if (Math.abs(sentimentValue) > neutralThreshold) {
-            if (sentimentValue > 0) {
-                return DataSetEntry.Class.POSITIVE;
-            } else {
-                return DataSetEntry.Class.NEGATIVE;
-            }
+        if (sentimentValue < neutralLowerThreshold) {
+            return DataSetEntry.Class.NEGATIVE;
+        } else if (sentimentValue > neutralHighThreshold) {
+            return DataSetEntry.Class.POSITIVE;
         } else {
             return DataSetEntry.Class.NEUTRAL;
         }
