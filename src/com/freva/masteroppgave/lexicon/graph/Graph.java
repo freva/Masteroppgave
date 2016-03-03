@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.lexicon.graph;
 
-import com.freva.masteroppgave.lexicon.container.*;
+import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.similarity.Cosine;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
@@ -58,12 +58,13 @@ public class Graph implements Progressable {
         for (int i = 0; i < nodeList.size(); i++) {
             for (int j = 0; j < nodeList.size(); j++ ) {
                 coOccurrences[i][j*2] = nodeList.get(i).getLeftScoreForWord(nodeList.get(j).getPhrase());
-                coOccurrences[i][j*2+1] = nodeList.get(j).getRightScoreForWord(nodeList.get(j).getPhrase());
+                coOccurrences[i][j*2+1] = nodeList.get(i).getRightScoreForWord(nodeList.get(j).getPhrase());
             }
             int max = Arrays.stream(coOccurrences[i]).max().getAsInt()/2;
             coOccurrences[i][2*i] = max;
             coOccurrences[i][2*i+1] = max;
         }
+
 
         return cosine.getSimilarities(coOccurrences, nodeList);
     }
@@ -101,7 +102,6 @@ public class Graph implements Progressable {
                 for (int size=nodesToCheck.size(); size > 0; size--) {
                     Node nodeToCheck = nodesToCheck.pop();
                     FixedPriorityQueue<Edge> neighbors = new FixedPriorityQueue<>(neighborLimit, nodeToCheck.getNeighbors());
-
                     for (Edge edge : neighbors.sortedItems()) {
                         edge.getNeighbor().updateSentimentScore(nodeToCheck, nodeToCheck.getCurrentScore()*edge.getWeight());
                         nodesToCheck.addLast(edge.getNeighbor());
