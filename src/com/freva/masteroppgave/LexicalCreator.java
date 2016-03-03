@@ -3,7 +3,6 @@ package com.freva.masteroppgave;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.container.ContextScore;
-import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
 import com.freva.masteroppgave.utils.similarity.Cosine;
@@ -31,7 +30,8 @@ public class LexicalCreator {
 
     private static final int neighborLimit = 30;
     private static final int pathLength = 3;
-    private static final float edgeThreshold = 0.3f;
+    private static final double edgeThreshold = 0.3;
+    private static final double lexicalInclusionThreshold = 0.0;
 
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
@@ -118,6 +118,6 @@ public class LexicalCreator {
         ProgressBar.trackProgress(graph, "Propagating Sentiment...");
         graph.propagateSentiment();
 
-        return graph.getLexicon();
+        return graph.getLexicon(lexicalInclusionThreshold);
     }
 }

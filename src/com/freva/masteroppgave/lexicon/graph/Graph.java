@@ -118,10 +118,14 @@ public class Graph implements Progressable {
     }
 
 
-    public Map<String, Double> getLexicon() {
+    public Map<String, Double> getLexicon(double sentimentThreshold) {
         Map<String, Double> lexicon = new HashMap<>();
         for(Map.Entry<String, Node> entry: nodes.entrySet()) {
-            lexicon.put(entry.getKey(), entry.getValue().getSentimentScore(beta));
+            double sentiment = entry.getValue().getSentimentScore(beta);
+
+            if(Math.abs(sentiment) > sentimentThreshold) {
+                lexicon.put(entry.getKey(), sentiment);
+            }
         }
 
         return lexicon;

@@ -27,7 +27,7 @@ public class LexicalClassifier {
         while (tweetReader.hasNext()) {
             DataSetEntry entry = tweetReader.readAndPreprocessNextDataSetEntry(3, 2);
 
-            DataSetEntry.Class predicted = classifier.classify(entry.getTweet(), entry.getClassification());
+            DataSetEntry.Class predicted = classifier.classify(entry.getTweet());
             classificationMetrics.updateEvidence(entry.getClassification(), predicted);
         }
 
