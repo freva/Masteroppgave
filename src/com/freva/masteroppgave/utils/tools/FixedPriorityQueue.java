@@ -33,10 +33,12 @@ public class FixedPriorityQueue<T> extends PriorityQueue<T> {
      * @return true (as specified by {@link Queue#offer})
      */
     public boolean add(T element) {
+        offer(element);
         while (size() > maxSize) {
             poll();
         }
-        return offer(element);
+
+        return true;
     }
 
 
