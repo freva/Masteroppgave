@@ -28,23 +28,27 @@ public class Classifier {
         this.phraseTree = new PhraseTree(lexicon.getSubjectiveWords());
     }
 
+    public DataSetEntry.Class classify(String tweet) {
+        double sentimentValue = calculateSentiment(tweet);
 
-    public DataSetEntry.Class classify(String tweet, DataSetEntry.Class correct) {
+        if (Math.abs(sentimentValue) > neutralThreshold) {
+            if (sentimentValue > 0) {
+                return DataSetEntry.Class.POSITIVE;
+            } else {
+                return DataSetEntry.Class.NEGATIVE;
+            }
+        } else {
+            return DataSetEntry.Class.NEUTRAL;
+        }
+    }
+
+
+    public double calculateSentiment(String tweet) {
         tweet = Filters.chain(tweet, filters);
         List<LexicalToken> lexicalTokens = LexicalParser.lexicallyParseTweet(tweet, phraseTree);
         analyseTokens(lexicalTokens);
-        double tweetSentimentScore = lexicalTokens.stream().mapToDouble(LexicalToken::getSentimentValue).sum();
-        DataSetEntry.Class predicted;
-        if (Math.abs(tweetSentimentScore) > neutralThreshold) {
-            if (tweetSentimentScore > 0) {
-                predicted = DataSetEntry.Class.POSITIVE;
-            } else {
-                predicted = DataSetEntry.Class.NEGATIVE;
-            }
-        } else {
-            predicted = DataSetEntry.Class.NEUTRAL;
-        }
-        return predicted;
+
+        return lexicalTokens.stream().mapToDouble(LexicalToken::getSentimentValue).sum();
     }
 
     private void analyseTokens(List<LexicalToken> lexicalTokens) {
