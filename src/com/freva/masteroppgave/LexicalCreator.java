@@ -37,13 +37,12 @@ public class LexicalCreator {
 
     private static final int max_n_grams_range = 6;
     private static final int max_context_word_distance = 6;
-    private static final double n_grams_cut_off_frequency = 0.0005;
+    private static final double n_grams_cut_off_frequency = 0.0004;
 
     private static final int neighborLimit = 30;
     private static final int pathLength = 3;
-    private static final double edgeThreshold = 0.3;
-    private static final double lexicalInclusionThreshold = 0.2;
-
+    private static final double edgeThreshold = 0.1;
+    private static final double lexicalInclusionThreshold = -0.00001;
 
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
@@ -63,7 +62,14 @@ public class LexicalCreator {
 
         Graph graph = initializeGraph();
         Map<String, Double> lexicon = createLexicon(graph);
-        lexicon = MapUtils.sortMapByValue(lexicon);
+        String jsonSeedWords = FileUtils.readEntireFileIntoString(new File("res/data/actualSeedSet.json"));
+        Set<String> seedWords = JSONUtils.fromJSON(jsonSeedWords, new TypeToken<HashMap<String, Double>>(){}).keySet();
+        Map<String, Double> seedMap = MapUtils.extractItems(lexicon, seedWords);
+        Set<String> nonSeedWords = lexicon.keySet();
+        nonSeedWords.removeAll(seedWords);
+        Map<String, Double> nonSeedMap = MapUtils.extractItems(lexicon, nonSeedWords);
+        nonSeedMap = MapUtils.normalizeMapBetween(nonSeedMap, -1, 1);
+        lexicon = MapUtils.sortMapByValue(MapUtils.mergeMaps(seedMap, nonSeedMap));
         String jsonLexicon = JSONUtils.toJSON(lexicon, true);
         FileUtils.writeToFile(Resources.OUR_LEXICON, jsonLexicon);
     }
@@ -111,7 +117,7 @@ public class LexicalCreator {
      * @throws IOException
      */
     private static Map<String, Double> createLexicon(Graph graph) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(new File("res/data/actualSeedSet.json"));
         graph.setPriorPolarityLexicon(priorPolarityLexicon);
 
         Cosine<Node> cosine = new Cosine<>();
