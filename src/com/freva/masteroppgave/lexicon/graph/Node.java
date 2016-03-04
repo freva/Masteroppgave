@@ -3,7 +3,6 @@ package com.freva.masteroppgave.lexicon.graph;
 import com.freva.masteroppgave.utils.MapUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -89,12 +88,12 @@ public class Node {
 
     public double getPositiveSentimentScore() {
         if(posValues.values().size() == 0) return 0;
-        return Collections.max(posValues.values());
+        return posValues.values().stream().mapToDouble(i-> i).sum();
     }
 
     public double getNegativeSentimentScore() {
         if(negValues.values().size() == 0) return 0;
-        return Collections.min(negValues.values());
+        return negValues.values().stream().mapToDouble(i-> i).sum();
     }
 
 
