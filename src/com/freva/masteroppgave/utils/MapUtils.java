@@ -106,4 +106,32 @@ public class MapUtils {
             }
         }
     }
+
+    /**
+     * Extracts the map entries with key values found in the toExtract set
+     * @param map Map to extract items from
+     * @param toExtract The key values
+     */
+    public static<K, V> Map<K, V> extractItems(Map<K, V> map, Set<K> toExtract) {
+        HashMap<K, V> extractedItems = new HashMap<>();
+        for(K key : toExtract) {
+            V value = map.get(key);
+            if(value != null) {
+                extractedItems.put(key, value);
+            }
+        }
+        return extractedItems;
+    }
+
+    /**
+     * Merges two maps into a new map
+     * @param map1 Map to merge
+     * @param map2 Map to merge
+     */
+    public static<K, V> Map<K, V> mergeMaps(Map<K,V> map1, Map<K,V> map2) {
+        Map<K, V> mergedMap = new HashMap<>();
+        mergedMap.putAll(map1);
+        mergedMap.putAll(map2);
+        return mergedMap;
+    }
 }
