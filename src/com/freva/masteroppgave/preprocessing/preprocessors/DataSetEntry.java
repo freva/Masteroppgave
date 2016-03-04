@@ -10,7 +10,7 @@ public class DataSetEntry {
     public DataSetEntry(String line, int tweetIndex, int classIndex) {
         String[] values = tab_regex.split(line);
         tweet = values[tweetIndex];
-        classification = Class.getClassificationFromString(values[classIndex]);
+        classification = Class.parseClassificationFromString(values[classIndex]);
     }
 
 
@@ -26,7 +26,7 @@ public class DataSetEntry {
     public enum Class {
         POSITIVE, NEUTRAL, NEGATIVE;
 
-        public static Class getClassificationFromString(String classification) {
+        public static Class parseClassificationFromString(String classification) {
             switch (classification) {
                 case "positive":
                     return Class.POSITIVE;
@@ -36,6 +36,16 @@ public class DataSetEntry {
                     return Class.NEGATIVE;
                 default:
                     throw new IllegalArgumentException("Unknown class: " + classification);
+            }
+        }
+
+        public static Class classifyFromThresholds(double value, double lowThresh, double highThresh) {
+            if(value < lowThresh) {
+                return NEGATIVE;
+            } else if(value > highThresh) {
+                return POSITIVE;
+            } else {
+                return NEUTRAL;
             }
         }
     }
