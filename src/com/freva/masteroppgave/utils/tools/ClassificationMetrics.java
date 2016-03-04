@@ -11,9 +11,8 @@ public final class ClassificationMetrics {
     private static final String columnFormat = "%" + columnWidth + "s";
     private static final String numberFormat = "%" + columnWidth + ".4f";
 
-    private final Map<Object, Integer> inverseLabels = new HashMap<>();
     private final int[][] confusionMatrix;
-    private final Object[] labels;
+    private final Enum[] labels;
     private boolean cacheUpToDate = false;
 
     private final double[] classPrecision;
@@ -27,7 +26,7 @@ public final class ClassificationMetrics {
      * @param yTrue True values
      * @param yPred Predicted values
      */
-    public ClassificationMetrics(Object[] yTrue, Object[] yPred) {
+    public ClassificationMetrics(Enum[] yTrue, Enum[] yPred) {
         this(uniqueLabels(yTrue, yPred));
 
         for(int i=0; i<yTrue.length; i++) {
@@ -35,7 +34,7 @@ public final class ClassificationMetrics {
         }
     }
 
-    public ClassificationMetrics(Object[] labels) {
+    public ClassificationMetrics(Enum[] labels) {
         this.labels = labels;
         confusionMatrix = new int[labels.length][labels.length];
 
@@ -43,10 +42,6 @@ public final class ClassificationMetrics {
         classRecall = new double[labels.length];
         classF1Score = new double[labels.length];
         classSupport = new int[labels.length];
-
-        for(int i = 0; i<labels.length; i++) {
-            inverseLabels.put(labels[i], i);
-        }
     }
 
 
@@ -55,8 +50,8 @@ public final class ClassificationMetrics {
      * @param yTrue The true result
      * @param yPred The predicted result
      */
-    public void updateEvidence(Object yTrue, Object yPred) {
-        confusionMatrix[inverseLabels.get(yTrue)][inverseLabels.get(yPred)]++;
+    public void updateEvidence(Enum yTrue, Enum yPred) {
+        confusionMatrix[yTrue.ordinal()][yPred.ordinal()]++;
         cacheUpToDate = false;
     }
 
@@ -186,9 +181,9 @@ public final class ClassificationMetrics {
     }
 
 
-    private static Object[] uniqueLabels(Object[] yTrue, Object[] yPred) {
+    private static Enum[] uniqueLabels(Enum[] yTrue, Enum[] yPred) {
         if(yTrue.length != yPred.length) throw new IllegalArgumentException("yTrue and yPred of different lengths!");
-        Set<Object> set = new HashSet<>();
+        Set<Enum> set = new HashSet<>();
 
         for(int i=0; i<yTrue.length; i++) {
             if(! set.contains(yTrue[i])) {
@@ -200,7 +195,7 @@ public final class ClassificationMetrics {
             }
         }
 
-        Object[] labels = set.toArray();
+        Enum[] labels = (Enum[]) set.toArray();
         Arrays.sort(labels);
 
         return labels;
