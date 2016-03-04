@@ -1,43 +1,27 @@
 package com.freva.masteroppgave.classifier;
 
-
 import com.freva.masteroppgave.classifier.sentence.LexicalParser;
 import com.freva.masteroppgave.classifier.sentence.LexicalToken;
 import com.freva.masteroppgave.lexicon.container.PhraseTree;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
+
 
 public class Classifier {
     private List<Function<String, String>> filters;
     private PriorPolarityLexicon lexicon;
     private PhraseTree phraseTree;
 
-    private static final double neutralLowerThreshold = -1.65;
-    private static final double neutralHighThreshold = 1.65;
-
 
     public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
         this.lexicon = lexicon;
         this.filters = filters;
         this.phraseTree = new PhraseTree(lexicon.getSubjectiveWords());
-    }
-
-    public DataSetEntry.Class classify(String tweet) {
-        double sentimentValue = calculateSentiment(tweet);
-
-        if (sentimentValue < neutralLowerThreshold) {
-            return DataSetEntry.Class.NEGATIVE;
-        } else if (sentimentValue > neutralHighThreshold) {
-            return DataSetEntry.Class.POSITIVE;
-        } else {
-            return DataSetEntry.Class.NEUTRAL;
-        }
     }
 
 
