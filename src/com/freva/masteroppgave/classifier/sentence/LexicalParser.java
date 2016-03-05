@@ -20,9 +20,7 @@ public class LexicalParser {
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-
-            List<PhraseTree.Phrase> phraseRanges = phraseTree.findTrackedWords(sentenceTokens);
-            phraseRanges = findOptimalAllocation(phraseRanges);
+            List<PhraseTree.Phrase> phraseRanges = phraseTree.findOptimalAllocation(sentenceTokens);
 
             int setIndex = 0;
             for(PhraseTree.Phrase phrase: phraseRanges) {
@@ -41,32 +39,5 @@ public class LexicalParser {
         }
 
         return lexicalTokens;
-    }
-
-
-    private static List<PhraseTree.Phrase> findOptimalAllocation(List<PhraseTree.Phrase> phraseRanges) {
-        Collections.sort(phraseRanges);
-
-        phraseRanges = findOptimalAllocation(phraseRanges, 1);
-        Collections.sort(phraseRanges, ((o1, o2) -> o1.getStartIndex()-o2.getStartIndex()));
-        return phraseRanges;
-    }
-
-
-    private static List<PhraseTree.Phrase> findOptimalAllocation(List<PhraseTree.Phrase> phraseRanges, int offset) {
-        if(offset >= phraseRanges.size()) return phraseRanges;
-        Iterator<PhraseTree.Phrase> iter = phraseRanges.listIterator(offset);
-
-        while(iter.hasNext()) {
-            PhraseTree.Phrase candidate = iter.next();
-            for(int i=0; i<offset; i++) {
-                if(phraseRanges.get(i).overlapsWith(candidate)) {
-                    iter.remove();
-                    break;
-                }
-            }
-        }
-
-        return findOptimalAllocation(phraseRanges, offset+1);
     }
 }

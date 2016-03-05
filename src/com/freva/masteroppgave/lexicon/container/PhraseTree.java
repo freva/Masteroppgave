@@ -86,6 +86,29 @@ public class PhraseTree {
     }
 
 
+    public List<Phrase> findOptimalAllocation(String[] tokens) {
+        List<Phrase> phraseRanges = findTrackedWords(tokens);
+        Collections.sort(phraseRanges);
+
+        for(int offset=1; offset<phraseRanges.size(); offset++) {
+            Iterator<Phrase> iter = phraseRanges.listIterator(offset);
+
+            while(iter.hasNext()) {
+                Phrase candidate = iter.next();
+                for(int i=0; i<offset; i++) {
+                    if(phraseRanges.get(i).overlapsWith(candidate)) {
+                        iter.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        Collections.sort(phraseRanges, ((o1, o2) -> o1.getStartIndex()-o2.getStartIndex()));
+        return phraseRanges;
+    }
+
+
     public class Phrase implements Comparable<Phrase> {
         private final int startIndex, endIndex;
         private final String phrase;

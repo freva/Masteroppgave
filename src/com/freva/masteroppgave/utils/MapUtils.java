@@ -113,13 +113,8 @@ public class MapUtils {
      * @param toExtract The key values
      */
     public static<K, V> Map<K, V> extractItems(Map<K, V> map, Set<K> toExtract) {
-        HashMap<K, V> extractedItems = new HashMap<>();
-        for(K key : toExtract) {
-            V value = map.get(key);
-            if(value != null) {
-                extractedItems.put(key, value);
-            }
-        }
+        Map<K, V> extractedItems = new HashMap<>();
+        toExtract.stream().filter(map::containsKey).forEach(key -> extractedItems.put(key, map.get(key)));
         return extractedItems;
     }
 
@@ -128,7 +123,7 @@ public class MapUtils {
      * @param map1 Map to merge
      * @param map2 Map to merge
      */
-    public static<K, V> Map<K, V> mergeMaps(Map<K,V> map1, Map<K,V> map2) {
+    public static<K, V> Map<K, V> mergeMaps(Map<K, V> map1, Map<K, V> map2) {
         Map<K, V> mergedMap = new HashMap<>();
         mergedMap.putAll(map1);
         mergedMap.putAll(map2);
