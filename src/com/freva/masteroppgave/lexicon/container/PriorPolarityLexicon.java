@@ -33,6 +33,10 @@ public class PriorPolarityLexicon implements Iterable<String> {
         return polarityLexicon.keySet().iterator();
     }
 
+    public Map<String, Double> getLexicon() {
+        return new HashMap<>(polarityLexicon);
+    }
+
 
     public static Map<String, Double> readLexicon(File file) throws IOException {
         String json = FileUtils.readEntireFileIntoString(file);
