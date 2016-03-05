@@ -38,6 +38,7 @@ public class TweetFilterer {
         if (text.startsWith("RT @")) return false;
         if (text.contains("https://") || text.contains("http://")) return false;
         if (text.startsWith("Get Weather Updates from The Weather Channel")) return false;
+        if (text.toLowerCase().contains("harry_styles")) return false;
 
         return true;
     }

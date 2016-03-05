@@ -48,7 +48,8 @@ public class TweetContexts implements Progressable {
         ContextScore contextScore = new ContextScore();
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(line)) {
-            List<PhraseTree.Phrase> phrases = tree.findTrackedWords(sentence);
+            String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
+            List<PhraseTree.Phrase> phrases = tree.findTrackedWords(sentenceTokens);
 
             for (int i = 0; i < phrases.size(); i++) {
                 PhraseTree.Phrase p1 = phrases.get(i);
