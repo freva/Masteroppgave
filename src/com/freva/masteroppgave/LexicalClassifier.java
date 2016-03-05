@@ -22,8 +22,8 @@ public class LexicalClassifier {
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
-    private static final double neutralLowThreshold = -1.24;
-    private static final double neutralHighThreshold = 0.61;
+    private static final double neutralLowThreshold = -0.45;
+    private static final double neutralHighThreshold = 0.65;
 
 
     public static void main(String[] args) throws IOException {

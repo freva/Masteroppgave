@@ -42,7 +42,7 @@ public class LexicalCreator {
     private static final int neighborLimit = 30;
     private static final int pathLength = 3;
     private static final double edgeThreshold = 0.1;
-    private static final double lexicalInclusionThreshold = -0.00001;
+    private static final double lexicalInclusionThreshold = 0;
 
     public static void main(String args[]) throws Exception{
         if(! use_cached_contexts) {
@@ -62,14 +62,6 @@ public class LexicalCreator {
 
         Graph graph = initializeGraph();
         Map<String, Double> lexicon = createLexicon(graph);
-        String jsonSeedWords = FileUtils.readEntireFileIntoString(new File("res/data/actualSeedSet.json"));
-        Set<String> seedWords = JSONUtils.fromJSON(jsonSeedWords, new TypeToken<HashMap<String, Double>>(){}).keySet();
-        Map<String, Double> seedMap = MapUtils.extractItems(lexicon, seedWords);
-        Set<String> nonSeedWords = lexicon.keySet();
-        nonSeedWords.removeAll(seedWords);
-        Map<String, Double> nonSeedMap = MapUtils.extractItems(lexicon, nonSeedWords);
-        nonSeedMap = MapUtils.normalizeMapBetween(nonSeedMap, -1, 1);
-        lexicon = MapUtils.sortMapByValue(MapUtils.mergeMaps(seedMap, nonSeedMap));
         String jsonLexicon = JSONUtils.toJSON(lexicon, true);
         FileUtils.writeToFile(Resources.OUR_LEXICON, jsonLexicon);
     }
@@ -128,6 +120,13 @@ public class LexicalCreator {
         ProgressBar.trackProgress(graph, "Propagating Sentiment...");
         graph.propagateSentiment();
 
-        return graph.getLexicon(lexicalInclusionThreshold);
+        Map<String, Double> lexicon = graph.getLexicon(lexicalInclusionThreshold);
+        Set<String> lexicalWords = lexicon.keySet();
+        lexicalWords.removeAll(priorPolarityLexicon.getSubjectiveWords());
+
+        Map<String, Double> nonSeedMap = MapUtils.extractItems(lexicon, lexicalWords);
+        nonSeedMap = MapUtils.normalizeMapBetween(nonSeedMap, -1, 1);
+
+        return MapUtils.sortMapByValue(MapUtils.mergeMaps(priorPolarityLexicon.getLexicon(), nonSeedMap));
     }
 }
