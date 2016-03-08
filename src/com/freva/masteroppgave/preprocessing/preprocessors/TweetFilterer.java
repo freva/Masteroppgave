@@ -1,12 +1,17 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.utils.MapUtils;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class TweetFilterer {
+    private static final Pattern endsWithNumber = Pattern.compile("[\\.,x][0-9]+$");
+    //private static
+
     /**
      * First stage of raw downloaded tweet filtering. Removes all tweets that cant be used by any other preprocessor.
      * @param input_filename File path to the raw downloaded tweets
@@ -24,9 +29,12 @@ public class TweetFilterer {
                         if(lineCounter % 10000000 == 0) MapUtils.removeInfrequentItems(unique, 2);
                         System.out.print("\r" + lineCounter);
                     }
-                    if (! shouldInclude(line) || unique.containsKey(line)) continue;
+                    if (! shouldInclude(line)) continue;
 
-                    MapUtils.incrementMapByValue(unique, line.toLowerCase(), 1);
+                    String filtered = Filters.chain(line, Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+                    if(unique.containsKey(filtered)) continue;
+
+                    MapUtils.incrementMapByValue(unique, filtered, 1);
                     output.write(line + "\n");
                 }
             }
@@ -39,6 +47,9 @@ public class TweetFilterer {
         if (text.contains("https://") || text.contains("http://")) return false;
         if (text.startsWith("Get Weather Updates from The Weather Channel")) return false;
         if (text.toLowerCase().contains("harry_styles")) return false;
+        if (text.contains("°")) return false;
+        if (text.contains("TVPersonality2015")) return false;
+        if (endsWithNumber.matcher(text).find()) return false;
 
         return true;
     }
