@@ -59,11 +59,7 @@ public class MapUtils {
      * @param increment Value to increment by
      */
     public static<T> void incrementMapByValue(Map<T, Integer> map, T key, int increment) {
-        if(! map.containsKey(key)) {
-            map.put(key, increment);
-        } else {
-            map.put(key, map.get(key) + increment);
-        }
+        map.put(key, map.getOrDefault(key, 0) + increment);
     }
 
 
