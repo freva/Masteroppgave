@@ -7,6 +7,7 @@ import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.preprocessing.reader.DataSetReader;
+import com.freva.masteroppgave.utils.Parallel;
 import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 
@@ -27,19 +28,20 @@ public class LexicalClassifier {
 
 
     public static void main(String[] args) throws IOException {
+        long startTime = System.currentTimeMillis();
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
-        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TEST, 3, 2);
+        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2016_TEST, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, filters);
         Threshold threshold = new Threshold();
 
         ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());
-        for(DataSetEntry entry: dataSetReader) {
+        Parallel.For(dataSetReader, entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
             DataSetEntry.Class predicted = DataSetEntry.Class.classifyFromThresholds(predictedSentiment, neutralLowThreshold, neutralHighThreshold);
 
             classificationMetrics.updateEvidence(entry.getClassification(), predicted);
             threshold.updateEvidence(entry.getClassification(), predictedSentiment);
-        }
+        });
 
         System.out.println(classificationMetrics.getClassificationReport());
         System.out.println(classificationMetrics.getNormalizedConfusionMatrixReport());
@@ -47,5 +49,6 @@ public class LexicalClassifier {
                 "] with accuracy: " + classificationMetrics.getAccuracy());
         System.out.println("Optimal thresholds: [" + String.format("%4.2f", threshold.getLowThreshold()) + ", " +
                 String.format("%4.2f", threshold.getHighThreshold()) + "] with accuracy: " + threshold.getMaxAccuracy());
+        System.out.println("In: " + (System.currentTimeMillis()-startTime) + "ms");
     }
 }

@@ -58,7 +58,7 @@ public class MapUtils {
      * @param key Key to increment
      * @param increment Value to increment by
      */
-    public static<T> void incrementMapByValue(Map<T, Integer> map, T key, int increment) {
+    public synchronized static<T> void incrementMapByValue(Map<T, Integer> map, T key, int increment) {
         map.put(key, map.getOrDefault(key, 0) + increment);
     }
 

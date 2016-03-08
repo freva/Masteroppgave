@@ -50,7 +50,7 @@ public final class ClassificationMetrics {
      * @param yTrue The true result
      * @param yPred The predicted result
      */
-    public void updateEvidence(Enum yTrue, Enum yPred) {
+    public synchronized void updateEvidence(Enum yTrue, Enum yPred) {
         confusionMatrix[yTrue.ordinal()][yPred.ordinal()]++;
         cacheUpToDate = false;
     }

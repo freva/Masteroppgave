@@ -11,7 +11,7 @@ public class Threshold {
     private double maxAccuracy;
     private boolean cacheUpToDate = false;
 
-    public void updateEvidence(DataSetEntry.Class correctClass, double predictedSentiment) {
+    public synchronized void updateEvidence(DataSetEntry.Class correctClass, double predictedSentiment) {
         previousResults.add(new SentimentTuple(correctClass, predictedSentiment));
         cacheUpToDate = false;
     }

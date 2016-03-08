@@ -2,12 +2,8 @@ package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.preprocessing.reader.DataSetReader;
-import com.freva.masteroppgave.utils.FileUtils;
-import com.freva.masteroppgave.utils.JSONUtils;
-import com.freva.masteroppgave.utils.MapUtils;
-import com.freva.masteroppgave.utils.Resources;
+import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;
@@ -42,7 +38,7 @@ public class LexicalCreatorPMI implements Progressable{
 
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
-        for(DataSetEntry entry: dataSetReader){
+        Parallel.For(dataSetReader, entry -> {
             String tweet = Filters.chain(entry.getTweet(), filters);
             String[][] nGrams = NGrams.getSyntacticalNGrams(tweet, 3);
 
@@ -58,7 +54,7 @@ public class LexicalCreatorPMI implements Progressable{
                     MapUtils.incrementMapByValue(wordsNeg, nGram, 1);
                 }
             }
-        }
+        });
 
         int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
         int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
