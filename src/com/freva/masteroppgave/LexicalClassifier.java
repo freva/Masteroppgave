@@ -22,12 +22,12 @@ public class LexicalClassifier {
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
-    private static final double neutralLowThreshold = -0.45;
-    private static final double neutralHighThreshold = 0.65;
+    private static final double neutralLowThreshold = -3.46;
+    private static final double neutralHighThreshold = 3.81;
 
 
     public static void main(String[] args) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.OUR_LEXICON);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
         TweetReader tweetReader = new TweetReader(Resources.SEMEVAL_2013_TEST);
         Classifier classifier = new Classifier(priorPolarityLexicon, filters);
         Threshold threshold = new Threshold();

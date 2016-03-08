@@ -7,6 +7,7 @@ import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
+import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;
@@ -16,11 +17,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;;
+import java.util.Map;
+import java.util.function.Function;
 
 
 public class LexicalCreatorPMI implements Progressable{
-
     private TweetReader tweetReader;
 
     public static final List<Function<String, String>> filters = Arrays.asList(
@@ -29,73 +30,59 @@ public class LexicalCreatorPMI implements Progressable{
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
-    public LexicalCreatorPMI() throws IOException {
-        tweetReader = new TweetReader(new File("res/tweets/classified.txt"));
+
+    public static void main(String[] args) throws IOException {
+        LexicalCreatorPMI lexicalCreatorPMI = new LexicalCreatorPMI();
+        ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon...");
+        lexicalCreatorPMI.createLexicon();
     }
 
     public void createLexicon() throws IOException {
         tweetReader = new TweetReader(new File("res/tweets/classified.txt"));
-        HashMap<String, Integer> wordsPos = new HashMap<>();
-        HashMap<String, Integer> wordsNeg = new HashMap<>();
-        long pos = 0;
-        long neg = 0;
+
+        int pos = 0, neg = 0;
+        Map<String, Integer> wordsPos = new HashMap<>();
+        Map<String, Integer> wordsNeg = new HashMap<>();
         while (tweetReader.hasNext()){
             DataSetEntry entry = tweetReader.readAndPreprocessNextDataSetEntry(1, 0);
             String tweet = Filters.chain(entry.getTweet(), filters);
             String[][] nGrams = NGrams.getSyntacticalNGrams(tweet, 3);
-            if(entry.getClassification() == DataSetEntry.Class.POSITIVE){
-                pos ++;
-            }
-            else {
+
+            if(entry.getClassification().isPositive()){
+                pos++;
+            } else {
                 neg++;
             }
+
             for(String[] ngramWords : nGrams) {
                 if(WordFilters.containsIntensifier(ngramWords)) continue;
                 if(WordFilters.isStopWord(ngramWords[ngramWords.length - 1])) continue;
                 String ngram = String.join(" ", ngramWords);
-                if(entry.getClassification() == DataSetEntry.Class.POSITIVE){
-                    if(!wordsPos.containsKey(ngram)){
-                        wordsPos.put(ngram, 1);
-                    }
-                    if(!wordsNeg.containsKey(ngram)){
-                        wordsNeg.put(ngram, 0);
-                    }
-                    int newValue = wordsPos.get(ngram) + 1;
-                    wordsPos.put(ngram, newValue);
-                }
-                else{
-                    if(!wordsNeg.containsKey(ngram)){
-                        wordsNeg.put(ngram, 1);
-                    }
-                    if(!wordsPos.containsKey(ngram)){
-                        wordsPos.put(ngram, 0);
-                    }
-                    int newValue = wordsNeg.get(ngram) + 1;
-                    wordsNeg.put(ngram, newValue);
+                if(entry.getClassification().isPositive()){
+                    MapUtils.incrementMapByValue(wordsPos, ngram, 1);
+                } else {
+                    MapUtils.incrementMapByValue(wordsNeg, ngram, 1);
                 }
             }
         }
-        HashMap<String, Double> lexicon = new HashMap<>();
+
+        final double ratio = (double) neg / pos;
+        Map<String, Double> lexicon = new HashMap<>();
         for(String key : wordsPos.keySet()){
-            if(wordsNeg.get(key) > 50 || wordsPos.get(key) > 50) {
-                long under = wordsNeg.get(key) * pos != 0 ? wordsNeg.get(key) * pos : 1;
-                long over = wordsPos.get(key) * neg != 0 ? wordsPos.get(key) * neg : 1;
-                double sentimentValue = Math.log((float) over / (float) under);
+            if(wordsNeg.getOrDefault(key, 0) > 50 || wordsPos.getOrDefault(key, 0) > 50) {
+                int over = wordsPos.getOrDefault(key, 1);
+                int under = wordsNeg.getOrDefault(key, 1);
+
+                double sentimentValue = Math.log(ratio * over / under);
                 lexicon.put(key, sentimentValue);
             }
         }
         String lexiconJson  = JSONUtils.toJSON(MapUtils.sortMapByValue(lexicon), true);
-        FileUtils.writeToFile(new File("res/tweets/nrcLexicon.txt"), lexiconJson);
-    }
-
-    public static void main(String[] args) throws IOException {
-        LexicalCreatorPMI lexicalCreatorPMI = new LexicalCreatorPMI();
-        ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon");
-        lexicalCreatorPMI.createLexicon();
+        FileUtils.writeToFile(Resources.PMI_LEXICON, lexiconJson);
     }
 
     @Override
     public double getProgress() {
-        return tweetReader.getProgress();
+        return tweetReader == null ? 0 : tweetReader.getProgress();
     }
 }
