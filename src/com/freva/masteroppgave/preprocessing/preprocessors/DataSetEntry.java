@@ -48,5 +48,17 @@ public class DataSetEntry {
                 return NEUTRAL;
             }
         }
+
+        public boolean isPositive() {
+            return this == POSITIVE;
+        }
+
+            public boolean isNeutral() {
+            return this == NEUTRAL;
+        }
+
+        public boolean isNegative() {
+            return this == NEGATIVE;
+        }
     }
 }
