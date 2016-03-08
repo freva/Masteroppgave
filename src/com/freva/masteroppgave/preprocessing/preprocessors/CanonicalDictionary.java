@@ -4,6 +4,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
+import com.freva.masteroppgave.preprocessing.reader.TweetReader;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
@@ -38,9 +39,8 @@ public class CanonicalDictionary implements Progressable {
 
         int iteration = 0;
         Map<String, Map<String, Integer>> counter = new HashMap<>();
-        while(tweetReader.hasNext()) {
+        for(String tweet: tweetReader) {
             if(iteration++ % 100000 == 0) removeInfrequent(counter, (int) (iteration*termFrequency/2), correctFrequency/2);
-            String tweet = tweetReader.readAndPreprocessNextTweet();
 
             for(String word: RegexFilters.WHITESPACE.split(tweet)) {
                 String reduced = CanonicalForm.reduceToCanonicalForm(word);

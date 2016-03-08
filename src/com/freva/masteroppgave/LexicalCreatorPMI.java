@@ -3,7 +3,7 @@ package com.freva.masteroppgave;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
-import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
+import com.freva.masteroppgave.preprocessing.reader.DataSetReader;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 
 public class LexicalCreatorPMI implements Progressable{
-    private TweetReader tweetReader;
+    private DataSetReader dataSetReader;
 
     public static final List<Function<String, String>> filters = Arrays.asList(
             Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
@@ -38,34 +38,30 @@ public class LexicalCreatorPMI implements Progressable{
     }
 
     public void createLexicon() throws IOException {
-        tweetReader = new TweetReader(new File("res/tweets/classified.txt"));
+        dataSetReader = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
 
-        int pos = 0, neg = 0;
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
-        while (tweetReader.hasNext()){
-            DataSetEntry entry = tweetReader.readAndPreprocessNextDataSetEntry(1, 0);
+        for(DataSetEntry entry: dataSetReader){
             String tweet = Filters.chain(entry.getTweet(), filters);
             String[][] nGrams = NGrams.getSyntacticalNGrams(tweet, 3);
 
-            if(entry.getClassification().isPositive()){
-                pos++;
-            } else {
-                neg++;
-            }
+            for(String[] nGramWords : nGrams) {
+                if(WordFilters.containsIntensifier(nGramWords)) continue;
+                if(WordFilters.containsNegation(nGramWords)) continue;
+                if(WordFilters.isStopWord(nGramWords[nGramWords.length - 1])) continue;
 
-            for(String[] ngramWords : nGrams) {
-                if(WordFilters.containsIntensifier(ngramWords)) continue;
-                if(WordFilters.isStopWord(ngramWords[ngramWords.length - 1])) continue;
-                String ngram = String.join(" ", ngramWords);
+                String nGram = String.join(" ", nGramWords);
                 if(entry.getClassification().isPositive()){
-                    MapUtils.incrementMapByValue(wordsPos, ngram, 1);
+                    MapUtils.incrementMapByValue(wordsPos, nGram, 1);
                 } else {
-                    MapUtils.incrementMapByValue(wordsNeg, ngram, 1);
+                    MapUtils.incrementMapByValue(wordsNeg, nGram, 1);
                 }
             }
         }
 
+        int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
+        int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
         final double ratio = (double) neg / pos;
         Map<String, Double> lexicon = new HashMap<>();
         for(String key : wordsPos.keySet()){
@@ -83,6 +79,6 @@ public class LexicalCreatorPMI implements Progressable{
 
     @Override
     public double getProgress() {
-        return tweetReader == null ? 0 : tweetReader.getProgress();
+        return dataSetReader == null ? 0 : dataSetReader.getProgress();
     }
 }

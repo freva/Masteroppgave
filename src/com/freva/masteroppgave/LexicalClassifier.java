@@ -6,7 +6,7 @@ import com.freva.masteroppgave.classifier.Threshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
-import com.freva.masteroppgave.preprocessing.preprocessors.TweetReader;
+import com.freva.masteroppgave.preprocessing.reader.DataSetReader;
 import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 
@@ -22,20 +22,18 @@ public class LexicalClassifier {
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
-    private static final double neutralLowThreshold = -3.46;
-    private static final double neutralHighThreshold = 3.81;
+    private static final double neutralLowThreshold = -3.74;
+    private static final double neutralHighThreshold = 3.60;
 
 
     public static void main(String[] args) throws IOException {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
-        TweetReader tweetReader = new TweetReader(Resources.SEMEVAL_2013_TEST);
+        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TEST, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, filters);
         Threshold threshold = new Threshold();
 
         ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());
-        while (tweetReader.hasNext()) {
-            DataSetEntry entry = tweetReader.readAndPreprocessNextDataSetEntry(3, 2);
-
+        for(DataSetEntry entry: dataSetReader) {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
             DataSetEntry.Class predicted = DataSetEntry.Class.classifyFromThresholds(predictedSentiment, neutralLowThreshold, neutralHighThreshold);
 

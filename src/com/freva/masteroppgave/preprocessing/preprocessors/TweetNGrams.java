@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.preprocessing.reader.TweetReader;
 import com.freva.masteroppgave.utils.tools.NGrams;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import org.apache.commons.lang3.StringUtils;
@@ -27,14 +28,13 @@ public class TweetNGrams implements Progressable {
         this.tweetReader = new TweetReader(input, filters);
         NGramTree tree = new NGramTree();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
-        int lineCounter;
+        int lineCounter = 0;
 
-        for(lineCounter=0; tweetReader.hasNext(); lineCounter++) {
-            if(lineCounter % 50000 == 0 && lineCounter != 0) {
+        for(String line: tweetReader) {
+            if(lineCounter % 50000 == 0 && lineCounter++ != 0) {
                 tree.pruneInfrequent((int) (frequencyCutoff * lineCounter) / 2);
             }
 
-            String line = tweetReader.readAndPreprocessNextTweet();
             for(String[] nGramTokens: NGrams.getSyntacticalNGrams(line, n)) {
                 String nGram = StringUtils.join(nGramTokens, " ");
                 if(! containsAlphabet.matcher(nGram).find()) continue;

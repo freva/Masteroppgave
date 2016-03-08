@@ -3,6 +3,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.lexicon.container.ContextScore;
 import com.freva.masteroppgave.lexicon.container.PhraseTree;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
+import com.freva.masteroppgave.preprocessing.reader.TweetReader;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.google.gson.reflect.TypeToken;
@@ -34,8 +35,7 @@ public class TweetContexts implements Progressable {
         TypeToken typeToken = new TypeToken<ContextScore>(){};
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
-            while(tweetReader.hasNext()) {
-                String tweet = tweetReader.readAndPreprocessNextTweet();
+            for(String tweet: tweetReader) {
                 ContextScore trackedDistances = getTrackedDistances(tweet, tree, cutOffDistance);
                 String JSONTrackedDistances = JSONUtils.toJSON(trackedDistances, typeToken, false);
                 writer.write(JSONTrackedDistances + "\n");
