@@ -66,7 +66,7 @@ public class ProgressBar implements Runnable {
     public void run() {
         System.out.println(taskName);
         double progress;
-        while ((progress = progressable.getProgress()) != 100) {
+        while ((progress = progressable.getProgress()) < 100) {
             System.out.print(getProgress(progress));
             try {
                 Thread.sleep(updateResolution);
