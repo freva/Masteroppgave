@@ -1,11 +1,9 @@
 package com.freva.masteroppgave.utils;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Parallel {
     private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
@@ -13,25 +11,28 @@ public class Parallel {
     public static <T> void For(final Iterable<T> elements, final Operation<T> operation) {
         ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES);
 
-        try {
-            forPool.invokeAll(createCallables(elements, operation));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            forPool.shutdown();
-        }
-    }
-
-    private static <T> Collection<Callable<Void>> createCallables(final Iterable<T> elements, final Operation<T> operation) {
-        List<Callable<Void>> callables = new LinkedList<>();
-        for (final T elem : elements) {
-            callables.add(() -> {
-                operation.perform(elem);
-                return null;
+        Iterator<T> iterator = elements.iterator();
+        for(int i=0; i<NUM_CORES; i++) {
+            forPool.submit((Runnable) () -> {
+                while(true) {
+                    T next;
+                    synchronized (iterator) {
+                        if (!iterator.hasNext()) {
+                            return;
+                        }
+                        next = iterator.next();
+                    }
+                    operation.perform(next);
+                }
             });
         }
 
-        return callables;
+        try {
+            forPool.shutdown();
+            forPool.awaitTermination(10, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Operation<T> {

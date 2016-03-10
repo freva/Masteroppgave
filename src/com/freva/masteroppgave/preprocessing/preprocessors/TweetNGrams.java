@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.preprocessing.reader.LineReader;
 import com.freva.masteroppgave.preprocessing.reader.TweetReader;
@@ -21,8 +20,6 @@ import java.util.regex.Pattern;
 
 
 public class TweetNGrams implements Progressable {
-
-
     private LineReader tweetReader;
 
     /**
@@ -35,15 +32,16 @@ public class TweetNGrams implements Progressable {
      * @throws IOException
      */
     public final Map<String, Integer> getFrequentNGrams(File input, int n, double frequencyCutoff, List<Function<String, String>> filters) throws IOException {
-        this.tweetReader = new TweetReader(input, filters);
+        final AtomicInteger lineCounter = new AtomicInteger(0);
+        tweetReader = new TweetReader(input, filters);
         NGramTree tree = new NGramTree();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
-        int lineCounter = 0;
 
-
-        for(String line: tweetReader) {
-            if(lineCounter % 50000 == 0 && lineCounter++ != 0) {
-                tree.pruneInfrequent((int) (frequencyCutoff * lineCounter) / 2);
+        Parallel.For(tweetReader, line -> {
+            synchronized (lineCounter) {
+                if (lineCounter.incrementAndGet() % 50000 == 0) {
+                    tree.pruneInfrequent((int) (frequencyCutoff * lineCounter.intValue()) / 2);
+                }
             }
 
             for(String[] nGramTokens: NGrams.getSyntacticalNGrams(line, n)) {
@@ -54,32 +52,8 @@ public class TweetNGrams implements Progressable {
 
                 tree.incrementNGram(nGramTokens);
             }
-        }
-
-        return tree.getNGrams((int) (frequencyCutoff*lineCounter));
-    }
-
-    public final Map<String, Integer> getFrequentNGramsParallel(File input, int n, double frequencyCutoff, List<Function<String, String>> filters) throws IOException {
-        this.tweetReader = new LineReader(input);
-        NGramTree tree = new NGramTree();
-        Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
-        final AtomicInteger lineCounter = new AtomicInteger(0);
-        Parallel.For(tweetReader, line ->{
-            synchronized (lineCounter){
-                if(lineCounter.incrementAndGet() % 50000 == 0) {
-                    tree.pruneInfrequent((int) (frequencyCutoff * lineCounter.intValue()) / 2);
-                }
-            }
-            line = Filters.chain(line, filters);
-            for(String[] nGramTokens: NGrams.getSyntacticalNGrams(line, n)) {
-                String nGram = StringUtils.join(nGramTokens, " ");
-                if(! containsAlphabet.matcher(nGram).find()) continue;
-                if(WordFilters.containsIntensifier(nGramTokens) || WordFilters.containsNegation(nGramTokens)) continue;
-                if(WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
-
-                tree.incrementNGram(nGramTokens);
-            }
         });
+
         return tree.getNGrams((int) (frequencyCutoff*lineCounter.intValue()));
     }
 
