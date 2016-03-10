@@ -2,7 +2,7 @@ package com.freva.masteroppgave.classifier;
 
 import com.freva.masteroppgave.classifier.sentence.LexicalParser;
 import com.freva.masteroppgave.classifier.sentence.LexicalToken;
-import com.freva.masteroppgave.lexicon.container.PhraseTree;
+import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
@@ -15,13 +15,13 @@ import java.util.function.Function;
 public class Classifier {
     private List<Function<String, String>> filters;
     private PriorPolarityLexicon lexicon;
-    private PhraseTree phraseTree;
+    private TokenTrie<String> phraseTree;
 
 
     public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
         this.lexicon = lexicon;
         this.filters = filters;
-        this.phraseTree = new PhraseTree(lexicon.getSubjectiveWords());
+        this.phraseTree = TokenTrie.createTrieFromSentences(lexicon.getSubjectiveWords());
     }
 
 

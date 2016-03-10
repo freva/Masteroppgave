@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.lexicon.container.ContextScore;
-import com.freva.masteroppgave.lexicon.container.PhraseTree;
+import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.reader.TweetReader;
 import com.freva.masteroppgave.utils.JSONUtils;
@@ -31,7 +31,7 @@ public class TweetContexts implements Progressable {
      */
     public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, List<Function<String, String>> filters) throws IOException {
         this.tweetReader = new TweetReader(input, filters);
-        PhraseTree tree = new PhraseTree(tracked);
+        TokenTrie<String> tree = TokenTrie.createTrieFromSentences(tracked);
         TypeToken typeToken = new TypeToken<ContextScore>(){};
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
@@ -44,22 +44,23 @@ public class TweetContexts implements Progressable {
     }
 
 
-    private static ContextScore getTrackedDistances(String line, PhraseTree tree, int cutOffDistance) {
+    private static ContextScore getTrackedDistances(String line, TokenTrie<String> tree, int cutOffDistance) {
         ContextScore contextScore = new ContextScore();
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(line)) {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-            List<PhraseTree.Phrase> phrases = tree.findTrackedWords(sentenceTokens);
+            List<TokenTrie<String>.Token> tokens = tree.findTrackedWords(sentenceTokens);
 
-            for (int i = 0; i < phrases.size(); i++) {
-                PhraseTree.Phrase p1 = phrases.get(i);
+            for (int i = 0; i < tokens.size(); i++) {
+                TokenTrie<String>.Token p1 = tokens.get(i);
                 for (int j = 0; j < i; j++) {
-                    PhraseTree.Phrase p2 = phrases.get(j);
+                    TokenTrie<String>.Token p2 = tokens.get(j);
                     if (p1.overlapsWith(p2)) continue;
 
                     int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
                     if (score == 0) continue;
-                    contextScore.addDistance(p1.getPhrase(), p2.getPhrase(), score);
+                    contextScore.addDistance(String.join(" ", p1.getTokenSequence()),
+                            String.join(" ", p2.getTokenSequence()), score);
                 }
             }
         }
@@ -72,7 +73,7 @@ public class TweetContexts implements Progressable {
      * Calculates context score between two ranges (end of the first range to start of the second range)
      * @return Context score between ranges
      */
-    private static int getScoreBetweenPoints(PhraseTree.Phrase p1, PhraseTree.Phrase p2, int cutOffDistance) {
+    private static int getScoreBetweenPoints(TokenTrie.Token p1, TokenTrie.Token p2, int cutOffDistance) {
         int distance1 = p2.getEndIndex()-p1.getStartIndex(), distance2 = p2.getStartIndex()-p1.getEndIndex();
         int absDist1 = Math.abs(distance1), absDist2 = Math.abs(distance2);
         if(absDist1 < absDist2) {
