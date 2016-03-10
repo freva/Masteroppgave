@@ -1,12 +1,14 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;
+import com.freva.masteroppgave.utils.tools.Parallel;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,7 @@ public class LexicalCreatorPMI implements Progressable{
         ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon...");
         lexicalCreatorPMI.createLexicon();
     }
+
 
     public void createLexicon() throws IOException {
         dataSetReader = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
@@ -59,6 +62,7 @@ public class LexicalCreatorPMI implements Progressable{
         int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
         int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
         final double ratio = (double) neg / pos;
+
         Map<String, Double> lexicon = new HashMap<>();
         for(String key : wordsPos.keySet()){
             if(wordsNeg.getOrDefault(key, 0) > 50 || wordsPos.getOrDefault(key, 0) > 50) {
@@ -69,9 +73,10 @@ public class LexicalCreatorPMI implements Progressable{
                 lexicon.put(key, sentimentValue);
             }
         }
-        String lexiconJson  = JSONUtils.toJSON(MapUtils.sortMapByValue(lexicon), true);
-        FileUtils.writeToFile(Resources.PMI_LEXICON, lexiconJson);
+
+        JSONUtils.toJSONFile(Resources.PMI_LEXICON, MapUtils.sortMapByValue(lexicon), true);
     }
+
 
     @Override
     public double getProgress() {

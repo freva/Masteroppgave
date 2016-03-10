@@ -5,7 +5,6 @@ import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.reader.TweetReader;
-import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
@@ -57,8 +56,7 @@ public class CanonicalDictionary implements Progressable {
         Map<String, Set<String>> options = counter.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e-> e.getValue().keySet()));
 
-        String json = JSONUtils.toJSON(options, true);
-        FileUtils.writeToFile(output, json);
+        JSONUtils.toJSONFile(output, options, true);
     }
 
 

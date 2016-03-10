@@ -51,8 +51,7 @@ public class LexicalCreator {
             if (!use_cached_ngrams) {
                 ngrams = getAndCacheFrequentNGrams(max_n_grams_range, n_grams_cut_off_frequency, N_GRAM_FILTERS);
             } else {
-                String JSONNGrams = FileUtils.readEntireFileIntoString(Resources.TEMP_NGRAMS);
-                ngrams = JSONUtils.fromJSON(JSONNGrams, new TypeToken<Map<String, Integer>>(){});
+                ngrams = JSONUtils.fromJSONFile(Resources.TEMP_NGRAMS, new TypeToken<Map<String, Integer>>(){});
             }
 
             TweetContexts tweetContexts = new TweetContexts();
@@ -63,8 +62,7 @@ public class LexicalCreator {
 
         Graph graph = initializeGraph();
         Map<String, Double> lexicon = createLexicon(graph);
-        String jsonLexicon = JSONUtils.toJSON(lexicon, true);
-        FileUtils.writeToFile(Resources.OUR_LEXICON, jsonLexicon);
+        JSONUtils.toJSONFile(Resources.OUR_LEXICON, lexicon, true);
     }
 
 
@@ -75,8 +73,7 @@ public class LexicalCreator {
         Map<String, Integer> ngrams = tweetNGrams.getFrequentNGrams(tweets_file, n, frequencyCutoff, filters);
         ngrams = MapUtils.sortMapByValue(ngrams);
 
-        String JSONNGrams = JSONUtils.toJSON(ngrams, true);
-        FileUtils.writeToFile(Resources.TEMP_NGRAMS, JSONNGrams);
+        JSONUtils.toJSONFile(Resources.TEMP_NGRAMS, ngrams, true);
         return ngrams;
     }
 
@@ -87,7 +84,7 @@ public class LexicalCreator {
      * @throws IOException
      */
     private static Graph initializeGraph() throws IOException {
-        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(Resources.TEMP_CONTEXT, new TypeToken<Map<String, Map<String, Integer>>>(){});
+        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(Resources.TEMP_CONTEXT);
         ProgressBar.trackProgress(contexts, "Initializing graph...");
         Graph graph = new Graph(neighborLimit, pathLength, edgeThreshold);
 
