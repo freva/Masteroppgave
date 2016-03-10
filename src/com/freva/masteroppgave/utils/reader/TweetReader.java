@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.preprocessing.reader;
+package com.freva.masteroppgave.utils.reader;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import java.io.File;

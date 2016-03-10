@@ -3,7 +3,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.lexicon.container.ContextScore;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.reader.TweetReader;
+import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.google.gson.reflect.TypeToken;

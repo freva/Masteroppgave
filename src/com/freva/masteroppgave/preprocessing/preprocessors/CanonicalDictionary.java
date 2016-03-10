@@ -4,7 +4,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.reader.TweetReader;
+import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;

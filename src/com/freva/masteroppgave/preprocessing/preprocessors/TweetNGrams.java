@@ -1,8 +1,8 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
-import com.freva.masteroppgave.preprocessing.reader.LineReader;
-import com.freva.masteroppgave.preprocessing.reader.TweetReader;
+import com.freva.masteroppgave.utils.reader.LineReader;
+import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.Parallel;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;

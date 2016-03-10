@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.preprocessing.reader;
+package com.freva.masteroppgave.utils.reader;
 
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
