@@ -3,6 +3,7 @@ package com.freva.masteroppgave;
 import com.freva.masteroppgave.lexicon.graph.Graph;
 import com.freva.masteroppgave.lexicon.graph.Node;
 import com.freva.masteroppgave.lexicon.container.ContextScore;
+import com.freva.masteroppgave.preprocessing.reader.JSONLineByLine;
 import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.similarity.PairSimilarity;
 import com.freva.masteroppgave.utils.similarity.Cosine;

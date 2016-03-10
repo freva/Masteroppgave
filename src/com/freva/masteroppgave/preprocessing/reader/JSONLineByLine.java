@@ -1,5 +1,6 @@
-package com.freva.masteroppgave.utils;
+package com.freva.masteroppgave.preprocessing.reader;
 
+import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
@@ -8,10 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JSONLineByLine<T> implements Progressable {
-    private int totalLines = 0;
-    private int lineCounter = 0;
-    private Scanner scanner;
+public class JSONLineByLine<T> implements Iterator<T>, Iterable<T>, Progressable {
+    private LineReader lineReader;
     private TypeToken<T> type;
 
     /**
@@ -20,8 +19,7 @@ public class JSONLineByLine<T> implements Progressable {
      * @throws IOException
      */
     public JSONLineByLine(File file, TypeToken<T> type) throws IOException {
-        this.totalLines = FileUtils.countLines(file);
-        this.scanner = new Scanner(file);
+        this.lineReader = new LineReader(file);
         this.type = type;
     }
 
@@ -31,7 +29,7 @@ public class JSONLineByLine<T> implements Progressable {
      * @return True if more entries present
      */
     public boolean hasNext() {
-        return scanner.hasNext();
+        return lineReader.hasNext();
     }
 
 
@@ -41,12 +39,16 @@ public class JSONLineByLine<T> implements Progressable {
      * @throws JSONException
      */
     public T next() throws JSONException {
-        lineCounter++;
-        return JSONUtils.fromJSON(scanner.nextLine(), type);
+        return JSONUtils.fromJSON(lineReader.next(), type);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return this;
     }
 
     @Override
     public double getProgress() {
-        return (totalLines == 0 ? 0 : 100.0*lineCounter/totalLines);
+        return lineReader.getProgress();
     }
 }
