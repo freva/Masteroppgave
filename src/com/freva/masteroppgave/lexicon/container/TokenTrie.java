@@ -8,22 +8,28 @@ import java.util.List;
 public class TokenTrie<T> {
     private Node root = new Node();
 
+    public TokenTrie() {}
+
     /**
      * Creates a tokenSequence tree for efficient sub-tokenSequence look up.
      * @param tokens Collection of Strings of all the phrases which are whitespace delimited n-grams
      */
     public TokenTrie(Collection<T[]> tokens) {
         for(T[] tokenParts: tokens) {
-
-            Node tree = root;
-            for(T token: tokenParts) {
-                if(! tree.hasChild(token)) {
-                    tree.addChild(token);
-                }
-                tree = tree.getChild(token);
-            }
-            tree.setPhraseEnd(true);
+            addTokenSequence(tokenParts);
         }
+    }
+
+
+    public void addTokenSequence(T[] tokenSequence) {
+        Node tree = root;
+        for(T token: tokenSequence) {
+            if(! tree.hasChild(token)) {
+                tree.addChild(token);
+            }
+            tree = tree.getChild(token);
+        }
+        tree.setPhraseEnd(true);
     }
 
 
