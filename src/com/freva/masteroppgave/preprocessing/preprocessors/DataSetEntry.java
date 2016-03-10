@@ -53,7 +53,7 @@ public class DataSetEntry {
             return this == POSITIVE;
         }
 
-            public boolean isNeutral() {
+        public boolean isNeutral() {
             return this == NEUTRAL;
         }
 

@@ -84,7 +84,7 @@ public class LexicalCreator {
      * @throws IOException
      */
     private static Graph initializeGraph() throws IOException {
-        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(Resources.TEMP_CONTEXT);
+        JSONLineByLine<Map<String, Map<String, Integer>>> contexts = new JSONLineByLine<>(Resources.TEMP_CONTEXT, new TypeToken<Map<String, Map<String, Integer>>>(){});
         ProgressBar.trackProgress(contexts, "Initializing graph...");
         Graph graph = new Graph(neighborLimit, pathLength, edgeThreshold);
 

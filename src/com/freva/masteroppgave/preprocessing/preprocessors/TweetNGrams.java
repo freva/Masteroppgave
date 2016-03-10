@@ -1,9 +1,10 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.reader.TweetReader;
-import com.freva.masteroppgave.utils.Parallel;
+import com.freva.masteroppgave.utils.tools.Parallel;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;
 import org.apache.commons.lang3.StringUtils;
@@ -98,19 +99,21 @@ public class TweetNGrams implements Progressable {
                     pruneTree(child);
                 }
             }
+
             if(startNode != root && !root.hasChild(startNode)) {
                 for (String child : startNode.children.keySet()) {
                     Node childNode = startNode.children.get(child);
                     for (String phrase : childNode.phrases.keySet()) {
                         String combinedPhrase = startNode.phrase + " " + phrase;
-                        Node nodeToAdjust = getNode(combinedPhrase.split(" "));
+                        Node nodeToAdjust = getNode(RegexFilters.WHITESPACE.split(combinedPhrase));
                         if(nodeToAdjust != null) {
                             nodeToAdjust.subtractNumOccurrences(childNode.numOccurrences);
                             startNode.phrases.put(combinedPhrase, childNode.getPhraseOccurrences(phrase));
                         }
                     }
                 }
-                Node currentNode = getNode(startNode.phrase.split(" "));
+
+                Node currentNode = getNode(RegexFilters.WHITESPACE.split(startNode.phrase));
                 if(currentNode != null){
                     currentNode.subtractNumOccurrences(startNode.numOccurrences);
                     startNode.phrases.put(startNode.phrase, startNode.numOccurrences);

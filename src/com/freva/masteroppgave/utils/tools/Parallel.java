@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.utils;
+package com.freva.masteroppgave.utils.tools;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;

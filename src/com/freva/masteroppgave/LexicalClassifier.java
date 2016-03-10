@@ -7,7 +7,7 @@ import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
-import com.freva.masteroppgave.utils.Parallel;
+import com.freva.masteroppgave.utils.tools.Parallel;
 import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.ClassificationMetrics;
 

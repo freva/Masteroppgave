@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.lexicon.container;
 
-import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,7 +38,6 @@ public class PriorPolarityLexicon implements Iterable<String> {
 
 
     public static Map<String, Double> readLexicon(File file) throws IOException {
-        String json = FileUtils.readEntireFileIntoString(file);
-        return JSONUtils.fromJSON(json, new TypeToken<HashMap<String, Double>>(){});
+        return JSONUtils.fromJSONFile(file, new TypeToken<Map<String, Double>>(){});
     }
 }

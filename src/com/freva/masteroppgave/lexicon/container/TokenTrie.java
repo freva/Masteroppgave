@@ -15,9 +15,7 @@ public class TokenTrie<T> {
      * @param tokens Collection of Strings of all the phrases which are whitespace delimited n-grams
      */
     public TokenTrie(Collection<T[]> tokens) {
-        for(T[] tokenParts: tokens) {
-            addTokenSequence(tokenParts);
-        }
+        tokens.forEach(this::addTokenSequence);
     }
 
 

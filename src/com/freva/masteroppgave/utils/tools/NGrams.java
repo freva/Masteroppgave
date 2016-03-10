@@ -1,7 +1,6 @@
 package com.freva.masteroppgave.utils.tools;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

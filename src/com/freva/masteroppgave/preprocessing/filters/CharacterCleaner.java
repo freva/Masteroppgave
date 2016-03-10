@@ -2,7 +2,6 @@ package com.freva.masteroppgave.preprocessing.filters;
 
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
-import com.freva.masteroppgave.utils.Resources;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.Fitzpatrick;

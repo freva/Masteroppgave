@@ -1,7 +1,6 @@
 package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.Resources;
 import com.google.gson.reflect.TypeToken;
@@ -14,8 +13,7 @@ public class EmoticonLexicon {
 
     static {
         try {
-            String json = FileUtils.readEntireFileIntoString(Resources.EMOTICON_LEXICON);
-            lexicon = JSONUtils.fromJSON(json, new TypeToken<Map<String, String>>(){});
+            lexicon = JSONUtils.fromJSONFile(Resources.EMOTICON_LEXICON, new TypeToken<Map<String, String>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
