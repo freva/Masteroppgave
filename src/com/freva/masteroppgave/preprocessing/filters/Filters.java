@@ -5,7 +5,6 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.Normalizer;
-import java.util.List;
 import java.util.function.Function;
 
 public class Filters {
@@ -83,6 +82,11 @@ public class Filters {
 
     public static String placeholderUsername(String text) {
         return RegexFilters.replaceUsername(text, USERNAME_PLACEHOLDER);
+    }
+
+
+    public static String removeEMail(String text) {
+        return RegexFilters.TWITTER_EMAIL.matcher(text).replaceAll("");
     }
 
 

@@ -22,7 +22,8 @@ public class RegexFilters {
     public static final Pattern TWITTER_USERNAME = Pattern.compile("(@\\w{1,15})");
     public static final Pattern TWITTER_HASHTAG = Pattern.compile("#([a-zA-Z]+\\w*)");
     public static final Pattern TWITTER_RT_TAG = Pattern.compile("(^RT\\s+|\\s+RT\\s+)");
-    public static final Pattern TWITTER_URL = Pattern.compile("(https?://\\S+)");
+    public static final Pattern TWITTER_URL = Pattern.compile("(https?://|www\\S+)");
+    public static final Pattern TWITTER_EMAIL = Pattern.compile("\\w+@\\S+");
 
     public static final Pattern WHITESPACE = Pattern.compile("\\s+");
     public static final Pattern POS_TAG = Pattern.compile("_[A-Z$]+");
