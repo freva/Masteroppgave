@@ -2,10 +2,12 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.lexicon.container.ContextScore;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
+import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.freva.masteroppgave.utils.reader.LineReader;
+import com.freva.masteroppgave.utils.tools.Parallel;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedWriter;
@@ -18,7 +20,7 @@ import java.util.function.Function;
 
 
 public class TweetContexts implements Progressable {
-    private TweetReader tweetReader;
+    private LineReader tweetReader;
 
     /**
      * Finds all context words to tracked words in a file, treating each new line as a new document.
@@ -30,16 +32,22 @@ public class TweetContexts implements Progressable {
      * @throws IOException
      */
     public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, List<Function<String, String>> filters) throws IOException {
-        this.tweetReader = new TweetReader(input, filters);
         TokenTrie<String> tree = TokenTrie.createTrieFromSentences(tracked);
         TypeToken typeToken = new TypeToken<ContextScore>(){};
+        tweetReader = new LineReader(input);
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
-            for(String tweet: tweetReader) {
+            Parallel.For(tweetReader, tweet -> {
+                tweet = Filters.chain(tweet, filters);
                 ContextScore trackedDistances = getTrackedDistances(tweet, tree, cutOffDistance);
                 String JSONTrackedDistances = JSONUtils.toJSON(trackedDistances, typeToken, false);
-                writer.write(JSONTrackedDistances + "\n");
-            }
+
+                try {
+                    writer.write(JSONTrackedDistances + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

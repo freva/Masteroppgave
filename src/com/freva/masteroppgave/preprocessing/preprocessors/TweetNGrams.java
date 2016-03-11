@@ -1,9 +1,9 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 import com.freva.masteroppgave.utils.reader.LineReader;
-import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.NGrams;
@@ -34,18 +34,19 @@ public class TweetNGrams implements Progressable {
      */
     public final Map<String, Integer> getFrequentNGrams(File input, int n, double frequencyCutoff, List<Function<String, String>> filters) throws IOException {
         final AtomicInteger lineCounter = new AtomicInteger(0);
-        tweetReader = new TweetReader(input, filters);
+        tweetReader = new LineReader(input);
         NGramTree tree = new NGramTree();
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
 
-        Parallel.For(tweetReader, line -> {
+        Parallel.For(tweetReader, tweet -> {
+            tweet = Filters.chain(tweet, filters);
             synchronized (lineCounter) {
                 if (lineCounter.incrementAndGet() % 50000 == 0) {
                     tree.pruneInfrequent((int) (frequencyCutoff * lineCounter.intValue()) / 2);
                 }
             }
 
-            for(String[] nGramTokens: NGrams.getSyntacticalNGrams(line, n)) {
+            for(String[] nGramTokens: NGrams.getSyntacticalNGrams(tweet, n)) {
                 String nGram = StringUtils.join(nGramTokens, " ");
                 if(! containsAlphabet.matcher(nGram).find()) continue;
                 if(WordFilters.containsIntensifier(nGramTokens) || WordFilters.containsNegation(nGramTokens)) continue;

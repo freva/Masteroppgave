@@ -4,10 +4,10 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.utils.reader.TweetReader;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
+import com.freva.masteroppgave.utils.reader.LineReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class CanonicalDictionary implements Progressable {
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
-    private TweetReader tweetReader;
+    private LineReader tweetReader;
 
 
     /**
@@ -34,13 +34,14 @@ public class CanonicalDictionary implements Progressable {
      * @throws IOException
      */
     public void createCanonicalDictionary(File input, File output, double correctFrequency, double termFrequency) throws IOException {
-        tweetReader = new TweetReader(input, filters);
+        tweetReader = new LineReader(input);
 
         int iteration = 0;
         Map<String, Map<String, Integer>> counter = new HashMap<>();
         for(String tweet: tweetReader) {
             if(iteration++ % 100000 == 0) removeInfrequent(counter, (int) (iteration*termFrequency/2), correctFrequency/2);
 
+            tweet = Filters.chain(tweet, filters);
             for(String word: RegexFilters.WHITESPACE.split(tweet)) {
                 String reduced = CanonicalForm.reduceToCanonicalForm(word);
                 if(! counter.containsKey(reduced)) {
