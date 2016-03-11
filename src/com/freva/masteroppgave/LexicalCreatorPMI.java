@@ -20,17 +20,11 @@ import java.util.function.Function;
 
 public class LexicalCreatorPMI implements Progressable{
     private DataSetReader dataSetReader;
-    private TokenTrie<String> tokenTrie;
-    private final int nGramRange = 3;
-    private final double cutoffFrequency = 0.0004;
-    private final int nGramFrequencyThreshold = 50;
-    private boolean useCachedNGrams = false;
 
-    public static final List<Function<String, String>> TWEET_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
-            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+    private static final int nGramRange = 3;
+    private static final double cutoffFrequency = 0.0004;
+    private static final int nGramFrequencyThreshold = 50;
+    private static final boolean useCachedNGrams = false;
 
     public static final List<Function<String, String>> N_GRAM_FILTERS = Arrays.asList(
             Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
@@ -38,17 +32,26 @@ public class LexicalCreatorPMI implements Progressable{
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
+    public static final List<Function<String, String>> TWEET_FILTERS = Arrays.asList(
+            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
+            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
+            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+
 
     public static void main(String[] args) throws IOException {
+        Set<String> frequentNGrams = generateNGrams();
+        TokenTrie<String> tokenTrie = TokenTrie.createTrieFromSentences(frequentNGrams);
+
         LexicalCreatorPMI lexicalCreatorPMI = new LexicalCreatorPMI();
         ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon...");
-        lexicalCreatorPMI.createLexicon();
+        lexicalCreatorPMI.createLexicon(tokenTrie);
     }
 
 
-    public void createLexicon() throws IOException {
+    public void createLexicon(TokenTrie<String> tokenTrie) throws IOException {
         dataSetReader = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
-        generateNGrams();
+
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
         Parallel.For(dataSetReader, entry -> {
@@ -84,17 +87,16 @@ public class LexicalCreatorPMI implements Progressable{
         JSONUtils.toJSONFile(Resources.PMI_LEXICON, MapUtils.sortMapByValue(lexicon), true);
     }
 
-    private void generateNGrams() throws IOException {
-        if(!useCachedNGrams) {
-            LexicalCreator.getAndCacheFrequentNGrams(nGramRange, cutoffFrequency,N_GRAM_FILTERS);
+    private static Set<String> generateNGrams() throws IOException {
+        if(! useCachedNGrams) {
+            return LexicalCreator.getAndCacheFrequentNGrams(nGramRange, cutoffFrequency, N_GRAM_FILTERS).keySet();
+        } else {
+            return JSONUtils.fromJSONFile(Resources.TEMP_NGRAMS, new TypeToken<HashMap<String, Integer>>(){}).keySet();
         }
-        String nGramsJson = FileUtils.readEntireFileIntoString(Resources.TEMP_NGRAMS);
-        Set<String> ngrams = JSONUtils.fromJSON(nGramsJson, new TypeToken<HashMap<String, Integer>>(){}).keySet();
-        tokenTrie = TokenTrie.createTrieFromSentences(ngrams);
     }
 
 
-    private boolean containsIllegalWord(String[] nGram) {
+    private static boolean containsIllegalWord(String[] nGram) {
         return WordFilters.isStopWord(nGram[nGram.length - 1]) || WordFilters.containsNegation(nGram) || WordFilters.containsIntensifier(nGram);
     }
 
