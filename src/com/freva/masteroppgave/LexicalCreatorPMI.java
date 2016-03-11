@@ -12,7 +12,6 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.Parallel;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
@@ -50,7 +49,7 @@ public class LexicalCreatorPMI implements Progressable{
 
 
     public void createLexicon(TokenTrie<String> tokenTrie) throws IOException {
-        dataSetReader = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
+        dataSetReader = new DataSetReader(Resources.CLASSIFIED, 1, 0);
 
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
@@ -97,7 +96,7 @@ public class LexicalCreatorPMI implements Progressable{
 
 
     private static boolean containsIllegalWord(String[] nGram) {
-        return WordFilters.isStopWord(nGram[nGram.length - 1]) || WordFilters.containsNegation(nGram) || WordFilters.containsIntensifier(nGram);
+        return WordFilters.isStopWord(nGram[nGram.length - 1])|| WordFilters.containsIntensifier(nGram);
     }
 
 
