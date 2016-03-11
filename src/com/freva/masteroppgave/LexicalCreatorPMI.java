@@ -12,6 +12,7 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.tools.Parallel;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
@@ -20,9 +21,9 @@ import java.util.function.Function;
 public class LexicalCreatorPMI implements Progressable{
     private DataSetReader dataSetReader;
 
-    private static final int nGramRange = 3;
-    private static final double cutoffFrequency = 0.0004;
-    private static final int nGramFrequencyThreshold = 50;
+    private static final int nGramRange = 4;
+    private static final double cutoffFrequency = 0.0002;
+    private static final int nGramFrequencyThreshold = 40;
     private static final boolean useCachedNGrams = false;
 
     public static final List<Function<String, String>> N_GRAM_FILTERS = Arrays.asList(
@@ -82,7 +83,7 @@ public class LexicalCreatorPMI implements Progressable{
                 lexicon.put(key, sentimentValue);
             }
         }
-
+        lexicon = findAdjectives(lexicon);
         JSONUtils.toJSONFile(Resources.PMI_LEXICON, MapUtils.sortMapByValue(lexicon), true);
     }
 
@@ -92,6 +93,22 @@ public class LexicalCreatorPMI implements Progressable{
         } else {
             return JSONUtils.fromJSONFile(Resources.TEMP_NGRAMS, new TypeToken<HashMap<String, Integer>>(){}).keySet();
         }
+    }
+
+    private Map<String, Double> findAdjectives(Map<String, Double> lexicon) throws IOException {
+        String adjectiveJson = FileUtils.readEntireFileIntoString(new File("res/tweets/adjectiveDict.txt"));
+        Map<String, String[]> adjectiveDict = JSONUtils.fromJSON(adjectiveJson, new TypeToken<HashMap<String, String[]>>(){});
+        HashMap<String, Double> wordsToBeAdded = new HashMap<>();
+        for(String key : lexicon.keySet()){
+            if(adjectiveDict.containsKey(key)){
+                for(String relatedWord : adjectiveDict.get(key)){
+                    if(! lexicon.containsKey(relatedWord) && ! wordsToBeAdded.containsKey(relatedWord)){
+                        wordsToBeAdded.put(relatedWord, lexicon.get(key));
+                    }
+                }
+            }
+        }
+        return MapUtils.mergeMaps(lexicon, wordsToBeAdded);
     }
 
 
