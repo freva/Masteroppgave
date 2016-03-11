@@ -28,9 +28,9 @@
   },
 
   "emotes" : {
-    "clfemotepositive": 1,
+    "clfemotepositive": 15,
     "clfemoteneutral": 0,
-    "clfemotenegaive": -1
+    "clfemotenegaive": -15
   },
 
   "negators": ["aint", "anit", "cant", "cannot", "couldnt", "didnt", "dnt", "doesnt", "dont", "dont", "hadnt", "hasnt", "havent", "havnt", "isnt",
