@@ -64,7 +64,7 @@ public class Filters {
 
 
     public static String parseUnicodeEmoticons(String text) {
-        return EmojiParser.parseToAliases(text);
+        return EmojiParser.parseToAliases(text, EmojiParser.FitzpatrickAction.REMOVE);
     }
 
     public static String removeUnicodeEmoticons(String text) {

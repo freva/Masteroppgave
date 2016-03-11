@@ -66,7 +66,7 @@ public class LexicalCreator {
     }
 
 
-    private static Map<String, Integer> getAndCacheFrequentNGrams(int n, double frequencyCutoff,
+    public static Map<String, Integer> getAndCacheFrequentNGrams(int n, double frequencyCutoff,
                                                                   List<Function<String, String>> filters) throws IOException {
         TweetNGrams tweetNGrams = new TweetNGrams();
         ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");

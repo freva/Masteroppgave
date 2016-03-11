@@ -52,7 +52,7 @@ public class ProgressBar implements Runnable {
 
     private static String getProgressBar(double percent) {
         String bar = fullProgress.substring(0, (int) percent) + noProgress.substring((int) percent);
-        String status = (percent == 100 ? "Finish" : String.format("%05.2f%%", percent));
+        String status = (percent >= 100 ? "Finish" : String.format("%05.2f%%", percent));
         return "[" + bar.substring(0, 46) + " " + status + " " + bar.substring(54) + "]";
     }
 
