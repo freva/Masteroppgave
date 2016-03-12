@@ -15,13 +15,13 @@ import java.util.function.Function;
 public class Classifier {
     private List<Function<String, String>> filters;
     private PriorPolarityLexicon lexicon;
-    private TokenTrie<String> phraseTree;
+    private TokenTrie phraseTree;
 
 
     public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
         this.lexicon = lexicon;
         this.filters = filters;
-        this.phraseTree = TokenTrie.createTrieFromSentences(lexicon.getSubjectiveWords());
+        this.phraseTree = new TokenTrie(lexicon.getSubjectiveWords());
     }
 
 

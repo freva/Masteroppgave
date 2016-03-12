@@ -15,15 +15,15 @@ public class LexicalParser {
      * @param phraseTree Token tree that contains all the lexical n-grams
      * @return List of LexicalTokens
      */
-    public static List<LexicalToken> lexicallyParseTweet(String tweet, TokenTrie<String> phraseTree) {
+    public static List<LexicalToken> lexicallyParseTweet(String tweet, TokenTrie phraseTree) {
         List<LexicalToken> lexicalTokens = new ArrayList<>();
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-            List<TokenTrie<String>.Token> tokenRanges = phraseTree.findOptimalAllocation(sentenceTokens);
+            List<TokenTrie.Token> tokenRanges = phraseTree.findOptimalAllocation(sentenceTokens);
 
             int setIndex = 0;
-            for(TokenTrie<String>.Token token : tokenRanges) {
+            for(TokenTrie.Token token : tokenRanges) {
                 while(setIndex < token.getStartIndex()) {
                     lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++], false));
                 }

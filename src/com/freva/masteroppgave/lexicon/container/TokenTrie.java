@@ -5,23 +5,26 @@ import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import java.util.*;
 import java.util.List;
 
-public class TokenTrie<T> {
+public class TokenTrie {
     private Node root = new Node();
 
     public TokenTrie() {}
 
     /**
      * Creates a tokenSequence tree for efficient sub-tokenSequence look up.
-     * @param tokens Collection of Strings of all the phrases which are whitespace delimited n-grams
+     * @param sentences Collection of Strings of all the phrases which are whitespace delimited n-grams
      */
-    public TokenTrie(Collection<T[]> tokens) {
-        tokens.forEach(this::addTokenSequence);
+    public TokenTrie(Collection<String> sentences) {
+        for(String sentence: sentences) {
+            String[] words = RegexFilters.WHITESPACE.split(sentence);
+            addTokenSequence(words);
+        }
     }
 
 
-    public void addTokenSequence(T[] tokenSequence) {
+    public void addTokenSequence(String[] tokenSequence) {
         Node tree = root;
-        for(T token: tokenSequence) {
+        for(String token: tokenSequence) {
             if(! tree.hasChild(token)) {
                 tree.addChild(token);
             }
@@ -31,14 +34,7 @@ public class TokenTrie<T> {
     }
 
 
-    public static TokenTrie<String> createTrieFromSentences(Collection<String> sentences) {
-        Collection<String[]> brokenUpSentences = new ArrayList<>(sentences.size());
-        for(String sentence: sentences) {
-            String[] words = RegexFilters.WHITESPACE.split(sentence);
-            brokenUpSentences.add(words);
-        }
-        return new TokenTrie<>(brokenUpSentences);
-    }
+
 
 
     /**
@@ -49,9 +45,9 @@ public class TokenTrie<T> {
      * @return Returns true if tokenSequence in its entirety is in the tree, null if part of the tokenSequence matches a larger tokenSequence,
      * false if phrases matches no tokenSequence entirely or any longer tokenSequence.
      */
-    public Boolean hasTokens(T[] phrase) {
+    public Boolean hasTokens(String[] phrase) {
         Node tree = root;
-        for(T token: phrase) {
+        for(String token: phrase) {
             if(! tree.hasChild(token)) return false;
             tree = tree.getChild(token);
         }
@@ -66,12 +62,12 @@ public class TokenTrie<T> {
      * @return Map of Points, where (x, y) coordinates denote start and end (inclusive) index in tokens of tokenSequence, and
      * String which stores the actual tokenSequence found
      */
-    public List<Token> findTrackedWords(T[] tokens) {
+    public List<Token> findTrackedWords(String[] tokens) {
         List<Token> trackedWords = new ArrayList<>();
 
         for(int i=0; i<tokens.length; i++) {
             for(int j=i+1; j<=tokens.length; j++) {
-                T[] phrase = Arrays.copyOfRange(tokens, i, j);
+                String[] phrase = Arrays.copyOfRange(tokens, i, j);
                 Boolean status = hasTokens(phrase);
 
                 if(status == null) {
@@ -87,7 +83,7 @@ public class TokenTrie<T> {
     }
 
 
-    public List<Token> findOptimalAllocation(T[] tokens) {
+    public List<Token> findOptimalAllocation(String[] tokens) {
         List<Token> tokenRanges = findTrackedWords(tokens);
         Collections.sort(tokenRanges);
 
@@ -112,15 +108,15 @@ public class TokenTrie<T> {
 
     public class Token implements Comparable<Token> {
         private final int startIndex, endIndex;
-        private final T[] tokenSequence;
+        private final String[] tokenSequence;
 
-        public Token(T[] tokenSequence, int startIndex, int endIndex) {
+        public Token(String[] tokenSequence, int startIndex, int endIndex) {
             this.tokenSequence = tokenSequence;
             this.startIndex = startIndex;
             this.endIndex = endIndex;
         }
 
-        public T[] getTokenSequence() {
+        public String[] getTokenSequence() {
             return tokenSequence;
         }
 
@@ -154,18 +150,18 @@ public class TokenTrie<T> {
 
 
     private class Node {
-        private Map<T, Node> children = new HashMap<>();
+        private Map<String, Node> children = new HashMap<>();
         private boolean endOfPhrase = false;
 
-        public boolean hasChild(T value) {
+        public boolean hasChild(String value) {
             return children.containsKey(value);
         }
 
-        public void addChild(T value) {
+        public void addChild(String value) {
             children.put(value, new Node());
         }
 
-        public Node getChild(T value) {
+        public Node getChild(String value) {
             return children.get(value);
         }
 

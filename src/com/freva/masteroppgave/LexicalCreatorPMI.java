@@ -2,6 +2,7 @@ package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.TokenTrie.*;
+import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
@@ -33,15 +34,15 @@ public class LexicalCreatorPMI implements Progressable{
             Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
     public static final List<Function<String, String>> TWEET_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
-            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+            Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::removeHashtag, Filters::removeEMail, Filters::removeUsername,
+            Filters::removeFreeDigits, Filters::replaceEmoticons, CharacterCleaner::cleanCharacters,
+            String::toLowerCase);
 
 
     public static void main(String[] args) throws IOException {
         Set<String> frequentNGrams = generateNGrams();
-        TokenTrie<String> tokenTrie = TokenTrie.createTrieFromSentences(frequentNGrams);
+        TokenTrie tokenTrie = new TokenTrie(frequentNGrams);
 
         LexicalCreatorPMI lexicalCreatorPMI = new LexicalCreatorPMI();
         ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon...");
@@ -49,17 +50,19 @@ public class LexicalCreatorPMI implements Progressable{
     }
 
 
-    public void createLexicon(TokenTrie<String> tokenTrie) throws IOException {
+    public void createLexicon(TokenTrie tokenTrie) throws IOException {
         dataSetReader = new DataSetReader(Resources.CLASSIFIED, 1, 0);
 
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
         Parallel.For(dataSetReader, entry -> {
             String tweet = Filters.chain(entry.getTweet(), TWEET_FILTERS);
-            List<TokenTrie<String>.Token> tokens = tokenTrie.findOptimalAllocation(RegexFilters.WHITESPACE.split(tweet));
+            List<TokenTrie.Token> tokens = tokenTrie.findOptimalAllocation(RegexFilters.WHITESPACE.split(tweet));
+
             for(Token token : tokens) {
-                String[] nGramWords = (String[]) token.getTokenSequence();
+                String[] nGramWords = token.getTokenSequence();
                 if(containsIllegalWord(nGramWords)) continue;
+
                 String nGram = String.join(" ", nGramWords);
                 if(entry.getClassification().isPositive()){
                     MapUtils.incrementMapByValue(wordsPos, nGram, 1);
@@ -83,7 +86,7 @@ public class LexicalCreatorPMI implements Progressable{
                 lexicon.put(key, sentimentValue);
             }
         }
-        lexicon = findAdjectives(lexicon);
+//        lexicon = findAdjectives(lexicon);
         JSONUtils.toJSONFile(Resources.PMI_LEXICON, MapUtils.sortMapByValue(lexicon), true);
     }
 

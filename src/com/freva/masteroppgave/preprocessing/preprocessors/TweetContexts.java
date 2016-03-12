@@ -32,7 +32,7 @@ public class TweetContexts implements Progressable {
      * @throws IOException
      */
     public final void findContextWords(File input, File output, Set<String> tracked, int cutOffDistance, List<Function<String, String>> filters) throws IOException {
-        TokenTrie<String> tree = TokenTrie.createTrieFromSentences(tracked);
+        TokenTrie tree = new TokenTrie(tracked);
         TypeToken typeToken = new TypeToken<ContextScore>(){};
         tweetReader = new LineReader(input);
 
@@ -52,17 +52,17 @@ public class TweetContexts implements Progressable {
     }
 
 
-    private static ContextScore getTrackedDistances(String line, TokenTrie<String> tree, int cutOffDistance) {
+    private static ContextScore getTrackedDistances(String line, TokenTrie tree, int cutOffDistance) {
         ContextScore contextScore = new ContextScore();
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(line)) {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-            List<TokenTrie<String>.Token> tokens = tree.findTrackedWords(sentenceTokens);
+            List<TokenTrie.Token> tokens = tree.findTrackedWords(sentenceTokens);
 
             for (int i = 0; i < tokens.size(); i++) {
-                TokenTrie<String>.Token p1 = tokens.get(i);
+                TokenTrie.Token p1 = tokens.get(i);
                 for (int j = 0; j < i; j++) {
-                    TokenTrie<String>.Token p2 = tokens.get(j);
+                    TokenTrie.Token p2 = tokens.get(j);
                     if (p1.overlapsWith(p2)) continue;
 
                     int score = getScoreBetweenPoints(p1, p2, cutOffDistance);
