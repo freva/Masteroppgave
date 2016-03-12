@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class WordFilters {
+    private static final Pattern SPECIAL_CLASS_WORD = Pattern.compile("\\|\\|\\S+\\|\\|");
     private static Map<String, Double> intensifiers;
     private static Map<String, Double> emoteClasses;
     private static Set<String> negators;
@@ -91,6 +92,11 @@ public class WordFilters {
 
     public static double getEmoteClassValue(String word) {
         return emoteClasses.get(word);
+    }
+
+
+    public static boolean isSpecialClassWord(String word) {
+        return SPECIAL_CLASS_WORD.matcher(word).find();
     }
 
 
