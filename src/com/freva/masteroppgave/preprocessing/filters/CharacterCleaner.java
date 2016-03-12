@@ -61,7 +61,7 @@ public class CharacterCleaner {
 
             if (emojiEnd != -1) {
                 sb.append(input.substring(prev, i));
-                sb.append(" ||").append(emojiTrie.getEmoji(input.substring(i, emojiEnd))).append("|| ");
+                sb.append(" ||").append(emojiTrie.getEmoji(input.substring(i, emojiEnd)).getAliases().get(0)).append("|| ");
                 prev = emojiEnd;
                 i = prev-1;
             }
