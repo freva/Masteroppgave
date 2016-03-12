@@ -25,14 +25,14 @@ public class LexicalParser {
             int setIndex = 0;
             for(TokenTrie.Token token : tokenRanges) {
                 while(setIndex < token.getStartIndex()) {
-                    lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++], false));
+                    lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++]));
                 }
-                lexicalTokens.add(new LexicalToken(String.join(" ", token.getTokenSequence()), true));
+                lexicalTokens.add(new LexicalToken(String.join(" ", token.getTokenSequence())));
                 setIndex = token.getEndIndex()+1;
             }
 
             while(setIndex < sentenceTokens.length) {
-                lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++], false));
+                lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++]));
             }
 
             lexicalTokens.get(lexicalTokens.size()-1).setAtEndOfSentence(true);

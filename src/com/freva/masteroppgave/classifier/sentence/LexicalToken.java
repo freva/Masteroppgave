@@ -7,16 +7,13 @@ public class LexicalToken {
     private double lexicalValue;
     private double intensification;
 
-    private boolean inLexicon = false;
     private boolean inNegatedContext;
     private boolean atEndOfSentence;
 
 
-    public LexicalToken(String phrase, boolean inLexicon) {
+    public LexicalToken(String phrase) {
         this.phrase = phrase;
-        this.inLexicon = inLexicon;
     }
-
 
     public String getPhrase() {
         return phrase;
@@ -64,10 +61,6 @@ public class LexicalToken {
 
     public boolean isUnderIntensification() {
         return intensification != 0;
-    }
-
-    public boolean isInLexicon() {
-        return inLexicon;
     }
 
     public String toString() {
