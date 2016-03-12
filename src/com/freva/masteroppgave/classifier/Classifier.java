@@ -38,7 +38,7 @@ public class Classifier {
             LexicalToken token = lexicalTokens.get(i);
             String phrase = token.getPhrase();
 
-            if(token.isInLexicon()) {
+            if(lexicon.hasWord(phrase)) {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
 
             } else if(WordFilters.isEmoteClass(phrase)) {

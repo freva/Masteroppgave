@@ -28,14 +28,14 @@ public class LexicalCreatorPMI implements Progressable{
     private static final boolean useCachedNGrams = false;
 
     public static final List<Function<String, String>> N_GRAM_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+            Filters::HTMLUnescape, CharacterCleaner::removeAllEmojis, Filters::normalizeForm, Filters::removeURL,
             Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+            String::toLowerCase);
 
     public static final List<Function<String, String>> TWEET_FILTERS = Arrays.asList(
             Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::removeHashtag, Filters::removeEMail, Filters::removeUsername,
+            Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
             Filters::removeFreeDigits, Filters::replaceEmoticons, CharacterCleaner::cleanCharacters,
             String::toLowerCase);
 

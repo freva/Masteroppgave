@@ -4,6 +4,7 @@ package com.freva.masteroppgave;
 import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.Threshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
+import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
@@ -18,19 +19,19 @@ import java.util.function.Function;
 
 public class LexicalClassifier {
     public static final List<Function<String, String>> filters = Arrays.asList(
-            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::hashtagToWord, Filters::removeUsername, Filters::replaceEmoticons,
-            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-            Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+            Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
+            Filters::replaceEmoticons, CharacterCleaner::cleanCharacters, Filters::removeFreeDigits,
+            String::toLowerCase);
 
-    private static final double neutralLowThreshold = -3.74;
-    private static final double neutralHighThreshold = 3.60;
+    private static final double neutralLowThreshold = -3.75;
+    private static final double neutralHighThreshold = 4.30;
 
 
     public static void main(String[] args) throws IOException {
         long startTime = System.currentTimeMillis();
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
-        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2016_TEST, 3, 2);
+        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TEST, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, filters);
         Threshold threshold = new Threshold();
 
