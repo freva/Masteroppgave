@@ -217,6 +217,6 @@ public class Filters {
     }
 
     public static String replaceEmoticons(String text){
-        return EmoticonLexicon.replaceEmoticons(text);
+        return RegexFilters.replaceEmoticons(text, " ||$1|| ");
     }
 }
