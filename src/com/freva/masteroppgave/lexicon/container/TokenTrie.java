@@ -1,6 +1,7 @@
 package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
+import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 
 import java.util.*;
 import java.util.List;
@@ -15,6 +16,7 @@ public class TokenTrie {
      * @param sentences Collection of Strings of all the phrases which are whitespace delimited n-grams
      */
     public TokenTrie(Collection<String> sentences) {
+        this();
         for(String sentence: sentences) {
             String[] words = RegexFilters.WHITESPACE.split(sentence);
             addTokenSequence(words);
@@ -46,6 +48,8 @@ public class TokenTrie {
      * false if phrases matches no tokenSequence entirely or any longer tokenSequence.
      */
     public Boolean hasTokens(String[] phrase) {
+        if(phrase.length == 1 && WordFilters.isSpecialClassWord(phrase[0])) return true;
+
         Node tree = root;
         for(String token: phrase) {
             if(! tree.hasChild(token)) return false;
