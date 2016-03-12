@@ -102,6 +102,10 @@ public class Filters {
         return RegexFilters.replaceHashtag(text, "$1");
     }
 
+    public static String protectHashtag(String text) {
+        return RegexFilters.replaceHashtag(text, "||#$1||");
+    }
+
 
     public static String removeRTTag(String text) {
         return RegexFilters.replaceRTTag(text, "");
