@@ -103,7 +103,7 @@ public class Filters {
     }
 
     public static String protectHashtag(String text) {
-        return RegexFilters.replaceHashtag(text, "||#$1||");
+        return RegexFilters.replaceHashtag(text, " ||#$1|| ");
     }
 
 

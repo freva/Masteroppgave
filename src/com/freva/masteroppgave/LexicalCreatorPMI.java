@@ -28,7 +28,7 @@ public class LexicalCreatorPMI implements Progressable{
     private static final boolean useCachedNGrams = false;
 
     public static final List<Function<String, String>> N_GRAM_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, CharacterCleaner::removeAllEmojis, Filters::normalizeForm, Filters::removeURL,
+            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
             Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
             Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
             String::toLowerCase);
