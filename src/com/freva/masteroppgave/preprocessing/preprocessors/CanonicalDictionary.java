@@ -41,7 +41,7 @@ public class CanonicalDictionary implements Progressable {
         for(String tweet: tweetReader) {
             if(iteration++ % 100000 == 0) removeInfrequent(counter, (int) (iteration*termFrequency/2), correctFrequency/2);
 
-            tweet = Filters.chain(tweet, filters);
+            tweet = Filters.stringChain(tweet, filters);
             for(String word: RegexFilters.WHITESPACE.split(tweet)) {
                 String reduced = CanonicalForm.reduceToCanonicalForm(word);
                 if(! counter.containsKey(reduced)) {

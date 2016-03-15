@@ -29,11 +29,11 @@ public class TweetTagger {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "utf-8"))) {
             try(BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for(String line; (line = br.readLine()) != null; ) {
-                    line = Filters.chain(line, filters);
+                    line = Filters.stringChain(line, filters);
 
                     if(line.length() > 0) line = tagger.tagSentence(line);
-                    line = Filters.chain(line,
-                            Filters::removeNonPosTaggedAlphabeticalText, Filters::removeRepeatedWhitespace, String::trim);
+//                    line = Filters.stringChain(line,
+//                            Filters::removeNonPosTaggedAlphabeticalText, Filters::removeRepeatedWhitespace, String::trim);
 
                     writer.write(line + "\n");
                 }

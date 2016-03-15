@@ -38,7 +38,7 @@ public class TweetContexts implements Progressable {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
             Parallel.For(tweetReader, tweet -> {
-                tweet = Filters.chain(tweet, filters);
+                tweet = Filters.stringChain(tweet, filters);
                 ContextScore trackedDistances = getTrackedDistances(tweet, tree, cutOffDistance);
                 String JSONTrackedDistances = JSONUtils.toJSON(trackedDistances, typeToken, false);
 

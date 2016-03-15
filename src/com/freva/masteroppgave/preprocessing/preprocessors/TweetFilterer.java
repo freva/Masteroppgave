@@ -4,13 +4,17 @@ import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.utils.MapUtils;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class TweetFilterer {
     private static final Pattern endsWithNumber = Pattern.compile("[\\.,x][0-9]+$");
-    //private static
+    private static List<Function<String, String>> filters = Arrays.asList(
+            Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
 
     /**
      * First stage of raw downloaded tweet filtering. Removes all tweets that cant be used by any other preprocessor.
@@ -31,7 +35,7 @@ public class TweetFilterer {
                     }
                     if (! shouldInclude(line)) continue;
 
-                    String filtered = Filters.chain(line, Filters::removeFreeDigits, Filters::removeRepeatedWhitespace, String::trim, String::toLowerCase);
+                    String filtered = Filters.stringChain(line, filters);
                     if(unique.containsKey(filtered)) continue;
 
                     MapUtils.incrementMapByValue(unique, filtered, 1);

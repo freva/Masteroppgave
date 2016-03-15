@@ -39,7 +39,7 @@ public class TweetNGrams implements Progressable {
         Pattern containsAlphabet = Pattern.compile(".*[a-zA-Z]+.*");
 
         Parallel.For(tweetReader, tweet -> {
-            tweet = Filters.chain(tweet, filters);
+            tweet = Filters.stringChain(tweet, filters);
             synchronized (lineCounter) {
                 if (lineCounter.incrementAndGet() % 50000 == 0) {
                     tree.pruneInfrequent((int) (frequencyCutoff * lineCounter.intValue()) / 2);

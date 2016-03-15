@@ -1,38 +1,69 @@
 package com.freva.masteroppgave.preprocessing.filters;
 
-import com.freva.masteroppgave.lexicon.container.EmoticonLexicon;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.Normalizer;
+import java.util.List;
 import java.util.function.Function;
 
 public class Filters {
-    public static final String USERNAME_PLACEHOLDER = "||U||";
-    public static final String HASHTAG_PLACEHOLDER = "||H||";
-    public static final String RTTAG_PLACEHOLDER = "||RT||";
-    public static final String URL_PLACEHOLDER = "||URL||";
+    public static final String USERNAME_PLACEHOLDER = " ||username|| ";
+    public static final String HASHTAG_PLACEHOLDER = " ||hashtag|| ";
+    public static final String RTTAG_PLACEHOLDER = " ||rt|| ";
+    public static final String URL_PLACEHOLDER = " ||url|| ";
 
+    private List<Function<String, String>> stringFilters;
+    private List<Function<String, String>> tokenFilters;
+
+    public Filters(List<Function<String, String>> stringFilters) {
+        this.stringFilters = stringFilters;
+    }
+
+    public Filters(List<Function<String, String>> stringFilters, List<Function<String, String>> tokenFilters) {
+        this(stringFilters);
+        this.tokenFilters = tokenFilters;
+    }
+
+    public String apply(String text) {
+        text = stringChain(text, stringFilters);
+        return tokenChain(text, tokenFilters).trim();
+    }
 
     /**
-     * Chain several filters after each other
+     * Chain several filters after each other, applies the filter on the entire string
      * @param text String to format
      * @param filters Sequence of filters to apply on String
      * @return The formatted String
      */
-    @SafeVarargs
-    public static String chain(String text, Function<String, String>... filters) {
+    public static String stringChain(String text, Iterable<Function<String, String>> filters) {
+        if(filters == null) return text;
+
         for (Function<String, String> filter : filters)
             text = filter.apply(text);
         return text;
     }
 
-    public static String chain(String text, Iterable<Function<String, String>> filters) {
-        for (Function<String, String> filter : filters)
-            text = filter.apply(text);
-        return text;
-    }
+    /**
+     * Chain several filters after each other, applying filters only on non special class tokens
+     * @param text String to format
+     * @param filters Sequence of filters to apply to tokens
+     * @return The formatted String
+     */
+    public static String tokenChain(String text, Iterable<Function<String, String>> filters) {
+        if(filters == null) return text;
 
+        StringBuilder sb = new StringBuilder();
+        for(String token: RegexFilters.WHITESPACE.split(text)) {
+            if(! WordFilters.isSpecialClassWord(token)) {
+                token = Filters.stringChain(token, filters);
+            }
+
+            sb.append(token).append(" ");
+        }
+
+        return sb.toString();
+    }
 
     /**
      * Returns HTML unescaped string

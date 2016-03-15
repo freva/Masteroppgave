@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.Fitzpatrick;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class CharacterCleaner {
@@ -13,21 +14,6 @@ public class CharacterCleaner {
     static {
         String[] fitzpatrickValues = Arrays.stream(Fitzpatrick.values()).map(i -> i.unicode).toArray(String[]::new);
         fitzpatrick = Pattern.compile("(:?" + String.join("|", fitzpatrickValues) + ")");
-    }
-
-    public static String cleanCharacters(String input) {
-        StringBuilder sb = new StringBuilder();
-
-        for(String token: RegexFilters.WHITESPACE.split(input)) {
-            if(! (token.startsWith("||") && token.endsWith("||") && token.length() > 4)) {
-                token = Filters.removeInnerWordCharacters(token);
-                token = Filters.removeNonAlphanumericalText(token);
-            }
-
-            sb.append(token).append(" ");
-        }
-
-        return sb.toString();
     }
 
 
