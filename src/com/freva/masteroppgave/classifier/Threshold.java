@@ -96,7 +96,7 @@ public class Threshold {
         @Override
         public int compareTo(SentimentTuple o) {
             double diff = o.predicted - predicted;
-            return diff != 0 ? (int) Math.signum(diff) : correct.compareTo(o.correct);
+            return diff != 0 ? (int) Math.signum(diff) : o.correct.compareTo(correct);
         }
     }
 }
