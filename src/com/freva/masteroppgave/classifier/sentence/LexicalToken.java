@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.classifier.sentence;
 
 public class LexicalToken {
-    private static final double negationValue = 2;
+    private static final double negationValue = 1;
 
     private String phrase;
     private double lexicalValue;

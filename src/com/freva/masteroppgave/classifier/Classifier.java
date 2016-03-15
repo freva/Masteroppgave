@@ -9,16 +9,15 @@ import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 
 
 public class Classifier {
-    private List<Function<String, String>> filters;
     private PriorPolarityLexicon lexicon;
     private TokenTrie phraseTree;
+    private Filters filters;
 
 
-    public Classifier(PriorPolarityLexicon lexicon, List<Function<String, String>> filters) throws IOException {
+    public Classifier(PriorPolarityLexicon lexicon, Filters filters) throws IOException {
         this.lexicon = lexicon;
         this.filters = filters;
         this.phraseTree = new TokenTrie(lexicon.getSubjectiveWords());
@@ -26,7 +25,7 @@ public class Classifier {
 
 
     public double calculateSentiment(String tweet) {
-        tweet = Filters.chain(tweet, filters);
+        tweet = filters.apply(tweet);
         List<LexicalToken> lexicalTokens = LexicalParser.lexicallyParseTweet(tweet, phraseTree);
         analyseTokens(lexicalTokens);
 
