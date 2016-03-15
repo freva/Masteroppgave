@@ -1,11 +1,11 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
-import com.freva.masteroppgave.lexicon.container.TokenTrie.*;
 import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGramsPMI;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.*;
 import com.freva.masteroppgave.utils.progressbar.ProgressBar;
@@ -20,24 +20,28 @@ import java.util.function.Function;
 
 
 public class LexicalCreatorPMI implements Progressable{
+    public static final List<Function<String, String>> N_GRAM_STRING_FILTERS = Arrays.asList(
+            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::removeHashtag, Filters::placeholderUsername, Filters::removeEmoticons,
+            Filters::removeFreeDigits, String::toLowerCase);
+    public static final List<Function<String, String>> N_GRAM_CHARACTER_FILTERS = Arrays.asList(
+            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalText);
+    public static final Filters N_GRAM_FILTERS = new Filters(N_GRAM_STRING_FILTERS, N_GRAM_CHARACTER_FILTERS);
+
+    public static final List<Function<String, String>> TWEET_STRING_FILTERS = Arrays.asList(
+            Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
+            Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
+            Filters::removeFreeDigits, Filters::replaceEmoticons, String::toLowerCase);
+    public static final List<Function<String, String>> TWEET_CHARACTER_FILTERS = Arrays.asList(
+            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText);
+    public static final Filters TWEET_FILTERS = new Filters(TWEET_STRING_FILTERS, TWEET_CHARACTER_FILTERS);
+
     private DataSetReader dataSetReader;
 
     private static final int nGramRange = 4;
-    private static final double cutoffFrequency = 0.0002;
     private static final int nGramFrequencyThreshold = 40;
-    private static final boolean useCachedNGrams = false;
-
-    public static final List<Function<String, String>> N_GRAM_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
-            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText, Filters::removeFreeDigits,
-            String::toLowerCase);
-
-    public static final List<Function<String, String>> TWEET_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
-            Filters::removeFreeDigits, Filters::replaceEmoticons, CharacterCleaner::cleanCharacters,
-            String::toLowerCase);
+    private static final double cutoffFrequency = 0.0002;
+    private static final Boolean useCachedNGrams = true;
 
 
     public static void main(String[] args) throws IOException {
@@ -56,14 +60,13 @@ public class LexicalCreatorPMI implements Progressable{
         Map<String, Integer> wordsPos = new HashMap<>();
         Map<String, Integer> wordsNeg = new HashMap<>();
         Parallel.For(dataSetReader, entry -> {
-            String tweet = Filters.chain(entry.getTweet(), TWEET_FILTERS);
-            List<TokenTrie.Token> tokens = tokenTrie.findOptimalAllocation(RegexFilters.WHITESPACE.split(tweet));
+            String tweet = TWEET_FILTERS.apply(entry.getTweet());
+            List<String> tokens = tokenTrie.findOptimalTokenization(RegexFilters.WHITESPACE.split(tweet));
 
-            for(Token token : tokens) {
-                String[] nGramWords = token.getTokenSequence();
+            for(String nGram : tokens) {
+                String[] nGramWords = RegexFilters.WHITESPACE.split(nGram);
                 if(containsIllegalWord(nGramWords)) continue;
 
-                String nGram = String.join(" ", nGramWords);
                 if(entry.getClassification().isPositive()){
                     MapUtils.incrementMapByValue(wordsPos, nGram, 1);
                 } else {
@@ -74,27 +77,38 @@ public class LexicalCreatorPMI implements Progressable{
 
         int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
         int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
+        double total = pos + neg;
         final double ratio = (double) neg / pos;
 
         Map<String, Double> lexicon = new HashMap<>();
-        for(String key : wordsPos.keySet()){
-            if(wordsNeg.getOrDefault(key, 0) > nGramFrequencyThreshold || wordsPos.getOrDefault(key, 0) > nGramFrequencyThreshold) {
+        Set<String> allKeys = new HashSet<>(wordsPos.keySet());
+        allKeys.retainAll(wordsNeg.keySet());
+        for(String key : allKeys){
+            if((wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0)) / total > 0.00001) {
                 int over = wordsPos.getOrDefault(key, 1);
                 int under = wordsNeg.getOrDefault(key, 1);
 
                 double sentimentValue = Math.log(ratio * over / under);
-                lexicon.put(key, sentimentValue);
+                if(Math.abs(sentimentValue) >= 0.5) lexicon.put(key, sentimentValue);
             }
         }
+
+        lexicon = MapUtils.normalizeMapBetween(lexicon, -5, 5);
 //        lexicon = findAdjectives(lexicon);
         JSONUtils.toJSONFile(Resources.PMI_LEXICON, MapUtils.sortMapByValue(lexicon), true);
     }
 
     private static Set<String> generateNGrams() throws IOException {
         if(! useCachedNGrams) {
-            return LexicalCreator.getAndCacheFrequentNGrams(nGramRange, cutoffFrequency, N_GRAM_FILTERS).keySet();
+            TweetNGramsPMI tweetNGrams = new TweetNGramsPMI(); //new File("res/tweets/filtered1.txt")
+            ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
+            Map<String, Double> ngrams = tweetNGrams.getFrequentNGrams(new File("res/tweets/filtered1.txt"), nGramRange, cutoffFrequency, N_GRAM_FILTERS);
+            ngrams = MapUtils.sortMapByValue(ngrams);
+
+            JSONUtils.toJSONFile(Resources.TEMP_NGRAMS, ngrams, true);
+            return ngrams.keySet();
         } else {
-            return JSONUtils.fromJSONFile(Resources.TEMP_NGRAMS, new TypeToken<HashMap<String, Integer>>(){}).keySet();
+            return JSONUtils.fromJSONFile(Resources.TEMP_NGRAMS, new TypeToken<HashMap<String, Double>>(){}).keySet();
         }
     }
 

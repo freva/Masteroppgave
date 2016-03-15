@@ -96,10 +96,6 @@ public class TweetNGramsPMI implements Progressable {
             Map<String, Double> nGrams = new HashMap<>();
 
             for(Node child: root.children.values()) {
-                if(child.numOccurrences >= limit) {
-                    nGrams.put(child.phrase, (double) child.numOccurrences);
-                }
-
                 child.addFrequentPhrases(nGrams, limit, child.phrase);
             }
 
