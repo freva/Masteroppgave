@@ -8,8 +8,8 @@ import java.util.stream.IntStream;
 
 public final class ClassificationMetrics {
     private static final int columnWidth = 13;
-    private static final String columnFormat = "%" + columnWidth + "s";
-    private static final String numberFormat = "%" + columnWidth + ".4f";
+    public static final String columnFormat = "%" + columnWidth + "s";
+    public static final String numberFormat = "%" + columnWidth + ".4f";
 
     private final int[][] confusionMatrix;
     private final Enum[] labels;
@@ -97,6 +97,15 @@ public final class ClassificationMetrics {
 
 
     /**
+     * Gets total support
+     * @return total class support
+     */
+    public int getSupport() {
+        return ArrayUtils.sum(classSupport);
+    }
+
+
+    /**
      * Returns a pretty formatted table that sums up the classification metrics with Precision, Recall, F1-Score and
      * Support of all the classes, and the overall values
      * @return String with the classification results
@@ -122,7 +131,7 @@ public final class ClassificationMetrics {
                 .append(String.format(numberFormat, getPrecision()))
                 .append(String.format(numberFormat, getRecall()))
                 .append(String.format(numberFormat, getF1Score()))
-                .append(String.format(columnFormat, ArrayUtils.sum(classSupport))).append("\n");
+                .append(String.format(columnFormat, getSupport())).append("\n");
 
         return sb.toString();
     }
