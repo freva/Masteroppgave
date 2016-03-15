@@ -3,6 +3,7 @@ package com.freva.masteroppgave.classifier.sentence;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class LexicalParser {
@@ -20,21 +21,9 @@ public class LexicalParser {
 
         for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
             String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-            List<TokenTrie.Token> tokenRanges = phraseTree.findOptimalAllocation(sentenceTokens);
+            List<String> tokenizedSentence = phraseTree.findOptimalTokenization(sentenceTokens);
 
-            int setIndex = 0;
-            for(TokenTrie.Token token : tokenRanges) {
-                while(setIndex < token.getStartIndex()) {
-                    lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++]));
-                }
-                lexicalTokens.add(new LexicalToken(String.join(" ", token.getTokenSequence())));
-                setIndex = token.getEndIndex()+1;
-            }
-
-            while(setIndex < sentenceTokens.length) {
-                lexicalTokens.add(new LexicalToken(sentenceTokens[setIndex++]));
-            }
-
+            lexicalTokens.addAll(tokenizedSentence.stream().map(LexicalToken::new).collect(Collectors.toList()));
             lexicalTokens.get(lexicalTokens.size()-1).setAtEndOfSentence(true);
         }
 

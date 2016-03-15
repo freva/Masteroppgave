@@ -110,6 +110,27 @@ public class TokenTrie {
     }
 
 
+    public List<String> findOptimalTokenization(String[] tokens) {
+        List<TokenTrie.Token> tokenRanges = findOptimalAllocation(tokens);
+        List<String> tokenizedSentence = new ArrayList<>();
+
+        int setIndex = 0;
+        for(TokenTrie.Token token : tokenRanges) {
+            while(setIndex < token.getStartIndex()) {
+                tokenizedSentence.add(tokens[setIndex++]);
+            }
+            tokenizedSentence.add(String.join(" ", token.getTokenSequence()));
+            setIndex = token.getEndIndex()+1;
+        }
+
+        while(setIndex < tokens.length) {
+            tokenizedSentence.add(tokens[setIndex++]);
+        }
+
+        return tokenizedSentence;
+    }
+
+
     public class Token implements Comparable<Token> {
         private final int startIndex, endIndex;
         private final String[] tokenSequence;
