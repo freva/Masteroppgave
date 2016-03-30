@@ -40,9 +40,6 @@ public class Classifier {
             if(lexicon.hasWord(phrase)) {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
 
-            } else if(WordFilters.isEmoteClass(phrase)) {
-                token.setLexicalValue(WordFilters.getEmoteClassValue(phrase));
-
             } else if(WordFilters.isNegation(phrase)) {
                 propagateNegation(lexicalTokens, i);
 
@@ -63,7 +60,7 @@ public class Classifier {
 
     private void intensifyNext(List<LexicalToken> lexicalTokens, int index, double intensification) {
         if (! lexicalTokens.get(index).isAtTheEndOfSentence()) {
-            lexicalTokens.get(index + 1).setIntensification(intensification);
+            lexicalTokens.get(index + 1).intensifyToken(intensification);
         }
     }
 }

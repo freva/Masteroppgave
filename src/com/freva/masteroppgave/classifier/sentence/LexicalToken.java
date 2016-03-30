@@ -5,11 +5,10 @@ public class LexicalToken {
 
     private String phrase;
     private double lexicalValue;
-    private double intensification;
+    private double intensification = 1;
 
     private boolean inNegatedContext;
     private boolean atEndOfSentence;
-
 
     public LexicalToken(String phrase) {
         this.phrase = phrase;
@@ -35,8 +34,8 @@ public class LexicalToken {
         this.atEndOfSentence = atEndOfSentence;
     }
 
-    public void setIntensification(double intensification) {
-        this.intensification = intensification;
+    public void intensifyToken(double intensification) {
+        this.intensification *= intensification;
     }
 
     public double getSentimentValue() {
@@ -45,7 +44,7 @@ public class LexicalToken {
             sentimentValue *= intensification;
         }
 
-        if(inNegatedContext && sentimentValue != 0) {
+        if(isInNegatedContext() && sentimentValue != 0) {
             sentimentValue = (sentimentValue > 0) ? sentimentValue - negationValue : sentimentValue + negationValue;
         }
         return sentimentValue;
@@ -60,11 +59,11 @@ public class LexicalToken {
     }
 
     public boolean isUnderIntensification() {
-        return intensification != 0;
+        return intensification != 1;
     }
 
     public String toString() {
-        return "[" + phrase + (inNegatedContext ? "_NEG" : "") + " | " + getSentimentValue() + " | " +
+        return "[" + phrase + (isInNegatedContext() ? "_NEG" : "") + " | " + getSentimentValue() + " | " +
                 intensification + "]";
     }
 }

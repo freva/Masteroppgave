@@ -22,7 +22,7 @@ public class LexicalClassifier {
             Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
             Filters::replaceEmoticons, Filters::removeFreeDigits, String::toLowerCase);
     public static final List<Function<String, String>> CLASSIFIER_CHARACTER_FILTERS = Arrays.asList(
-            Filters::removeInnerWordCharacters, Filters::removeNonAlphanumericalText);
+            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus);
     public static final Filters CLASSIFIER_FILTERS = new Filters(CLASSIFIER_STRING_FILTERS, CLASSIFIER_CHARACTER_FILTERS);
 
     private static final Map<String, File> TEST_SETS = new LinkedHashMap<String, File>(){{

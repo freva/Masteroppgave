@@ -40,7 +40,7 @@ public class LexicalCreatorPMI implements Progressable{
 
     private static final int nGramRange = 4;
     private static final int nGramFrequencyThreshold = 40;
-    private static final double cutoffFrequency = 0.0002;
+    private static final double cutoffFrequency = 3.17 * Math.pow(10, -6);
     private static final Boolean useCachedNGrams = true;
 
 

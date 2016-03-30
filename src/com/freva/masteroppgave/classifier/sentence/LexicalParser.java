@@ -3,6 +3,7 @@ package com.freva.masteroppgave.classifier.sentence;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 
@@ -19,14 +20,41 @@ public class LexicalParser {
     public static List<LexicalToken> lexicallyParseTweet(String tweet, TokenTrie phraseTree) {
         List<LexicalToken> lexicalTokens = new ArrayList<>();
 
-        for(String sentence: RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
-            String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
-            List<String> tokenizedSentence = phraseTree.findOptimalTokenization(sentenceTokens);
+        int prev = 0;
+        Matcher matcher = RegexFilters.SENTENCE_END_PUNCTUATION.matcher(tweet);
+        while (matcher.find()) {
+            String sentence = tweet.substring(prev, matcher.start());
+            String punctuation = matcher.group();
+            prev = matcher.end();
 
-            lexicalTokens.addAll(tokenizedSentence.stream().map(LexicalToken::new).collect(Collectors.toList()));
-            lexicalTokens.get(lexicalTokens.size()-1).setAtEndOfSentence(true);
+            lexicalTokens.addAll(addSentence(sentence, punctuation, phraseTree));
         }
 
+        lexicalTokens.addAll(addSentence(tweet.substring(prev), null, phraseTree));
+
         return lexicalTokens;
+    }
+
+    private static List<LexicalToken> addSentence(String sentence, String punctuation, TokenTrie phraseTree) {
+        String[] sentenceTokens = RegexFilters.WHITESPACE.split(sentence);
+
+        List<String> tokenizedSentence = phraseTree.findOptimalTokenization(sentenceTokens);
+        List<LexicalToken> tokens = tokenizedSentence.stream().map(LexicalToken::new).collect(Collectors.toList());
+
+        if(tokens.size() > 0) {
+            tokens.get(tokens.size() - 1).setAtEndOfSentence(true);
+
+            if (punctuation != null && punctuation.contains("!")) {
+                for (LexicalToken token : tokens) {
+                    token.intensifyToken(2.);
+                }
+            } else if (punctuation != null && punctuation.contains("?")) {
+                for (LexicalToken token : tokens) {
+                    token.intensifyToken(.5);
+                }
+            }
+        }
+
+        return tokens;
     }
 }
