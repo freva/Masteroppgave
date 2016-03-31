@@ -77,19 +77,21 @@ public class LexicalCreatorPMI implements Progressable{
 
         int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
         int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
-        double total = pos + neg;
         final double ratio = (double) neg / pos;
+        final double Z = 2.5759; //Two nines
 
         Map<String, Double> lexicon = new HashMap<>();
         Set<String> allKeys = new HashSet<>(wordsPos.keySet());
         allKeys.retainAll(wordsNeg.keySet());
         for(String key : allKeys){
-            if((wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0)) / total > 0.00001) {
+            double error = Z / (2 * Math.sqrt(wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0)));
+
+            if (error < 0.15) {
                 int over = wordsPos.getOrDefault(key, 1);
                 int under = wordsNeg.getOrDefault(key, 1);
 
                 double sentimentValue = Math.log(ratio * over / under);
-                if(Math.abs(sentimentValue) >= 0.5) lexicon.put(key, sentimentValue);
+                lexicon.put(key, sentimentValue);
             }
         }
 
