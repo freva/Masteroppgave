@@ -34,7 +34,7 @@ public class TweetNGramsPMI implements Progressable {
         Parallel.For(tweetReader, tweet -> {
             synchronized (lineCounter) {
                 if (lineCounter.incrementAndGet() % 200000 == 0) {
-                    nGramTree.pruneInfrequent((int) Math.ceil(frequencyCutoff * lineCounter.intValue() / 3));
+                    nGramTree.pruneInfrequent((int) Math.ceil(frequencyCutoff * lineCounter.intValue() / 2));
                 }
             }
 
