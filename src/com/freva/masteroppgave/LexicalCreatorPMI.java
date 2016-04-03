@@ -39,9 +39,10 @@ public class LexicalCreatorPMI implements Progressable{
     private DataSetReader dataSetReader;
 
     private static final int nGramRange = 6;
-    private static final double cutoffFrequency = 0.00001;
-    private static final double maxErrorRate = 0.095;
-    private static final double sentimentValueThreshold = 0.5;
+    private static final double nGramsCutoffFrequency = 0.00001;
+    private static final double nGramsInclusionPMIValueThreshold = 1.5;
+    private static final double lexiconInclusionMaxErrorRate = 0.095;
+    private static final double lexiconInclusionSentimentValueThreshold = 0.5;
     private static final Boolean useCachedNGrams = true;
 
 
@@ -81,7 +82,7 @@ public class LexicalCreatorPMI implements Progressable{
 
         final double ratio = (double) neg / pos;
         final double Z = 2.5759; //Two nines
-        final double cutoff = Z * Z / 4 / maxErrorRate / maxErrorRate;
+        final double cutoff = Z * Z / 4 / lexiconInclusionMaxErrorRate / lexiconInclusionMaxErrorRate;
 
         Map<String, Double> lexicon = new HashMap<>();
         Set<String> allKeys = new HashSet<>(wordsPos.keySet());
@@ -92,7 +93,7 @@ public class LexicalCreatorPMI implements Progressable{
                 int under = wordsNeg.getOrDefault(key, 1);
 
                 double sentimentValue = Math.log(ratio * over / under);
-                if (Math.abs(sentimentValue) >= sentimentValueThreshold) lexicon.put(key, sentimentValue);
+                if (Math.abs(sentimentValue) >= lexiconInclusionSentimentValueThreshold) lexicon.put(key, sentimentValue);
             }
         }
 
@@ -105,7 +106,8 @@ public class LexicalCreatorPMI implements Progressable{
         if(! useCachedNGrams) {
             TweetNGramsPMI tweetNGrams = new TweetNGramsPMI(); //new File("res/tweets/filtered1.txt")
             ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-            Map<String, Double> ngrams = tweetNGrams.getFrequentNGrams(new File("res/tweets/filtered.txt"), nGramRange, cutoffFrequency, N_GRAM_FILTERS);
+            Map<String, Double> ngrams = tweetNGrams.getFrequentNGrams(new File("res/tweets/filtered.txt"), nGramRange,
+                    nGramsCutoffFrequency, nGramsInclusionPMIValueThreshold, N_GRAM_FILTERS);
             ngrams = MapUtils.sortMapByValue(ngrams);
 
             JSONUtils.toJSONFile(Resources.TEMP_NGRAMS, ngrams, true);

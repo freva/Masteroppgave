@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.utils.tools;
+package com.freva.masteroppgave.statistics;
 
 import com.freva.masteroppgave.utils.ArrayUtils;
 

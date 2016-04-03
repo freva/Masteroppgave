@@ -1,13 +1,13 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.Classifier;
-import com.freva.masteroppgave.classifier.Threshold;
+import com.freva.masteroppgave.statistics.ClassificationThreshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
-import com.freva.masteroppgave.utils.tools.ClassificationCollection;
+import com.freva.masteroppgave.statistics.ClassificationCollection;
 import com.freva.masteroppgave.utils.tools.Parallel;
 import com.freva.masteroppgave.utils.Resources;
 
@@ -38,7 +38,7 @@ public class LexicalClassifier {
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, CLASSIFIER_FILTERS);
-        Threshold threshold = new Threshold();
+        ClassificationThreshold threshold = new ClassificationThreshold();
 
         Parallel.For(dataSetReader, entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());

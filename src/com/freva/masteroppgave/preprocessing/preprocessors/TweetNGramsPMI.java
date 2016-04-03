@@ -26,7 +26,7 @@ public class TweetNGramsPMI implements Progressable {
      * @return Map of n-grams as key and number of occurrences as value
      * @throws IOException
      */
-    public final Map<String, Double> getFrequentNGrams(File input, int n, double frequencyCutoff, Filters filters) throws IOException {
+    public final Map<String, Double> getFrequentNGrams(File input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) throws IOException {
         final AtomicInteger lineCounter = new AtomicInteger(0);
         tweetReader = new LineReader(input);
         nGramTree = new NGramTree();
@@ -49,7 +49,7 @@ public class TweetNGramsPMI implements Progressable {
             }
         });
 
-        return nGramTree.getNGrams((int) (frequencyCutoff*lineCounter.intValue()));
+        return nGramTree.getNGrams((int) (frequencyCutoff*lineCounter.intValue()), inclusionThreshold);
     }
 
 
@@ -92,7 +92,7 @@ public class TweetNGramsPMI implements Progressable {
             root.pruneInfrequent(limit);
         }
 
-        private Map<String, Double> getNGrams(int limit) {
+        private Map<String, Double> getNGrams(int limit, double inclusionThreshold) {
             Map<String, Double> nGrams = new HashMap<>();
 
             for(Node child: root.children.values()) {
@@ -104,7 +104,7 @@ public class TweetNGramsPMI implements Progressable {
                 Map.Entry<String, Double> next = iterator.next();
                 String[] nGramTokens = RegexFilters.WHITESPACE.split(next.getKey());
 
-                if(next.getValue() < 0 ||
+                if(next.getValue() < inclusionThreshold ||
                         WordFilters.containsIntensifier(nGramTokens) ||
                         WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) {
                     iterator.remove();

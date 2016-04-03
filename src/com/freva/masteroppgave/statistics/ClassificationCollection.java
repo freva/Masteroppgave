@@ -1,4 +1,4 @@
-package com.freva.masteroppgave.utils.tools;
+package com.freva.masteroppgave.statistics;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

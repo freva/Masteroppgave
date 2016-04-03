@@ -1,10 +1,10 @@
-package com.freva.masteroppgave.classifier;
+package com.freva.masteroppgave.statistics;
 
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
 import java.util.*;
 
-public class Threshold {
+public class ClassificationThreshold {
     private List<SentimentTuple> previousResults = new ArrayList<>();
     private double lowThreshold;
     private double highThreshold;
