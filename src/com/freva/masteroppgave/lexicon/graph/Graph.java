@@ -103,7 +103,7 @@ public class Graph implements Progressable {
                     Node nodeToCheck = nodesToCheck.pop();
                     FixedPriorityQueue<Edge> neighbors = new FixedPriorityQueue<>(neighborLimit, nodeToCheck.getNeighbors());
                     for (Edge edge : neighbors.sortedItems()) {
-                        edge.getNeighbor().updateSentimentScore(nodeToCheck, nodeToCheck.getCurrentScore()*edge.getWeight());
+                        edge.getNeighbor().updateSentimentScore(subjectiveNode, nodeToCheck.getCurrentScore()*edge.getWeight());
                         nodesToCheck.addLast(edge.getNeighbor());
                     }
                 }
@@ -127,7 +127,6 @@ public class Graph implements Progressable {
                 lexicon.put(entry.getKey(), sentiment);
             }
         }
-
         return lexicon;
     }
 
