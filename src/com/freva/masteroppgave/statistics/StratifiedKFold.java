@@ -13,25 +13,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class StratifiedKFold {
+    private final PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
+    private final Classifier classifier = new Classifier(priorPolarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
 
     private List<DataSetEntry> entries;
     private int k;
 
 
     public StratifiedKFold(List<DataSetEntry> entries, int k) throws IOException {
+        Collections.shuffle(entries);
         this.entries = entries;
         this.k = k;
-
     }
 
     public double calculateScore() throws IOException {
         int partLength = entries.size() / k;
-        Collections.shuffle(entries);
 
         double F1Score = 0;
         for(int i = 0 ; i < k ; i++){
             List<DataSetEntry> testSet = new ArrayList<>(entries.subList(i*partLength, (i+1)*partLength));
-            List<DataSetEntry> trainSet = entries.subList(0, i*partLength);
+            List<DataSetEntry> trainSet = new ArrayList<>(entries.subList(0, i*partLength));
             trainSet.addAll(entries.subList((i+1)*partLength, entries.size()));
 
             F1Score += trainAndTest(trainSet, testSet);
@@ -40,17 +41,11 @@ public class StratifiedKFold {
     }
 
     private double trainAndTest(List<DataSetEntry> trainSet, List<DataSetEntry> testSet) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
-        Classifier classifier = new Classifier(priorPolarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
         ClassificationThreshold threshold = new ClassificationThreshold();
-
         Parallel.For(trainSet, entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
             threshold.updateEvidence(entry.getClassification(), predictedSentiment);
         });
-
-        System.out.println("Performing tests with threshold: [" + String.format("%4.2f", threshold.getLowThreshold()) + ", " +
-                String.format("%4.2f", threshold.getHighThreshold()) + "] with accuracy: " + threshold.getMaxAccuracy() + "\n");
 
         ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());
         Parallel.For(testSet, entry -> {
