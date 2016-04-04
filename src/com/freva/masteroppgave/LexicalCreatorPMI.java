@@ -4,7 +4,7 @@ import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGramsPMI;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.*;
@@ -135,7 +135,7 @@ public class LexicalCreatorPMI implements Progressable{
 
 
     private static boolean containsIllegalWord(String[] nGram) {
-        return WordFilters.isStopWord(nGram[nGram.length - 1])|| WordFilters.containsIntensifier(nGram);
+        return ClassifierOptions.isStopWord(nGram[nGram.length - 1])|| ClassifierOptions.containsIntensifier(nGram);
     }
 
 

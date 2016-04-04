@@ -1,4 +1,11 @@
 {
+  "options" : {
+    "NEGATION_VALUE": 1,
+    "EXCLAMATION_INTENSIFIER": 2,
+    "QUESTION_INTENSIFIER": 0.5,
+    "NEGATION_SCOPE_LENGTH": 4
+  },
+
   "intensifiers": {
     "most": 2.00,
     "incredibly": 1.80,
@@ -25,12 +32,6 @@
     "hardly": 0.70,
     "barely": 0.60,
     "slightly": 0.50
-  },
-
-  "emotes" : {
-    "clfemotepositive": 15,
-    "clfemoteneutral": 0,
-    "clfemotenegaive": -15
   },
 
   "negators": ["aint", "anit", "cant", "cannot", "couldnt", "didnt", "dnt", "doesnt", "dont", "dont", "hadnt", "hasnt", "havent", "havnt", "isnt",

@@ -1,13 +1,16 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.Classifier;
+import com.freva.masteroppgave.statistics.ClassificationThreshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
+import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.MapUtils;
 import com.freva.masteroppgave.utils.Resources;
+import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
@@ -28,14 +31,32 @@ public class Test {
 
 
     public static void main(String[] args) throws IOException {
-//        LineReader lineReader = new LineReader(Resources.DATASET_10k);
-//
-//        for(String line: lineReader) {
-//            System.out.println(line);
-//            System.out.println(Filters.stringChain(line, LexicalClassifier.filters));
-//            System.out.println();
-//        }
-        generateClassifiedBasedOnSmileys();
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
+        DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
+        Classifier classifier = new Classifier(priorPolarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
+        ClassificationThreshold threshold = new ClassificationThreshold();
+
+        Parallel.For(dataSetReader, entry -> {
+            double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
+            threshold.updateEvidence(entry.getClassification(), predictedSentiment);
+        });
+
+        int neutralLinks = 0;
+        int nonNeutralLinks = 0;
+        for(DataSetEntry entry : new DataSetReader(Resources.SEMEVAL_2013_TEST, 3, 2)) {
+            double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
+            DataSetEntry.Class predicted = DataSetEntry.Class.classifyFromThresholds(predictedSentiment, threshold.getLowThreshold(), threshold.getHighThreshold());
+
+            if(RegexFilters.TWITTER_URL.matcher(entry.getTweet()).find()) {
+                if(entry.getClassification().isNeutral()) {
+                    neutralLinks++;
+                } else {
+                    nonNeutralLinks++;
+                }
+            }
+        }
+
+        System.out.println(neutralLinks + "/" + (neutralLinks+nonNeutralLinks));
     }
 
 

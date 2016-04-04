@@ -1,28 +1,25 @@
-package com.freva.masteroppgave.preprocessing.filters;
+package com.freva.masteroppgave.classifier;
 
 import com.freva.masteroppgave.utils.FileUtils;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-public class WordFilters {
-    private static final Pattern SPECIAL_CLASS_WORD = Pattern.compile("\\|\\|\\S+\\|\\|");
+public class ClassifierOptions {
+    private static Map<String, Double> options;
     private static Map<String, Double> intensifiers;
-    private static Map<String, Double> emoteClasses;
     private static Set<String> negators;
     private static Set<String> stopWords;
 
     static {
         try {
             Words words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(new File("res/data/words.json")), new TypeToken<Words>(){});
+            options = words.options;
             intensifiers = words.intensifiers;
-            emoteClasses = words.emotes;
             negators = words.negators;
             stopWords = words.stopWords;
         } catch (IOException e) {
@@ -30,17 +27,9 @@ public class WordFilters {
         }
     }
 
-    private static final String stopWordsPattern = "\\b(" + StringUtils.join(stopWords, "|") + ")\\b";
-    private static final Pattern stopWordsRegex = Pattern.compile(stopWordsPattern);
-
-
-    public static String replaceStopWords(String text, String replace) {
-        return stopWordsRegex.matcher(text.toLowerCase()).replaceAll(replace);
-    }
-
     public static boolean containsStopWord(String[] words) {
-        for(String word: words) {
-            if(stopWords.contains(word)) {
+        for (String word: words) {
+            if (stopWords.contains(word)) {
                 return true;
             }
         }
@@ -86,29 +75,35 @@ public class WordFilters {
         return intensifiers.get(word);
     }
 
-    public static boolean isEmoteClass(String word) {
-        return emoteClasses.containsKey(word);
+    public static void setIntensifierValue(String word, double value) {
+        intensifiers.put(word, value);
     }
-
-    public static double getEmoteClassValue(String word) {
-        return emoteClasses.get(word);
-    }
-
 
     public static boolean isSpecialClassWord(String word) {
-        return SPECIAL_CLASS_WORD.matcher(word).find();
+        return word.startsWith("||")  && word.endsWith("||");
     }
 
+    public static double getVariable(Variable variable) {
+        return options.get(variable.name());
+    }
+
+    public static void setVariable(Variable variable, double value) {
+        options.put(variable.name(), value);
+    }
+
+    public enum Variable {
+        NEGATION_VALUE, EXCLAMATION_INTENSIFIER, QUESTION_INTENSIFIER, NEGATION_SCOPE_LENGTH
+    }
 
     private class Words {
+        private Map<String, Double> options;
         private Map<String, Double> intensifiers;
-        private Map<String, Double> emotes;
         private Set<String> negators;
         private Set<String> stopWords;
 
-        private Words(Map<String, Double> intensifiers, Map<String, Double> emotes, Set<String> negators, Set<String> stopWords) {
+        private Words(Map<String, Double> options, Map<String, Double> intensifiers, Set<String> negators, Set<String> stopWords) {
+            this.options = options;
             this.intensifiers = intensifiers;
-            this.emotes = emotes;
             this.negators = negators;
             this.stopWords = stopWords;
         }

@@ -2,7 +2,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
@@ -105,8 +105,8 @@ public class TweetNGramsPMI implements Progressable {
                 String[] nGramTokens = RegexFilters.WHITESPACE.split(next.getKey());
 
                 if(next.getValue() < inclusionThreshold ||
-                        WordFilters.containsIntensifier(nGramTokens) ||
-                        WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) {
+                        ClassifierOptions.containsIntensifier(nGramTokens) ||
+                        ClassifierOptions.isStopWord(nGramTokens[nGramTokens.length - 1])) {
                     iterator.remove();
                 }
             }

@@ -5,7 +5,6 @@ import com.freva.masteroppgave.classifier.sentence.LexicalToken;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +14,6 @@ public class Classifier {
     private PriorPolarityLexicon lexicon;
     private TokenTrie phraseTree;
     private Filters filters;
-
 
     public Classifier(PriorPolarityLexicon lexicon, Filters filters) throws IOException {
         this.lexicon = lexicon;
@@ -40,17 +38,18 @@ public class Classifier {
             if(lexicon.hasWord(phrase)) {
                 token.setLexicalValue(lexicon.getPolarity(phrase));
 
-            } else if(WordFilters.isNegation(phrase)) {
+            } else if(ClassifierOptions.isNegation(phrase)) {
                 propagateNegation(lexicalTokens, i);
 
-            } else if(WordFilters.isIntensifier(phrase)) {
-                intensifyNext(lexicalTokens, i, WordFilters.getIntensifierValue(phrase));
+            } else if(ClassifierOptions.isIntensifier(phrase)) {
+                intensifyNext(lexicalTokens, i, ClassifierOptions.getIntensifierValue(phrase));
             }
         }
     }
 
     private void propagateNegation(List<LexicalToken> lexicalTokens, int index) {
-        for(int i = index + 1; i <= index + 4 && i < lexicalTokens.size(); i++) {
+        final double negationScopeLength = ClassifierOptions.getVariable(ClassifierOptions.Variable.NEGATION_SCOPE_LENGTH);
+        for(int i = index + 1; i <= index + negationScopeLength && i < lexicalTokens.size(); i++) {
             lexicalTokens.get(i).setInNegatedContext(true);
             if(lexicalTokens.get(i).isAtTheEndOfSentence()) {
                 break;

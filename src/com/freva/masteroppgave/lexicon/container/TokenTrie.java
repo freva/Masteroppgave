@@ -1,7 +1,7 @@
 package com.freva.masteroppgave.lexicon.container;
 
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 
 import java.util.*;
 import java.util.List;
@@ -48,7 +48,7 @@ public class TokenTrie {
      * false if phrases matches no tokenSequence entirely or any longer tokenSequence.
      */
     public Boolean hasTokens(String[] phrase) {
-        if(phrase.length == 1 && WordFilters.isSpecialClassWord(phrase[0])) return true;
+        if(phrase.length == 1 && ClassifierOptions.isSpecialClassWord(phrase[0])) return true;
 
         Node tree = root;
         for(String token: phrase) {

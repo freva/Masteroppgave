@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.classifier.sentence;
 
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import java.util.*;
@@ -45,12 +46,14 @@ public class LexicalParser {
             tokens.get(tokens.size() - 1).setAtEndOfSentence(true);
 
             if (punctuation != null && punctuation.contains("!")) {
+                final double exclamationIntensifier = ClassifierOptions.getVariable(ClassifierOptions.Variable.EXCLAMATION_INTENSIFIER);
                 for (LexicalToken token : tokens) {
-                    token.intensifyToken(2.);
+                    token.intensifyToken(exclamationIntensifier);
                 }
             } else if (punctuation != null && punctuation.contains("?")) {
+                final double questionIntensifier = ClassifierOptions.getVariable(ClassifierOptions.Variable.QUESTION_INTENSIFIER);
                 for (LexicalToken token : tokens) {
-                    token.intensifyToken(.5);
+                    token.intensifyToken(questionIntensifier);
                 }
             }
         }

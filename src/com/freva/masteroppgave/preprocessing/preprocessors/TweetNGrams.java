@@ -2,7 +2,7 @@ package com.freva.masteroppgave.preprocessing.preprocessors;
 
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
-import com.freva.masteroppgave.preprocessing.filters.WordFilters;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 import com.freva.masteroppgave.utils.progressbar.Progressable;
@@ -49,8 +49,8 @@ public class TweetNGrams implements Progressable {
             for(String[] nGramTokens: NGrams.getSyntacticalNGrams(tweet, n)) {
                 String nGram = StringUtils.join(nGramTokens, " ");
                 if(! containsAlphabet.matcher(nGram).find()) continue;
-                if(WordFilters.containsIntensifier(nGramTokens)) continue;
-                if(WordFilters.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
+                if(ClassifierOptions.containsIntensifier(nGramTokens)) continue;
+                if(ClassifierOptions.isStopWord(nGramTokens[nGramTokens.length - 1])) continue;
 
                 tree.incrementNGram(nGramTokens);
             }

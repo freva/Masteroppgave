@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.preprocessing.filters;
 
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -55,7 +56,7 @@ public class Filters {
 
         StringBuilder sb = new StringBuilder();
         for(String token: RegexFilters.WHITESPACE.split(text)) {
-            if(! WordFilters.isSpecialClassWord(token)) {
+            if(! ClassifierOptions.isSpecialClassWord(token)) {
                 token = Filters.stringChain(token, filters);
             }
 
@@ -239,16 +240,6 @@ public class Filters {
 
     public static String fixQuotationSentence(String text) {
         return RegexFilters.fixQuotationSentence(text);
-    }
-
-
-    /**
-     * Removes English stop words, replacing them with "_"
-     * @param text String to format (f.ex. "This is a sentence with many stop words")
-     * @return The formatted String (f.ex. "_ _ _ sentence _ many stop words")
-     */
-    public static String removeStopWords(String text) {
-        return WordFilters.replaceStopWords(text, "_");
     }
 
     public static String replaceEmoticons(String text){
