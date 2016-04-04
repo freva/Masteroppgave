@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,7 +65,8 @@ public class ClassifierOptions {
             }
         }
 
-        return false;    }
+        return false;
+    }
 
 
     public static boolean isIntensifier(String word) {
@@ -89,6 +91,10 @@ public class ClassifierOptions {
 
     public static void setVariable(Variable variable, double value) {
         options.put(variable.name(), value);
+    }
+
+    public static String getAsJson() {
+        return JSONUtils.toJSON(Arrays.asList(options, intensifiers, negators, stopWords), true);
     }
 
     public enum Variable {
