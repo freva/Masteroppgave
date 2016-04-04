@@ -8,6 +8,7 @@ import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,12 +27,13 @@ public class StratifiedKFold {
     public double calculateScore() throws IOException {
         int partLength = entries.size() / k;
         Collections.shuffle(entries);
+
         double F1Score = 0;
         for(int i = 0 ; i < k ; i++){
-            List<DataSetEntry> testSet = entries.subList(i*partLength, (i+1)*partLength);
+            List<DataSetEntry> testSet = new ArrayList<>(entries.subList(i*partLength, (i+1)*partLength));
             List<DataSetEntry> trainSet = entries.subList(0, i*partLength);
-            List<DataSetEntry> trainSet2 = entries.subList((i+1)*partLength, k*partLength);
-            trainSet.addAll(trainSet2);
+            trainSet.addAll(entries.subList((i+1)*partLength, entries.size()));
+
             F1Score += trainAndTest(trainSet, testSet);
         }
         return F1Score/k;
