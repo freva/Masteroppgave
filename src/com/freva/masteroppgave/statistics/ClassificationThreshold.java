@@ -49,7 +49,7 @@ public class ClassificationThreshold {
      * Calculates optimal lower bound for neutral class. Optimizes based on accuracy.
      * @return Lower bound threshold
      */
-    public double getLowThreshold() {
+    public synchronized double getLowThreshold() {
         if(! cacheUpToDate) updateThresholds();
         return lowThreshold;
     }
@@ -58,7 +58,7 @@ public class ClassificationThreshold {
      * Calculates optimal higher bound for neutral class. Optimizes based on accuracy.
      * @return Higher bound threshold
      */
-    public double getHighThreshold() {
+    public synchronized double getHighThreshold() {
         if(! cacheUpToDate) updateThresholds();
         return highThreshold;
     }
