@@ -21,9 +21,16 @@ public class Classifier {
         this.phraseTree = new TokenTrie(lexicon.getSubjectiveWords());
     }
 
+    public Classifier(PriorPolarityLexicon lexicon) throws IOException {
+        this(lexicon, null);
+    }
+
 
     public double calculateSentiment(String tweet) {
-        tweet = filters.apply(tweet);
+        if (filters != null) {
+            tweet = filters.apply(tweet);
+        }
+
         List<LexicalToken> lexicalTokens = LexicalParser.lexicallyParseTweet(tweet, phraseTree);
         analyseTokens(lexicalTokens);
 
@@ -58,6 +65,7 @@ public class Classifier {
     }
 
     private void intensifyNext(List<LexicalToken> lexicalTokens, int index, double intensification) {
+        intensification *= ClassifierOptions.getVariable(intensification > 1 ? ClassifierOptions.Variable.AMPLIFIER_SCALAR : ClassifierOptions.Variable.DOWNTONER_SCALAR);
         if (! lexicalTokens.get(index).isAtTheEndOfSentence()) {
             lexicalTokens.get(index + 1).intensifyToken(intensification);
         }
