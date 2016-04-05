@@ -1,5 +1,7 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
+import com.freva.masteroppgave.preprocessing.filters.Filters;
+
 import java.util.regex.Pattern;
 
 public class DataSetEntry {
@@ -22,6 +24,9 @@ public class DataSetEntry {
         return classification;
     }
 
+    public void applyFilters(Filters filters) {
+        tweet = filters.apply(tweet);
+    }
 
     public enum Class {
         POSITIVE, NEUTRAL, NEGATIVE;
