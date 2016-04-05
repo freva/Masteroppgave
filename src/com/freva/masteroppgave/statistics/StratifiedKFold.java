@@ -1,10 +1,7 @@
 package com.freva.masteroppgave.statistics;
 
-import com.freva.masteroppgave.LexicalClassifier;
 import com.freva.masteroppgave.classifier.Classifier;
-import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
-import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
 import java.io.IOException;
@@ -13,15 +10,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class StratifiedKFold {
-    private final PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
-    private final Classifier classifier = new Classifier(priorPolarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
+    private final Classifier classifier;
+    private final List<DataSetEntry> entries;
+    private final int k;
 
-    private List<DataSetEntry> entries;
-    private int k;
-
-
-    public StratifiedKFold(List<DataSetEntry> entries, int k) throws IOException {
+    public StratifiedKFold(Classifier classifier, List<DataSetEntry> entries, int k) throws IOException {
         Collections.shuffle(entries);
+        this.classifier = classifier;
         this.entries = entries;
         this.k = k;
     }
