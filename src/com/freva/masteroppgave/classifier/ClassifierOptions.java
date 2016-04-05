@@ -77,10 +77,6 @@ public class ClassifierOptions {
         return intensifiers.get(word);
     }
 
-    public static void setIntensifierValue(String word, double value) {
-        intensifiers.put(word, value);
-    }
-
     public static boolean isSpecialClassWord(String word) {
         return word.startsWith("||")  && word.endsWith("||");
     }
@@ -98,7 +94,7 @@ public class ClassifierOptions {
     }
 
     public enum Variable {
-        NEGATION_VALUE, EXCLAMATION_INTENSIFIER, QUESTION_INTENSIFIER, NEGATION_SCOPE_LENGTH
+        NEGATION_VALUE, EXCLAMATION_INTENSIFIER, QUESTION_INTENSIFIER, NEGATION_SCOPE_LENGTH, DOWNTONER_SCALAR, AMPLIFIER_SCALAR
     }
 
     private class Words {
