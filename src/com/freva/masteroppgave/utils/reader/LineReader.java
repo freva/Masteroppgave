@@ -15,7 +15,7 @@ public class LineReader implements Iterator<String>, Iterable<String>, Progressa
 
     public LineReader(File file) throws IOException {
         this.totalLines = FileUtils.countLines(file);
-        this.scanner = new Scanner(file);
+        this.scanner = new Scanner(file, "UTF-8");
     }
 
     public boolean hasNext() {
