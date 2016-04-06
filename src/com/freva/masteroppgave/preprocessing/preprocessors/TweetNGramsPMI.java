@@ -7,9 +7,10 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -19,16 +20,15 @@ public class TweetNGramsPMI implements Progressable {
 
     /**
      * Finds all frequent n-grams in a file, treating each new line as a new document.
-     * @param input File with documents to generate n-grams for
+     * @param input LineReader initialized on file with documents to generate n-grams for
      * @param n Maximum n-gram length
      * @param frequencyCutoff Smallest required frequency to include n-gram
      * @param filters List of filters to apply to document before generating n-grams
      * @return Map of n-grams as key and number of occurrences as value
-     * @throws IOException
      */
-    public final Map<String, Double> getFrequentNGrams(File input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) throws IOException {
+    public final Map<String, Double> getFrequentNGrams(LineReader input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) {
         final AtomicInteger lineCounter = new AtomicInteger(0);
-        tweetReader = new LineReader(input);
+        tweetReader = input;
         nGramTree = new NGramTree();
 
         Parallel.For(tweetReader, tweet -> {
@@ -157,19 +157,19 @@ public class TweetNGramsPMI implements Progressable {
         }
 
         private void addFrequentPhrases(Map<String, Double> map, int limit, String prefix) {
-            for(Node child: children.values()) {
-                if(child.numOccurrences >= limit) {
-                    Node lastWord = nGramTree.getNode(child.phrase);
+            children.values().stream()
+                    .filter(child -> child.numOccurrences >= limit)
+                    .forEach(child -> {
+                Node lastWord = nGramTree.getNode(child.phrase);
 
-                    if(lastWord != null && lastWord.numOccurrences >= limit) {
-                        double temp = nGramTree.root.getLogScore() + child.getLogScore() - getLogScore() - lastWord.getLogScore();
+                if (lastWord != null && lastWord.numOccurrences >= limit) {
+                    double temp = nGramTree.root.getLogScore() + child.getLogScore() - getLogScore() - lastWord.getLogScore();
 
-                        String candidate = prefix + " " + child.phrase;
-                        map.put(candidate, temp);
-                        child.addFrequentPhrases(map, limit, candidate);
-                    }
+                    String candidate = prefix + " " + child.phrase;
+                    map.put(candidate, temp);
+                    child.addFrequentPhrases(map, limit, candidate);
                 }
-            }
+            });
         }
     }
 }

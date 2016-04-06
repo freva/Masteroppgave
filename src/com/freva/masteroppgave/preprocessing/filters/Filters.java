@@ -40,8 +40,9 @@ public class Filters {
     public static String stringChain(String text, Iterable<Function<String, String>> filters) {
         if(filters == null) return text;
 
-        for (Function<String, String> filter : filters)
+        for (Function<String, String> filter : filters) {
             text = filter.apply(text);
+        }
         return text;
     }
 
