@@ -7,10 +7,12 @@ import com.freva.masteroppgave.utils.progressbar.Progressable;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -26,7 +28,7 @@ public class TweetNGramsPMI implements Progressable {
      * @param filters List of filters to apply to document before generating n-grams
      * @return Map of n-grams as key and number of occurrences as value
      */
-    public final Map<String, Double> getFrequentNGrams(LineReader input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) {
+    public final List<String> getFrequentNGrams(LineReader input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) {
         final AtomicInteger lineCounter = new AtomicInteger(0);
         tweetReader = input;
         nGramTree = new NGramTree();
@@ -92,26 +94,25 @@ public class TweetNGramsPMI implements Progressable {
             root.pruneInfrequent(limit);
         }
 
-        private Map<String, Double> getNGrams(int limit, double inclusionThreshold) {
-            Map<String, Double> nGrams = new HashMap<>();
+        private List<String> getNGrams(int limit, double inclusionThreshold) {
+            Map<String, Double> allNGrams = new HashMap<>();
 
             for(Node child: root.children.values()) {
-                child.addFrequentPhrases(nGrams, limit, child.phrase);
+                child.addFrequentPhrases(allNGrams, limit, child.phrase);
             }
 
-            Iterator<Map.Entry<String, Double>> iterator = nGrams.entrySet().iterator();
-            while(iterator.hasNext()) {
-                Map.Entry<String, Double> next = iterator.next();
+            List<String> filteredNGrams = new ArrayList<>();
+            for (Map.Entry<String, Double> next : allNGrams.entrySet()) {
                 String[] nGramTokens = RegexFilters.WHITESPACE.split(next.getKey());
 
-                if(next.getValue() < inclusionThreshold ||
-                        ClassifierOptions.containsIntensifier(nGramTokens) ||
-                        ClassifierOptions.isStopWord(nGramTokens[nGramTokens.length - 1])) {
-                    iterator.remove();
+                if (next.getValue() >= inclusionThreshold &&
+                        !ClassifierOptions.containsIntensifier(nGramTokens) &&
+                        !ClassifierOptions.isStopWord(nGramTokens[nGramTokens.length - 1])) {
+                    filteredNGrams.add(next.getKey());
                 }
             }
 
-            return nGrams;
+            return filteredNGrams;
         }
     }
 
