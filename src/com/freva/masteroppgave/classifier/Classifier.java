@@ -6,7 +6,6 @@ import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -15,13 +14,13 @@ public class Classifier {
     private TokenTrie phraseTree;
     private Filters filters;
 
-    public Classifier(PriorPolarityLexicon lexicon, Filters filters) throws IOException {
+    public Classifier(PriorPolarityLexicon lexicon, Filters filters) {
         this.lexicon = lexicon;
         this.filters = filters;
         this.phraseTree = new TokenTrie(lexicon.getSubjectiveWords());
     }
 
-    public Classifier(PriorPolarityLexicon lexicon) throws IOException {
+    public Classifier(PriorPolarityLexicon lexicon) {
         this(lexicon, null);
     }
 

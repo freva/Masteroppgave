@@ -14,14 +14,14 @@ public class StratifiedKFold {
     private final List<DataSetEntry> entries;
     private final int k;
 
-    public StratifiedKFold(Classifier classifier, List<DataSetEntry> entries, int k) throws IOException {
+    public StratifiedKFold(Classifier classifier, List<DataSetEntry> entries, int k) {
         Collections.shuffle(entries);
         this.classifier = classifier;
         this.entries = entries;
         this.k = k;
     }
 
-    public double calculateScore() throws IOException {
+    public double calculateScore() {
         int partLength = entries.size() / k;
 
         double F1Score = 0;
@@ -35,7 +35,7 @@ public class StratifiedKFold {
         return F1Score/k;
     }
 
-    private double trainAndTest(List<DataSetEntry> trainSet, List<DataSetEntry> testSet) throws IOException {
+    private double trainAndTest(List<DataSetEntry> trainSet, List<DataSetEntry> testSet) {
         ClassificationThreshold threshold = new ClassificationThreshold();
         Parallel.For(trainSet, entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
