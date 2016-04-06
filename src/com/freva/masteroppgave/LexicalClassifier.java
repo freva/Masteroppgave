@@ -35,7 +35,7 @@ public class LexicalClassifier {
 
     public static void main(String[] args) throws IOException {
         long startTime = System.currentTimeMillis();
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, CLASSIFIER_FILTERS);
         ClassificationThreshold threshold = new ClassificationThreshold();

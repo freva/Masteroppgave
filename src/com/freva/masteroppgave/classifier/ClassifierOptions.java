@@ -16,9 +16,9 @@ public class ClassifierOptions {
     private static Set<String> negators;
     private static Set<String> stopWords;
 
-    static {
+    public static void loadOptions(File file) {
         try {
-            Words words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(new File("res/data/words.json")), new TypeToken<Words>(){});
+            Words words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Words>(){});
             options = words.options;
             intensifiers = words.intensifiers;
             negators = words.negators;
