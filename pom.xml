@@ -45,12 +45,5 @@
             <artifactId>emoji-java</artifactId>
             <version>3.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>edu.stanford</groupId>
-            <artifactId>nlp</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/res/gate_pos_tagger/stanford-postagger.jar</systemPath>
-        </dependency>
     </dependencies>
 </project>
