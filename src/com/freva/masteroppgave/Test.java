@@ -5,7 +5,6 @@ import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.statistics.ClassificationOptimizer;
-import com.freva.masteroppgave.statistics.StratifiedKFold;
 import com.freva.masteroppgave.utils.Resources;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.reader.LineReader;
@@ -28,13 +27,19 @@ public class Test {
 
 
     public static void main(String[] args) throws IOException {
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
+        Classifier classifier = new Classifier(priorPolarityLexicon);
+
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
         List<DataSetEntry> entries = new ArrayList<>();
         dataSetReader.forEach(entries::add);
+        entries.forEach(e -> e.applyFilters(LexicalClassifier.CLASSIFIER_FILTERS));
 
-        ClassificationOptimizer.runOptimizer(entries);
-
+        final long startTime = System.currentTimeMillis();
+        ClassificationOptimizer.runOptimizer(classifier, entries);
+        System.out.println(System.currentTimeMillis()-startTime);
     }
+
 
     public static void generateClassified() throws IOException {
         LineReader lineReader = new LineReader(new File("res/tweets/filtered1.txt"));

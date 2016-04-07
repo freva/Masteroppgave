@@ -1,6 +1,7 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.Classifier;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.statistics.ClassificationThreshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
@@ -35,15 +36,17 @@ public class LexicalClassifier {
 
     public static void main(String[] args) throws IOException {
         long startTime = System.currentTimeMillis();
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
+        ClassifierOptions.loadOptions(new File("res/data/words.json"));
+
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
         Classifier classifier = new Classifier(priorPolarityLexicon, CLASSIFIER_FILTERS);
         ClassificationThreshold threshold = new ClassificationThreshold();
 
-        Parallel.For(dataSetReader, entry -> {
+        for(DataSetEntry entry : dataSetReader) {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
             threshold.updateEvidence(entry.getClassification(), predictedSentiment);
-        });
+        }
 
         System.out.println("Performing tests with threshold: [" + String.format("%4.2f", threshold.getLowThreshold()) + ", " +
                 String.format("%4.2f", threshold.getHighThreshold()) + "] with accuracy: " + threshold.getMaxAccuracy() + "\n");
