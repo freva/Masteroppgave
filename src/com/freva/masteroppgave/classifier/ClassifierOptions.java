@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,12 +89,13 @@ public class ClassifierOptions {
         options.put(variable.name(), value);
     }
 
-    public static String getAsJson() {
-        return JSONUtils.toJSON(Arrays.asList(options, intensifiers, negators, stopWords), true);
+    public static Map<String, Double> getOptions() {
+        return new HashMap<>(options);
     }
 
     public enum Variable {
-        NEGATION_VALUE, EXCLAMATION_INTENSIFIER, QUESTION_INTENSIFIER, NEGATION_SCOPE_LENGTH, DOWNTONER_SCALAR, AMPLIFIER_SCALAR
+        NEGATION_VALUE, EXCLAMATION_INTENSIFIER, QUESTION_INTENSIFIER, NEGATION_SCOPE_LENGTH, DOWNTONER_SCALAR,
+        AMPLIFIER_SCALAR, CLASSIFICATION_THRESHOLD_LOWER, CLASSIFICATION_THRESHOLD_HIGHER
     }
 
     private class Words {
