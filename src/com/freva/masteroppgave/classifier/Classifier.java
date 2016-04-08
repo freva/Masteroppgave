@@ -5,6 +5,7 @@ import com.freva.masteroppgave.classifier.sentence.LexicalToken;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
+import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 
 import java.util.List;
 
@@ -24,6 +25,13 @@ public class Classifier {
         this(lexicon, null);
     }
 
+    public DataSetEntry.Class classify(String tweet) {
+        final double sentimentValue = calculateSentiment(tweet);
+
+        return DataSetEntry.Class.classifyFromThresholds(sentimentValue,
+                ClassifierOptions.getVariable(ClassifierOptions.Variable.CLASSIFICATION_THRESHOLD_LOWER),
+                ClassifierOptions.getVariable(ClassifierOptions.Variable.CLASSIFICATION_THRESHOLD_HIGHER));
+    }
 
     public double calculateSentiment(String tweet) {
         if (filters != null) {
