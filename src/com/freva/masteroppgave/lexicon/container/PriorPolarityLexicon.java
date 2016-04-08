@@ -12,7 +12,11 @@ public class PriorPolarityLexicon implements Iterable<String> {
     private Map<String, Double> polarityLexicon;
 
     public PriorPolarityLexicon(File file) throws IOException {
-        polarityLexicon = readLexicon(file);
+        this(readLexicon(file));
+    }
+
+    public PriorPolarityLexicon(Map<String, Double> polarityLexicon) {
+        this.polarityLexicon = polarityLexicon;
     }
 
     public double getPolarity(String phrase) {
