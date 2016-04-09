@@ -3,7 +3,7 @@ package com.freva.masteroppgave.classifier.sentence;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
 
 public class LexicalToken {
-    private String phrase;
+    private final String phrase;
     private double lexicalValue;
     private double intensification = 1;
 
@@ -22,22 +22,6 @@ public class LexicalToken {
         this.lexicalValue = lexicalValue;
     }
 
-    public double getLexicalValue() {
-        return lexicalValue;
-    }
-
-    public void setInNegatedContext(boolean inNegatedContext) {
-        this.inNegatedContext = inNegatedContext;
-    }
-
-    public void setAtEndOfSentence(boolean atEndOfSentence) {
-        this.atEndOfSentence = atEndOfSentence;
-    }
-
-    public void intensifyToken(double intensification) {
-        this.intensification *= intensification;
-    }
-
     public double getSentimentValue() {
         double sentimentValue = lexicalValue;
         if (isUnderIntensification()) {
@@ -51,17 +35,33 @@ public class LexicalToken {
         return sentimentValue;
     }
 
+
+    public void setInNegatedContext(boolean inNegatedContext) {
+        this.inNegatedContext = inNegatedContext;
+    }
+
     public boolean isInNegatedContext() {
         return inNegatedContext;
+    }
+
+
+    public void setAtEndOfSentence(boolean atEndOfSentence) {
+        this.atEndOfSentence = atEndOfSentence;
     }
 
     public boolean isAtTheEndOfSentence() {
         return atEndOfSentence;
     }
 
+
+    public void intensifyToken(double intensification) {
+        this.intensification *= intensification;
+    }
+
     public boolean isUnderIntensification() {
         return intensification != 1;
     }
+
 
     public String toString() {
         return "[" + phrase + (isInNegatedContext() ? "_NEG" : "") + " | " + getSentimentValue() + " | " +

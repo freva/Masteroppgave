@@ -7,9 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-
-public class PriorPolarityLexicon implements Iterable<String> {
-    private Map<String, Double> polarityLexicon;
+public class PriorPolarityLexicon {
+    private final Map<String, Double> polarityLexicon;
 
     public PriorPolarityLexicon(File file) throws IOException {
         this(readLexicon(file));
@@ -19,21 +18,16 @@ public class PriorPolarityLexicon implements Iterable<String> {
         this.polarityLexicon = polarityLexicon;
     }
 
-    public double getPolarity(String phrase) {
+    public double getTokenPolarity(String phrase) {
         return polarityLexicon.get(phrase);
     }
 
-    public boolean hasWord(String word) {
+    public boolean hasToken(String word) {
         return polarityLexicon.containsKey(word);
     }
 
-    public Set<String> getSubjectiveWords() {
-        return new HashSet<>(polarityLexicon.keySet());
-    }
-
-    @Override
-    public Iterator<String> iterator() {
-        return polarityLexicon.keySet().iterator();
+    public Collection<String> getSubjectiveWords() {
+        return new ArrayList<>(polarityLexicon.keySet());
     }
 
     public Map<String, Double> getLexicon() {
@@ -42,6 +36,6 @@ public class PriorPolarityLexicon implements Iterable<String> {
 
 
     public static Map<String, Double> readLexicon(File file) throws IOException {
-        return JSONUtils.fromJSONFile(file, new TypeToken<Map<String, Double>>(){});
+        return JSONUtils.fromJSONFile(file, new TypeToken<Map<String, Double>>() {});
     }
 }

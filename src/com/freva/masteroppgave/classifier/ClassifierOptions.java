@@ -18,7 +18,7 @@ public class ClassifierOptions {
 
     public static void loadOptions(File file) {
         try {
-            Words words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Words>(){});
+            Settings words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Settings>() {});
             options = words.options;
             intensifiers = words.intensifiers;
             negators = words.negators;
@@ -29,8 +29,8 @@ public class ClassifierOptions {
     }
 
     public static boolean containsStopWord(String[] words) {
-        for (String word: words) {
-            if (stopWords.contains(word)) {
+        for (String word : words) {
+            if (isStopWord(word)) {
                 return true;
             }
         }
@@ -44,8 +44,8 @@ public class ClassifierOptions {
 
 
     public static boolean containsNegation(String[] words) {
-        for(String word: words) {
-            if(negators.contains(word)) {
+        for (String word : words) {
+            if (isNegation(word)) {
                 return true;
             }
         }
@@ -59,15 +59,14 @@ public class ClassifierOptions {
 
 
     public static boolean containsIntensifier(String[] words) {
-        for(String word: words) {
-            if(intensifiers.containsKey(word)) {
+        for (String word : words) {
+            if (isIntensifier(word)) {
                 return true;
             }
         }
 
         return false;
     }
-
 
     public static boolean isIntensifier(String word) {
         return intensifiers.containsKey(word);
@@ -77,9 +76,11 @@ public class ClassifierOptions {
         return intensifiers.get(word);
     }
 
+
     public static boolean isSpecialClassWord(String word) {
-        return word.startsWith("||")  && word.endsWith("||");
+        return word.startsWith("||") && word.endsWith("||");
     }
+
 
     public static double getVariable(Variable variable) {
         return options.get(variable.name());
@@ -98,13 +99,13 @@ public class ClassifierOptions {
         AMPLIFIER_SCALAR, CLASSIFICATION_THRESHOLD_LOWER, CLASSIFICATION_THRESHOLD_HIGHER
     }
 
-    private class Words {
-        private Map<String, Double> options;
-        private Map<String, Double> intensifiers;
-        private Set<String> negators;
-        private Set<String> stopWords;
+    private class Settings {
+        private final Map<String, Double> options;
+        private final Map<String, Double> intensifiers;
+        private final Set<String> negators;
+        private final Set<String> stopWords;
 
-        private Words(Map<String, Double> options, Map<String, Double> intensifiers, Set<String> negators, Set<String> stopWords) {
+        private Settings(Map<String, Double> options, Map<String, Double> intensifiers, Set<String> negators, Set<String> stopWords) {
             this.options = options;
             this.intensifiers = intensifiers;
             this.negators = negators;
