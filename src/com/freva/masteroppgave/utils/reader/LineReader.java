@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
 
-public class LineReader implements Iterator<String>, Iterable<String>, Progressable{
+public class LineReader implements Iterator<String>, Iterable<String>, Progressable {
     private Scanner scanner;
     private int totalLines = 0;
     private int lineCounter = 0;
@@ -32,6 +32,6 @@ public class LineReader implements Iterator<String>, Iterable<String>, Progressa
     }
 
     public double getProgress() {
-        return (totalLines == 0 ? 0 : 100.0*lineCounter/totalLines);
+        return (totalLines == 0 ? 0 : 100.0 * lineCounter / totalLines);
     }
 }

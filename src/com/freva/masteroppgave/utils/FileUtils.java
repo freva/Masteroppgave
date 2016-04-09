@@ -1,18 +1,22 @@
 package com.freva.masteroppgave.utils;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
-
 
 public class FileUtils {
     /**
      * Calculates number of lines in a file
+     *
      * @param file File to count lines in
      * @return Number of lines in a file
      * @throws IOException
      */
     public static int countLines(File file) throws IOException {
-        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
             byte[] c = new byte[1024];
             int count = 0;
             int readChars;
@@ -32,6 +36,7 @@ public class FileUtils {
 
     /**
      * Reads entire file into a String
+     *
      * @param file File to read in
      * @return String with entire file contents
      * @throws IOException
@@ -43,13 +48,13 @@ public class FileUtils {
 
     /**
      * Writes String to file. If file contained anything before operation, it will be emptied first.
+     *
      * @param data String to write to file
      * @throws IOException
      */
     public static void writeToFile(File file, String data) throws IOException {
-        try (Writer writer = new FileWriter(file)) {
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(data);
         }
     }
-
 }

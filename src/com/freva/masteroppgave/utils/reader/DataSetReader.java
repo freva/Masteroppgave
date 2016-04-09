@@ -18,24 +18,18 @@ public class DataSetReader implements Iterator<DataSetEntry>, Iterable<DataSetEn
         this.classIndex = classIndex;
     }
 
-
-    @Override
     public boolean hasNext() {
         return lineReader.hasNext();
     }
 
-    @Override
     public DataSetEntry next() {
         return new DataSetEntry(lineReader.next(), tweetIndex, classIndex);
     }
-
 
     public Iterator<DataSetEntry> iterator() {
         return this;
     }
 
-
-    @Override
     public double getProgress() {
         return lineReader.getProgress();
     }

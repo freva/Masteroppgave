@@ -1,19 +1,17 @@
 package com.freva.masteroppgave.utils.progressbar;
 
-
 public class ProgressBar implements Runnable {
     private static final String fullProgress = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
-    private static final String noProgress =   "----------------------------------------------------------------------------------------------------";
-    private static final int updateResolution = 1000;
+    private static final String noProgress = "----------------------------------------------------------------------------------------------------";
     private static final String format = "%02d:%02d";
+    private static final int updateResolution = 1000;
 
     private static final Object lock = new Object();
     private static String currentThread = null;
 
-    private Progressable progressable;
-    private String taskName;
-    private long taskStart;
-
+    private final Progressable progressable;
+    private final String taskName;
+    private final long taskStart;
 
     private ProgressBar(Progressable progressable, String taskName) {
         this.taskStart = System.currentTimeMillis();
@@ -24,8 +22,9 @@ public class ProgressBar implements Runnable {
 
     /**
      * Class that regularly checks progress of a Progressable and prints it in a nicely formatted ASCII progress bar
+     *
      * @param progressable Instance that implements Progressable interface
-     * @param taskName Name of the task, is printed right before the progress bar
+     * @param taskName     Name of the task, is printed right before the progress bar
      */
     public static void trackProgress(Progressable progressable, String taskName) {
         synchronized (lock) {
@@ -42,9 +41,9 @@ public class ProgressBar implements Runnable {
     }
 
     private String getProgress(double perc) {
-        long secondsElapsed = (System.currentTimeMillis()-taskStart)/1000;
+        long secondsElapsed = (System.currentTimeMillis() - taskStart) / 1000;
         String timeElapsed = convertSeconds(secondsElapsed);
-        String timeRemaining = perc != 0 ? convertSeconds((long) ((100-perc)*secondsElapsed/perc)) : "Infin";
+        String timeRemaining = perc != 0 ? convertSeconds((long) ((100 - perc) * secondsElapsed / perc)) : "Infin";
         String progress = getProgressBar(perc) + " Elapsed: " + timeElapsed + " | Remaining: " + timeRemaining;
 
         return "\r" + progress;
