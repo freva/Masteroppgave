@@ -1,6 +1,7 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.Classifier;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
@@ -27,8 +28,7 @@ public class Test {
 
 
     public static void main(String[] args) throws IOException {
-        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.AFINN_LEXICON);
-        Classifier classifier = new Classifier(priorPolarityLexicon);
+        ClassifierOptions.loadOptions(new File("res/data/words.json"));
 
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
         List<DataSetEntry> entries = new ArrayList<>();
@@ -36,7 +36,7 @@ public class Test {
         entries.forEach(e -> e.applyFilters(LexicalClassifier.CLASSIFIER_FILTERS));
 
         final long startTime = System.currentTimeMillis();
-        ClassificationOptimizer.runOptimizer(classifier, entries);
+        ClassificationOptimizer.runOptimizer(entries);
         System.out.println(System.currentTimeMillis()-startTime);
     }
 

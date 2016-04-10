@@ -1,7 +1,8 @@
 package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.ClassifierOptions;
-import com.freva.masteroppgave.preprocessing.filters.CharacterCleaner;
+import com.freva.masteroppgave.lexicon.LexiconCreator;
+import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGramsPMI;
 import com.freva.masteroppgave.utils.JSONUtils;
@@ -19,14 +20,14 @@ import java.util.function.Function;
 public class Main {
     public static final List<Function<String, String>> N_GRAM_STRING_FILTERS = Arrays.asList(
             Filters::HTMLUnescape, Filters::removeUnicodeEmoticons, Filters::normalizeForm, Filters::removeURL,
-            Filters::removeRTTag, Filters::removeHashtag, Filters::placeholderUsername, Filters::removeEmoticons,
+            Filters::removeRTTag, Filters::removeHashtag, Filters::removeUsername, Filters::removeEmoticons,
             Filters::removeFreeDigits, String::toLowerCase);
     public static final List<Function<String, String>> N_GRAM_CHARACTER_FILTERS = Arrays.asList(
-            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalText);
+            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalText, CanonicalForm::correctWordViaCanonical);
     public static final Filters N_GRAM_FILTERS = new Filters(N_GRAM_STRING_FILTERS, N_GRAM_CHARACTER_FILTERS);
 
     public static final List<Function<String, String>> TWEET_STRING_FILTERS = Arrays.asList(
-            Filters::HTMLUnescape, CharacterCleaner::unicodeEmotesToAlias, Filters::normalizeForm, Filters::removeURL,
+            Filters::HTMLUnescape, Filters::parseUnicodeEmojisToAlias, Filters::normalizeForm, Filters::removeURL,
             Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
             Filters::removeFreeDigits, Filters::replaceEmoticons, String::toLowerCase);
     public static final List<Function<String, String>> TWEET_CHARACTER_FILTERS = Arrays.asList(
@@ -35,8 +36,9 @@ public class Main {
 
 
     public static void main(String[] args) {
-//        args = new String[]{"ngrams", "tweets=res/tweets/1m.txt", "output=ngrams.txt", "options=res/data/words.json", "n=4", "minRatio=0.0001", "minPMI=1"};
-//        args = new String[]{"create", "ngrams=ngrams.txt", "dataset=res/tweets/classified.txt", "output=lexicon.txt", "options=res/data/words.json", "maxError=0.1", "minSentiment=0.5"};
+//        args = new String[]{"ngrams", "tweets=res/tweets/filtered.txt", "output=res/tweets/ngrams.txt", "options=res/data/words.json", "n=6", "minRatio=0.000005", "minPMI=0"};
+//        args = new String[]{"ngrams", "tweets=res/tweets/filtered.txt", "output=res/tweets/ngrams.txt", "options=res/data/words.json", "n=5", "minRatio=0.000005", "minPMI=3"};
+        args = new String[]{"create", "ngrams=res/tweets/ngrams.txt", "dataset=res/tweets/classified.txt", "output=res/tweets/pmilexicon.txt", "options=res/data/words.json", "maxError=0.1", "minSentiment=2"};
         if (args.length == 0) {
             printHelp();
             return;
@@ -114,9 +116,9 @@ public class Main {
         Set<String> frequentNGrams = JSONUtils.fromJSONFile(nGramsFile, new TypeToken<Set<String>>(){});
         DataSetReader dataSetReader = new DataSetReader(dataSetFile, 1, 0);
 
-        LexicalCreatorPMI lexicalCreatorPMI = new LexicalCreatorPMI();
-        ProgressBar.trackProgress(lexicalCreatorPMI, "Creating lexicon...");
-        Map<String, Double> lexicon = lexicalCreatorPMI.createLexicon(dataSetReader, frequentNGrams, maxErrorRate, sentimentValueThreshold, TWEET_FILTERS);
+        LexiconCreator lexiconCreator = new LexiconCreator();
+        ProgressBar.trackProgress(lexiconCreator, "Creating lexicon...");
+        Map<String, Double> lexicon = lexiconCreator.createLexicon(dataSetReader, frequentNGrams, maxErrorRate, sentimentValueThreshold, TWEET_FILTERS);
         JSONUtils.toJSONFile(lexiconFile, MapUtils.sortMapByValue(lexicon), true);
     }
 }

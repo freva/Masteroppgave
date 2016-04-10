@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.statistics;
 
-import com.freva.masteroppgave.LexicalCreatorPMI;
+import com.freva.masteroppgave.lexicon.LexiconCreator;
 import com.freva.masteroppgave.Main;
 import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class ClassificationOptimizer {
     private static final Map<ClassifierOptions.Variable, double[]> variableValues = new HashMap<>();
-    private static final LexicalCreatorPMI creator = new LexicalCreatorPMI();
+    private static final LexiconCreator creator = new LexiconCreator();
     private static final Map<String, double[]> nGrams = new HashMap<>();
     private static final double[][] lexiconVariables = {{3, 4, 5, 6}, //n
             {0.000005, 0.00001, 0.00005, 0.0001, 0.0005, 0.001}, //frequencyCutoff
