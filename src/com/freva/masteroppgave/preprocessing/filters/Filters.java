@@ -14,15 +14,12 @@ public class Filters {
     public static final String RTTAG_PLACEHOLDER = " ||rt|| ";
     public static final String URL_PLACEHOLDER = " ||url|| ";
 
-    private List<Function<String, String>> stringFilters;
-    private List<Function<String, String>> tokenFilters;
-
-    public Filters(List<Function<String, String>> stringFilters) {
-        this.stringFilters = stringFilters;
-    }
+    private static final EmojiParser.EmojiTransformer EMOJI_ALIAS_TRANSFORMER = e -> " ||" + e.getEmoji().getAliases().get(0) + "|| ";
+    private final List<Function<String, String>> stringFilters;
+    private final List<Function<String, String>> tokenFilters;
 
     public Filters(List<Function<String, String>> stringFilters, List<Function<String, String>> tokenFilters) {
-        this(stringFilters);
+        this.stringFilters = stringFilters;
         this.tokenFilters = tokenFilters;
     }
 
@@ -33,31 +30,34 @@ public class Filters {
 
     /**
      * Chain several filters after each other, applies the filter on the entire string
-     * @param text String to format
+     *
+     * @param text    String to format
      * @param filters Sequence of filters to apply on String
      * @return The formatted String
      */
     public static String stringChain(String text, Iterable<Function<String, String>> filters) {
-        if(filters == null) return text;
+        if (filters == null) return text;
 
         for (Function<String, String> filter : filters) {
             text = filter.apply(text);
         }
+
         return text;
     }
 
     /**
      * Chain several filters after each other, applying filters only on non special class tokens
-     * @param text String to format
+     *
+     * @param text    String to format
      * @param filters Sequence of filters to apply to tokens
      * @return The formatted String
      */
     public static String tokenChain(String text, Iterable<Function<String, String>> filters) {
-        if(filters == null) return text;
+        if (filters == null) return text;
 
         StringBuilder sb = new StringBuilder();
-        for(String token: RegexFilters.WHITESPACE.split(text)) {
-            if(! ClassifierOptions.isSpecialClassWord(token)) {
+        for (String token : RegexFilters.WHITESPACE.split(text)) {
+            if (!ClassifierOptions.isSpecialClassWord(token)) {
                 token = Filters.stringChain(token, filters);
             }
 
@@ -69,6 +69,7 @@ public class Filters {
 
     /**
      * Returns HTML unescaped string
+     *
      * @param text String to format (f.ex. "&lt;3")
      * @return The formatted String (f.ex. "<3")
      */
@@ -79,6 +80,7 @@ public class Filters {
 
     /**
      * Normalizes String to Latin characters if possible
+     *
      * @param text String to format (f.ex. "A strîng wìth fúnny chäracters")
      * @return The formatted String (f.ex. "A string with funny characters")
      */
@@ -88,6 +90,7 @@ public class Filters {
 
     /**
      * Removes repeated whitespace
+     *
      * @param text String to format (f.ex. "A string    with maany   spaces  ")
      * @return The formatted String (f.ex. "A string with many spaces ")
      */
@@ -96,8 +99,8 @@ public class Filters {
     }
 
 
-    public static String parseUnicodeEmoticons(String text) {
-        return EmojiParser.parseToAliases(text, EmojiParser.FitzpatrickAction.REMOVE);
+    public static String parseUnicodeEmojisToAlias(String text) {
+        return EmojiParser.parseFromUnicode(text, EMOJI_ALIAS_TRANSFORMER);
     }
 
     public static String removeUnicodeEmoticons(String text) {
@@ -159,17 +162,8 @@ public class Filters {
 
 
     /**
-     * Removes PoS tags (Assumed immediately after a word connected by an underscore)
-     * @param text String to format (f.ex "A_TAG PoS_TAG tagged_TAG sentence_TAG")
-     * @return The formatted String (f.ex. "A PoS tagged sentence")
-     */
-    public static String removePosTags(String text) {
-        return RegexFilters.replacePosTag(text, "");
-    }
-
-
-    /**
      * Removes characters which are often part of a word (mostly apostrophes)
+     *
      * @param text String to format (f.ex. "Here's a sentence!")
      * @return The formatted String (f.ex. "Heres a sentence!")
      */
@@ -180,6 +174,7 @@ public class Filters {
 
     /**
      * Removes all non-alphabetic or basic punctuation characters (!?,. )
+     *
      * @param text String to format (f.ex. "This is' a #crazy tæst")
      * @return The formatted String (f.ex. "This is a crazy tst")
      */
@@ -193,6 +188,7 @@ public class Filters {
 
     /**
      * Removes non-alphanumerical characters
+     *
      * @param text String to format (f.ex "It's very nice!")
      * @return The formatted String (f.ex "It s very nice ")
      */
@@ -203,6 +199,7 @@ public class Filters {
 
     /**
      * Removes non alphabetic characters
+     *
      * @param text String to format (f.ex "Hey, m8!")
      * @return The formatted String (f.ex. "Hey m")
      */
@@ -210,18 +207,10 @@ public class Filters {
         return RegexFilters.replaceNonAlphabeticText(text, " ");
     }
 
-    /**
-     * Removes non-alphabetical symbols from PoS tagged sentence
-     * @param text String to format (f.ex. "That_TAG was_TAG ***_TAG ._. cool_TAG m8_TAG")
-     * @return The formatted String (f.ex "That_TAG was_TAG cool_TAG m_TAG")
-     */
-    public static String removeNonPosTaggedAlphabeticalText(String text) {
-        return RegexFilters.replaceNonPosTaggedAlphabeticalText(text, "");
-    }
-
 
     /**
      * Removes free standing digits (digits not part of a word)
+     *
      * @param text String to format (f.ex. "Only 90s kids will get this 1337 m8")
      * @return The formatted String (f.ex. "Only 90s kids will get this m8")
      */
@@ -230,20 +219,7 @@ public class Filters {
     }
 
 
-    /**
-     * Formats punctuation signs to be syntactically correctly placed (immediately following a word, followed by a space)
-     * @param text String to format (f.ex. "This sentence ,has oddly.placed signs ! ! !"
-     * @return The formatted String (f.ex. "This sentence, has oddly. placed signs!!!")
-     */
-    public static String fixSyntacticalPunctuationGrammar(String text) {
-        return RegexFilters.fixSyntacticalPunctuationGrammar(text);
-    }
-
-    public static String fixQuotationSentence(String text) {
-        return RegexFilters.fixQuotationSentence(text);
-    }
-
-    public static String replaceEmoticons(String text){
+    public static String replaceEmoticons(String text) {
         return RegexFilters.replaceEmoticons(text, " ||$1|| ");
     }
 }
