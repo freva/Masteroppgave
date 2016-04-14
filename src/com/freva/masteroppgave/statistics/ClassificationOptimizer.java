@@ -6,9 +6,11 @@ import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
+import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,12 +22,14 @@ public class ClassificationOptimizer {
     private static final Map<ClassifierOptions.Variable, double[]> variableValues = new HashMap<>();
     private static final LexiconCreator creator = new LexiconCreator();
     private static final Map<String, double[]> nGrams = new HashMap<>();
-    private static final double[][] lexiconVariables = {{3, 4, 5, 6}, //n
-            {0.000005, 0.00001, 0.00005, 0.0001, 0.0005, 0.001}, //frequencyCutoff
-            {0, 1, 1.5, 2, 2.5, 3, 3.5, 4}, //minPMI
-            {0.01, 0.05, 0.1, 0.15, 0.2}, //maxError
-            {0, 0.5, 1, 1.5, 2}}; //minSentiment
-    private static final double[] bestValues = {6, 0.000005, 1.5, 0.1, 0.5};
+    private static Map<String, String[]> synonyms;
+
+    private static final double[][] lexiconVariables = {{4, 5, 6}, //n
+            {0.000005, 0.0000075, 0.00001, 0.000025, 0.00005}, //frequencyCutoff
+            {3, 3.25, 3.5, 3.75, 4}, //minPMI
+            {0.075, 0.1, 0.125, 0.15}, //maxError
+            {2, 2.25, 2.5, 2.75, 3.0}}; //minSentiment
+    private static final double[] bestValues = {lexiconVariables[0][0], lexiconVariables[1][0], lexiconVariables[2][0], lexiconVariables[3][0], lexiconVariables[4][0]};
 
 
     static {
@@ -34,16 +38,18 @@ public class ClassificationOptimizer {
                 String[] values = line.split("\t");
                 nGrams.put(values[2], new double[]{Double.parseDouble(values[0]), Double.parseDouble(values[1])});
             }
+
+            synonyms = JSONUtils.fromJSONFile(new File("res/data/synonyms.json"), new TypeToken<Map<String, String[]>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        variableValues.put(ClassifierOptions.Variable.NEGATION_VALUE, new double[]{0.5, 0.8, 1.0, 1.2, 1.5});
-        variableValues.put(ClassifierOptions.Variable.EXCLAMATION_INTENSIFIER, new double[]{1.0, 1.5, 2.0, 2.5});
-        variableValues.put(ClassifierOptions.Variable.QUESTION_INTENSIFIER, new double[]{0.3, 0.5, 0.7, 1.0});
-        variableValues.put(ClassifierOptions.Variable.NEGATION_SCOPE_LENGTH, new double[]{3, 4, 5});
-        variableValues.put(ClassifierOptions.Variable.AMPLIFIER_SCALAR, new double[]{1, 2, 2.5, 3, 3.5, 4});
-        variableValues.put(ClassifierOptions.Variable.DOWNTONER_SCALAR, new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1});
+        variableValues.put(ClassifierOptions.Variable.NEGATION_VALUE, new double[]{0.5, 0.8, 1.0, 1.2, 1.3, 1.4, 1.5});
+        variableValues.put(ClassifierOptions.Variable.EXCLAMATION_INTENSIFIER, new double[]{2.0, 2.5, 2.75, 3.0, 3.25, 3.5});
+        variableValues.put(ClassifierOptions.Variable.QUESTION_INTENSIFIER, new double[]{0.3, 0.5, 0.7, 0.8, 0.9, 1.0});
+        variableValues.put(ClassifierOptions.Variable.NEGATION_SCOPE_LENGTH, new double[]{2, 3, 4, 5, 6});
+        variableValues.put(ClassifierOptions.Variable.AMPLIFIER_SCALAR, new double[]{2, 2.5, 3, 3.5, 4});
+        variableValues.put(ClassifierOptions.Variable.DOWNTONER_SCALAR, new double[]{0.4, 0.6, 0.8, 0.9, 1, 1.1});
     }
 
     public static void runOptimizer(List<DataSetEntry> entries) throws IOException {
@@ -113,7 +119,7 @@ public class ClassificationOptimizer {
                 .map(Map.Entry::getKey).collect(Collectors.toList());
 
         DataSetReader dataset = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
-        return creator.createLexicon(dataset, filteredNGrams, maxError, minSentiment, Main.TWEET_FILTERS);
+        return creator.createLexicon(dataset, filteredNGrams, maxError, minSentiment, Main.TWEET_FILTERS, synonyms);
     }
 
     private static double calculateScore(Classifier classifier, List<DataSetEntry> entries) {

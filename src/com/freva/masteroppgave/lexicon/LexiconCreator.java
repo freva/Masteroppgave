@@ -15,13 +15,13 @@ public class LexiconCreator implements Progressable {
     private DataSetReader dataSetReader;
 
     public Map<String, Double> createLexicon(DataSetReader dataSetReader, Collection<String> nGrams, double maxErrorRate,
-                                             double sentimentValueThreshold, Filters filters, Map<String, String[]> adjectives) {
+                                             double sentimentValueThreshold, Filters filters, Map<String, String[]> synonyms) {
         Map<String, Double> lexicon = createLexicon(dataSetReader, nGrams, maxErrorRate, sentimentValueThreshold, filters);
         Map<String, Double> wordsToBeAdded = new HashMap<>();
         lexicon.keySet().stream()
-                .filter(adjectives::containsKey)
+                .filter(synonyms::containsKey)
                 .forEach(key -> {
-                    for (String relatedWord : adjectives.get(key)) {
+                    for (String relatedWord : synonyms.get(key)) {
                         if (!lexicon.containsKey(relatedWord) && !wordsToBeAdded.containsKey(relatedWord)) {
                             wordsToBeAdded.put(relatedWord, lexicon.get(key));
                         }

@@ -2,6 +2,7 @@ package com.freva.masteroppgave;
 
 import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
+import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.statistics.ClassificationThreshold;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
@@ -25,7 +26,7 @@ public class LexicalClassifier {
             Filters::removeRTTag, Filters::protectHashtag, Filters::removeEMail, Filters::removeUsername,
             Filters::replaceEmoticons, Filters::removeFreeDigits, String::toLowerCase);
     public static final List<Function<String, String>> CLASSIFIER_CHARACTER_FILTERS = Arrays.asList(
-            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalTextPlus);
+            Filters::removeInnerWordCharacters, Filters::removeNonSyntacticalText, CanonicalForm::correctWordViaCanonical);
     public static final Filters CLASSIFIER_FILTERS = new Filters(CLASSIFIER_STRING_FILTERS, CLASSIFIER_CHARACTER_FILTERS);
 
     private static final Map<String, File> TEST_SETS = new LinkedHashMap<String, File>() {{
@@ -39,7 +40,7 @@ public class LexicalClassifier {
 
     public static void main(String[] args) throws IOException {
         long startTime = System.currentTimeMillis();
-        ClassifierOptions.loadOptions(new File("res/data/words.json"));
+        ClassifierOptions.loadOptions(new File("res/data/options.pmi.json"));
 
         PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(Resources.PMI_LEXICON);
         DataSetReader dataSetReader = new DataSetReader(Resources.SEMEVAL_2013_TRAIN, 3, 2);
