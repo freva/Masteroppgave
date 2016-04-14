@@ -73,7 +73,9 @@ public class ClassifierOptions {
     }
 
     public static double getIntensifierValue(String word) {
-        return intensifiers.get(word);
+        final double intensifier = intensifiers.getOrDefault(word, 0d);
+        final double mult = intensifier > 0 ? getVariable(Variable.AMPLIFIER_SCALAR) : getVariable(Variable.DOWNTONER_SCALAR);
+        return mult * intensifier;
     }
 
 

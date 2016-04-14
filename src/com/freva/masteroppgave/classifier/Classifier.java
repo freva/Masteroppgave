@@ -67,7 +67,6 @@ public class Classifier {
     }
 
     private void intensifyNext(List<LexicalToken> lexicalTokens, int index, double intensification) {
-        intensification *= ClassifierOptions.getVariable(intensification > 1 ? Variable.AMPLIFIER_SCALAR : Variable.DOWNTONER_SCALAR);
         if (!lexicalTokens.get(index).isAtTheEndOfSentence()) {
             lexicalTokens.get(index + 1).intensifyToken(intensification);
         }
