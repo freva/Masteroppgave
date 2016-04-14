@@ -1,0 +1,2378 @@
+{
+  "truest": [
+    "true",
+    "truer"
+  ],
+  "itchier": [
+    "itchy",
+    "itchiest"
+  ],
+  "funnier": [
+    "funniest",
+    "funny"
+  ],
+  "bad": [
+    "worst",
+    "worse"
+  ],
+  "safer": [
+    "safe",
+    "safest"
+  ],
+  "quickest": [
+    "quick",
+    "quicker"
+  ],
+  "handy": [
+    "handiest",
+    "handier"
+  ],
+  "slower": [
+    "slow",
+    "slowest"
+  ],
+  "blandest": [
+    "blander",
+    "bland"
+  ],
+  "fit": [
+    "fittest",
+    "fitter"
+  ],
+  "poor": [
+    "poorer",
+    "poorest"
+  ],
+  "gloomy": [
+    "gloomiest",
+    "gloomier"
+  ],
+  "neat": [
+    "neater",
+    "neatest"
+  ],
+  "near": [
+    "nearer",
+    "nearest"
+  ],
+  "strict": [
+    "stricter",
+    "strictest"
+  ],
+  "slimmest": [
+    "slim",
+    "slimmer"
+  ],
+  "shortest": [
+    "short",
+    "shorter"
+  ],
+  "soft": [
+    "softest",
+    "softer"
+  ],
+  "younger": [
+    "young",
+    "youngest"
+  ],
+  "mild": [
+    "mildest",
+    "milder"
+  ],
+  "raw": [
+    "rawer",
+    "rawest"
+  ],
+  "humbler": [
+    "humble",
+    "humblest"
+  ],
+  "angry": [
+    "angrier",
+    "angriest"
+  ],
+  "easy": [
+    "easiest",
+    "easier"
+  ],
+  "rustiest": [
+    "rusty",
+    "rustier"
+  ],
+  "finer": [
+    "finest",
+    "fine"
+  ],
+  "hippest": [
+    "hipper",
+    "hip"
+  ],
+  "milder": [
+    "mildest",
+    "mild"
+  ],
+  "humble": [
+    "humblest",
+    "humbler"
+  ],
+  "strong": [
+    "stronger",
+    "strongest"
+  ],
+  "loneliest": [
+    "lonely",
+    "lonlier"
+  ],
+  "iciest": [
+    "icier",
+    "icy"
+  ],
+  "smellier": [
+    "smelly",
+    "smelliest"
+  ],
+  "rawest": [
+    "rawer",
+    "raw"
+  ],
+  "meanest": [
+    "mean",
+    "meaner"
+  ],
+  "hot": [
+    "hottest",
+    "hotter"
+  ],
+  "oldest/eldest": [
+    "old",
+    "older/elder"
+  ],
+  "hungry": [
+    "hungrier",
+    "hungriest"
+  ],
+  "cruellest": [
+    "cruel",
+    "crueller"
+  ],
+  "odder": [
+    "oddest",
+    "odd"
+  ],
+  "greediest": [
+    "greedy",
+    "greedier"
+  ],
+  "plainest": [
+    "plain",
+    "plainer"
+  ],
+  "hipper": [
+    "hippest",
+    "hip"
+  ],
+  "dumber": [
+    "dumbest",
+    "dumb"
+  ],
+  "quiet": [
+    "quietest",
+    "quieter"
+  ],
+  "slimy": [
+    "slimier",
+    "slimiest"
+  ],
+  "naughty": [
+    "naughtier",
+    "naughtiest"
+  ],
+  "close": [
+    "closer",
+    "closest"
+  ],
+  "bossier": [
+    "bossiest",
+    "bossy"
+  ],
+  "chewiest": [
+    "chewy",
+    "chewier"
+  ],
+  "fanciest": [
+    "fancy",
+    "fancier"
+  ],
+  "salty": [
+    "saltiest",
+    "saltier"
+  ],
+  "sanest": [
+    "sane",
+    "saner"
+  ],
+  "fastest": [
+    "faster",
+    "fast"
+  ],
+  "sharper": [
+    "sharpest",
+    "sharp"
+  ],
+  "quicker": [
+    "quick",
+    "quickest"
+  ],
+  "stingy": [
+    "stingier",
+    "stingiest"
+  ],
+  "oiliest": [
+    "oilier",
+    "oily"
+  ],
+  "shyest": [
+    "shyer",
+    "shy"
+  ],
+  "prettier": [
+    "prettiest",
+    "pretty"
+  ],
+  "newer": [
+    "new",
+    "newest"
+  ],
+  "tinier": [
+    "tiny",
+    "tiniest"
+  ],
+  "weird": [
+    "weirder",
+    "weirdest"
+  ],
+  "fast": [
+    "faster",
+    "fastest"
+  ],
+  "blue": [
+    "bluest",
+    "bluer"
+  ],
+  "cleverest": [
+    "clever",
+    "cleverer"
+  ],
+  "dirtier": [
+    "dirty",
+    "dirtiest"
+  ],
+  "smoothest": [
+    "smoother",
+    "smooth"
+  ],
+  "friendliest": [
+    "friendly",
+    "friendlier"
+  ],
+  "shallow": [
+    "shallower",
+    "shallowest"
+  ],
+  "bolder": [
+    "bold",
+    "boldest"
+  ],
+  "clumsiest": [
+    "clumsier",
+    "clumsy"
+  ],
+  "filthier": [
+    "filthy",
+    "filthiest"
+  ],
+  "older/elder": [
+    "old",
+    "oldest/eldest"
+  ],
+  "sweet": [
+    "sweeter",
+    "sweetest"
+  ],
+  "richest": [
+    "richer",
+    "rich"
+  ],
+  "lonlier": [
+    "loneliest",
+    "lonely"
+  ],
+  "sillier": [
+    "silly",
+    "silliest"
+  ],
+  "shinier": [
+    "shiny",
+    "shiniest"
+  ],
+  "bitterer": [
+    "bitterest",
+    "bitter"
+  ],
+  "roomy": [
+    "roomier",
+    "roomiest"
+  ],
+  "bitterest": [
+    "bitterer",
+    "bitter"
+  ],
+  "freshest": [
+    "fresher",
+    "fresh"
+  ],
+  "happiest": [
+    "happier",
+    "happy"
+  ],
+  "ugliest": [
+    "ugly",
+    "uglier"
+  ],
+  "good": [
+    "better",
+    "best"
+  ],
+  "grosser": [
+    "grossest",
+    "gross"
+  ],
+  "nearest": [
+    "nearer",
+    "near"
+  ],
+  "meaner": [
+    "mean",
+    "meanest"
+  ],
+  "thinnest": [
+    "thinner",
+    "thin"
+  ],
+  "deadly": [
+    "deadliest",
+    "deadlier"
+  ],
+  "later": [
+    "late",
+    "latest"
+  ],
+  "ruder": [
+    "rude",
+    "rudest"
+  ],
+  "sleepiest": [
+    "sleepier",
+    "sleepy"
+  ],
+  "wise": [
+    "wiser",
+    "wisest"
+  ],
+  "rare": [
+    "rarer",
+    "rarest"
+  ],
+  "scary": [
+    "scariest",
+    "scarier"
+  ],
+  "tall": [
+    "taller",
+    "tallest"
+  ],
+  "needy": [
+    "neediest",
+    "needier"
+  ],
+  "smokiest": [
+    "smoky",
+    "smokier"
+  ],
+  "faint": [
+    "faintest",
+    "fainter"
+  ],
+  "oilier": [
+    "oily",
+    "oiliest"
+  ],
+  "rawer": [
+    "raw",
+    "rawest"
+  ],
+  "cruel": [
+    "cruellest",
+    "crueller"
+  ],
+  "curvy": [
+    "curviest",
+    "curvier"
+  ],
+  "thickest": [
+    "thicker",
+    "thick"
+  ],
+  "lovelier": [
+    "lovely",
+    "loveliest"
+  ],
+  "shiniest": [
+    "shinier",
+    "shiny"
+  ],
+  "strange": [
+    "stranger",
+    "strangest"
+  ],
+  "sane": [
+    "sanest",
+    "saner"
+  ],
+  "skinniest": [
+    "skinnier",
+    "skinny"
+  ],
+  "coldest": [
+    "cold",
+    "colder"
+  ],
+  "busiest": [
+    "busy",
+    "busier"
+  ],
+  "toughest": [
+    "tougher",
+    "tough"
+  ],
+  "moistest": [
+    "moister",
+    "moist"
+  ],
+  "creamiest": [
+    "creamy",
+    "creamier"
+  ],
+  "coarsest": [
+    "coarse",
+    "coarser"
+  ],
+  "little": [
+    "littlest",
+    "littler"
+  ],
+  "deep": [
+    "deepest",
+    "deeper"
+  ],
+  "shy": [
+    "shyer",
+    "shyest"
+  ],
+  "young": [
+    "younger",
+    "youngest"
+  ],
+  "smallest": [
+    "small",
+    "smaller"
+  ],
+  "worthy": [
+    "worthier",
+    "worthiest"
+  ],
+  "riskiest": [
+    "risky",
+    "riskier"
+  ],
+  "rustier": [
+    "rustiest",
+    "rusty"
+  ],
+  "heavier": [
+    "heaviest",
+    "heavy"
+  ],
+  "greasier": [
+    "greasy",
+    "greasiest"
+  ],
+  "oily": [
+    "oilier",
+    "oiliest"
+  ],
+  "brightest": [
+    "brighter",
+    "bright"
+  ],
+  "sorry": [
+    "sorriest",
+    "sorrier"
+  ],
+  "kindest": [
+    "kinder",
+    "kind"
+  ],
+  "silliest": [
+    "silly",
+    "sillier"
+  ],
+  "bland": [
+    "blander",
+    "blandest"
+  ],
+  "hard": [
+    "hardest",
+    "harder"
+  ],
+  "fairest": [
+    "fairer",
+    "fair"
+  ],
+  "softer": [
+    "softest",
+    "soft"
+  ],
+  "bloody": [
+    "bloodier",
+    "bloodiest"
+  ],
+  "juiciest": [
+    "juicier",
+    "juicy"
+  ],
+  "sorrier": [
+    "sorriest",
+    "sorry"
+  ],
+  "rich": [
+    "richer",
+    "richest"
+  ],
+  "grand": [
+    "grandest",
+    "grander"
+  ],
+  "better": [
+    "best",
+    "good"
+  ],
+  "fattest": [
+    "fatter",
+    "fat"
+  ],
+  "prettiest": [
+    "pretty",
+    "prettier"
+  ],
+  "sweatier": [
+    "sweatiest",
+    "sweaty"
+  ],
+  "flakier": [
+    "flaky",
+    "flakiest"
+  ],
+  "fresh": [
+    "fresher",
+    "freshest"
+  ],
+  "creepy": [
+    "creepier",
+    "creepiest"
+  ],
+  "wilder": [
+    "wild",
+    "wildest"
+  ],
+  "big": [
+    "biggest",
+    "bigger"
+  ],
+  "smaller": [
+    "small",
+    "smallest"
+  ],
+  "dirtiest": [
+    "dirty",
+    "dirtier"
+  ],
+  "windiest": [
+    "windier",
+    "windy"
+  ],
+  "slim": [
+    "slimmest",
+    "slimmer"
+  ],
+  "greedier": [
+    "greedy",
+    "greediest"
+  ],
+  "fiercer": [
+    "fierce",
+    "fiercest"
+  ],
+  "classy": [
+    "classiest",
+    "classier"
+  ],
+  "soon": [
+    "sooner",
+    "soonest"
+  ],
+  "thick": [
+    "thicker",
+    "thickest"
+  ],
+  "wettest": [
+    "wet",
+    "wetter"
+  ],
+  "fullest": [
+    "fuller",
+    "full"
+  ],
+  "worthier": [
+    "worthy",
+    "worthiest"
+  ],
+  "deepest": [
+    "deep",
+    "deeper"
+  ],
+  "fierce": [
+    "fiercest",
+    "fiercer"
+  ],
+  "grandest": [
+    "grand",
+    "grander"
+  ],
+  "stingiest": [
+    "stingier",
+    "stingy"
+  ],
+  "brave": [
+    "bravest",
+    "braver"
+  ],
+  "narrow": [
+    "narrowest",
+    "narrower"
+  ],
+  "blacker": [
+    "black",
+    "blackest"
+  ],
+  "nastiest": [
+    "nastier",
+    "nasty"
+  ],
+  "shorter": [
+    "short",
+    "shortest"
+  ],
+  "poorer": [
+    "poorest",
+    "poor"
+  ],
+  "likely": [
+    "likeliest",
+    "likelier"
+  ],
+  "large": [
+    "larger",
+    "largest"
+  ],
+  "tanner": [
+    "tan",
+    "tannest"
+  ],
+  "lower": [
+    "low",
+    "lowest"
+  ],
+  "funniest": [
+    "funnier",
+    "funny"
+  ],
+  "tiniest": [
+    "tinier",
+    "tiny"
+  ],
+  "angrier": [
+    "angry",
+    "angriest"
+  ],
+  "tough": [
+    "toughest",
+    "tougher"
+  ],
+  "odd": [
+    "odder",
+    "oddest"
+  ],
+  "heavy": [
+    "heaviest",
+    "heavier"
+  ],
+  "wildest": [
+    "wild",
+    "wilder"
+  ],
+  "chubbier": [
+    "chubby",
+    "chubbiest"
+  ],
+  "hairy": [
+    "hairiest",
+    "hairier"
+  ],
+  "smoother": [
+    "smoothest",
+    "smooth"
+  ],
+  "lively": [
+    "liveliest",
+    "livelier"
+  ],
+  "calmer": [
+    "calm",
+    "calmest"
+  ],
+  "messier": [
+    "messiest",
+    "messy"
+  ],
+  "curviest": [
+    "curvy",
+    "curvier"
+  ],
+  "hardest": [
+    "hard",
+    "harder"
+  ],
+  "crazy": [
+    "craziest",
+    "crazier"
+  ],
+  "graver": [
+    "grave",
+    "gravest"
+  ],
+  "crunchiest": [
+    "crunchier",
+    "crunchy"
+  ],
+  "fewest": [
+    "fewer",
+    "few"
+  ],
+  "larger": [
+    "largest",
+    "large"
+  ],
+  "naughtier": [
+    "naughty",
+    "naughtiest"
+  ],
+  "wider": [
+    "widest",
+    "wide"
+  ],
+  "longest": [
+    "longer",
+    "long"
+  ],
+  "crunchier": [
+    "crunchy",
+    "crunchiest"
+  ],
+  "fairer": [
+    "fair",
+    "fairest"
+  ],
+  "narrower": [
+    "narrowest",
+    "narrow"
+  ],
+  "ripest": [
+    "riper",
+    "ripe"
+  ],
+  "densest": [
+    "denser",
+    "dense"
+  ],
+  "handier": [
+    "handiest",
+    "handy"
+  ],
+  "soonest": [
+    "sooner",
+    "soon"
+  ],
+  "curliest": [
+    "curly"
+  ],
+  "mad": [
+    "madder",
+    "maddest"
+  ],
+  "scariest": [
+    "scary",
+    "scarier"
+  ],
+  "denser": [
+    "densest",
+    "dense"
+  ],
+  "greasy": [
+    "greasiest",
+    "greasier"
+  ],
+  "bloodiest": [
+    "bloodier",
+    "bloody"
+  ],
+  "blackest": [
+    "black",
+    "blacker"
+  ],
+  "bluest": [
+    "blue",
+    "bluer"
+  ],
+  "coolest": [
+    "cooler",
+    "cool"
+  ],
+  "livelier": [
+    "lively",
+    "liveliest"
+  ],
+  "scarier": [
+    "scariest",
+    "scary"
+  ],
+  "taller": [
+    "tallest",
+    "tall"
+  ],
+  "weirder": [
+    "weird",
+    "weirdest"
+  ],
+  "tannest": [
+    "tan",
+    "tanner"
+  ],
+  "briefest": [
+    "brief",
+    "briefer"
+  ],
+  "worldliest": [
+    "worldly",
+    "worldlier"
+  ],
+  "cheap": [
+    "cheaper",
+    "cheapest"
+  ],
+  "noisy": [
+    "noisier",
+    "noisiest"
+  ],
+  "sharp": [
+    "sharper",
+    "sharpest"
+  ],
+  "warmer": [
+    "warm",
+    "warmest"
+  ],
+  "handiest": [
+    "handier",
+    "handy"
+  ],
+  "widest": [
+    "wider",
+    "wide"
+  ],
+  "skinnier": [
+    "skinniest",
+    "skinny"
+  ],
+  "plainer": [
+    "plain",
+    "plainest"
+  ],
+  "strongest": [
+    "strong",
+    "stronger"
+  ],
+  "cheaper": [
+    "cheapest",
+    "cheap"
+  ],
+  "cleanest": [
+    "cleaner",
+    "clean"
+  ],
+  "saltiest": [
+    "salty",
+    "saltier"
+  ],
+  "faster": [
+    "fast",
+    "fastest"
+  ],
+  "finest": [
+    "fine",
+    "finer"
+  ],
+  "high": [
+    "highest",
+    "higher"
+  ],
+  "biggest": [
+    "big",
+    "bigger"
+  ],
+  "earlier": [
+    "earliest",
+    "early"
+  ],
+  "fine": [
+    "finest",
+    "finer"
+  ],
+  "moist": [
+    "moistest",
+    "moister"
+  ],
+  "riskier": [
+    "riskiest",
+    "risky"
+  ],
+  "nasty": [
+    "nastier",
+    "nastiest"
+  ],
+  "new": [
+    "newer",
+    "newest"
+  ],
+  "steeper": [
+    "steepest",
+    "steep"
+  ],
+  "windier": [
+    "windiest",
+    "windy"
+  ],
+  "fittest": [
+    "fit",
+    "fitter"
+  ],
+  "sooner": [
+    "soonest",
+    "soon"
+  ],
+  "greasiest": [
+    "greasy",
+    "greasier"
+  ],
+  "thirstier": [
+    "thirsty",
+    "thirstiest"
+  ],
+  "filthiest": [
+    "filthy",
+    "filthier"
+  ],
+  "dry": [
+    "driest",
+    "drier"
+  ],
+  "liveliest": [
+    "lively",
+    "livelier"
+  ],
+  "spicy": [
+    "spiciest",
+    "spicier"
+  ],
+  "colder": [
+    "coldest",
+    "cold"
+  ],
+  "dullest": [
+    "duller",
+    "dull"
+  ],
+  "neediest": [
+    "needier",
+    "needy"
+  ],
+  "roughest": [
+    "rough",
+    "rougher"
+  ],
+  "guilter": [
+    "guilty",
+    "guiltiest"
+  ],
+  "thirsty": [
+    "thirstier",
+    "thirstiest"
+  ],
+  "sincerest": [
+    "sincerer",
+    "sincere"
+  ],
+  "busier": [
+    "busiest",
+    "busy"
+  ],
+  "rougher": [
+    "roughest",
+    "rough"
+  ],
+  "sadder": [
+    "sad",
+    "saddest"
+  ],
+  "true": [
+    "truest",
+    "truer"
+  ],
+  "sore": [
+    "sorer",
+    "sorest"
+  ],
+  "weirdest": [
+    "weird",
+    "weirder"
+  ],
+  "cloudier": [
+    "cloudy",
+    "cloudiest"
+  ],
+  "dusty": [
+    "dustiest",
+    "dustier"
+  ],
+  "guiltiest": [
+    "guilty",
+    "guilter"
+  ],
+  "steepest": [
+    "steeper",
+    "steep"
+  ],
+  "itchiest": [
+    "itchier",
+    "itchy"
+  ],
+  "neatest": [
+    "neater",
+    "neat"
+  ],
+  "wealthier": [
+    "wealthy",
+    "wealthiest"
+  ],
+  "dumb": [
+    "dumbest",
+    "dumber"
+  ],
+  "best": [
+    "better",
+    "good"
+  ],
+  "slimier": [
+    "slimy",
+    "slimiest"
+  ],
+  "sour": [
+    "sourest",
+    "sourer"
+  ],
+  "strangest": [
+    "stranger",
+    "strange"
+  ],
+  "simpler": [
+    "simplest",
+    "simple"
+  ],
+  "crazier": [
+    "crazy",
+    "craziest"
+  ],
+  "dustiest": [
+    "dustier",
+    "dusty"
+  ],
+  "cheapest": [
+    "cheaper",
+    "cheap"
+  ],
+  "busy": [
+    "busiest",
+    "busier"
+  ],
+  "saddest": [
+    "sad",
+    "sadder"
+  ],
+  "saltier": [
+    "salty",
+    "saltiest"
+  ],
+  "harder": [
+    "hardest",
+    "hard"
+  ],
+  "friendlier": [
+    "friendly",
+    "friendliest"
+  ],
+  "loudest": [
+    "loud",
+    "louder"
+  ],
+  "further/farther": [
+    "far",
+    "furthest/farthest"
+  ],
+  "brief": [
+    "briefer",
+    "briefest"
+  ],
+  "juicier": [
+    "juiciest",
+    "juicy"
+  ],
+  "louder": [
+    "loud",
+    "loudest"
+  ],
+  "pretty": [
+    "prettiest",
+    "prettier"
+  ],
+  "smelliest": [
+    "smelly",
+    "smellier"
+  ],
+  "slowest": [
+    "slow",
+    "slower"
+  ],
+  "crispier": [
+    "crispiest",
+    "crispy"
+  ],
+  "crueller": [
+    "cruellest",
+    "cruel"
+  ],
+  "noisiest": [
+    "noisy",
+    "noisier"
+  ],
+  "riper": [
+    "ripe",
+    "ripest"
+  ],
+  "fatter": [
+    "fattest",
+    "fat"
+  ],
+  "gloomiest": [
+    "gloomy",
+    "gloomier"
+  ],
+  "tougher": [
+    "toughest",
+    "tough"
+  ],
+  "easier": [
+    "easiest",
+    "easy"
+  ],
+  "uglier": [
+    "ugliest",
+    "ugly"
+  ],
+  "sleepier": [
+    "sleepiest",
+    "sleepy"
+  ],
+  "nastier": [
+    "nasty",
+    "nastiest"
+  ],
+  "risky": [
+    "riskiest",
+    "riskier"
+  ],
+  "dull": [
+    "duller",
+    "dullest"
+  ],
+  "closest": [
+    "close",
+    "closer"
+  ],
+  "clumsy": [
+    "clumsier",
+    "clumsiest"
+  ],
+  "briefer": [
+    "brief",
+    "briefest"
+  ],
+  "gentlest": [
+    "gentler",
+    "gentle"
+  ],
+  "fiercest": [
+    "fierce",
+    "fiercer"
+  ],
+  "grander": [
+    "grandest",
+    "grand"
+  ],
+  "messiest": [
+    "messier",
+    "messy"
+  ],
+  "saner": [
+    "sane",
+    "sanest"
+  ],
+  "firm": [
+    "firmer",
+    "firmest"
+  ],
+  "happier": [
+    "happy",
+    "happiest"
+  ],
+  "clever": [
+    "cleverest",
+    "cleverer"
+  ],
+  "gentle": [
+    "gentlest",
+    "gentler"
+  ],
+  "purer": [
+    "pure",
+    "purest"
+  ],
+  "noisier": [
+    "noisy",
+    "noisiest"
+  ],
+  "chewy": [
+    "chewiest",
+    "chewier"
+  ],
+  "littlest": [
+    "littler",
+    "little"
+  ],
+  "dumbest": [
+    "dumb",
+    "dumber"
+  ],
+  "roomier": [
+    "roomy",
+    "roomiest"
+  ],
+  "old": [
+    "older/elder",
+    "oldest/eldest"
+  ],
+  "shallower": [
+    "shallow",
+    "shallowest"
+  ],
+  "laziest": [
+    "lazy",
+    "lazier"
+  ],
+  "wetter": [
+    "wet",
+    "wettest"
+  ],
+  "shallowest": [
+    "shallower",
+    "shallow"
+  ],
+  "rude": [
+    "ruder",
+    "rudest"
+  ],
+  "slow": [
+    "slower",
+    "slowest"
+  ],
+  "highest": [
+    "high",
+    "higher"
+  ],
+  "sincere": [
+    "sincerest",
+    "sincerer"
+  ],
+  "tasty": [
+    "tastier",
+    "tastiest"
+  ],
+  "fainter": [
+    "faintest",
+    "faint"
+  ],
+  "prouder": [
+    "proud",
+    "proudest"
+  ],
+  "truer": [
+    "truest",
+    "true"
+  ],
+  "gloomier": [
+    "gloomiest",
+    "gloomy"
+  ],
+  "drier": [
+    "driest",
+    "dry"
+  ],
+  "strictest": [
+    "strict",
+    "stricter"
+  ],
+  "polite": [
+    "politer",
+    "politest"
+  ],
+  "quietest": [
+    "quiet",
+    "quieter"
+  ],
+  "tallest": [
+    "taller",
+    "tall"
+  ],
+  "sorer": [
+    "sore",
+    "sorest"
+  ],
+  "sunniest": [
+    "sunnier",
+    "sunny"
+  ],
+  "cute": [
+    "cutest",
+    "cuter"
+  ],
+  "rudest": [
+    "rude",
+    "ruder"
+  ],
+  "long": [
+    "longer",
+    "longest"
+  ],
+  "harsher": [
+    "harsh",
+    "harshest"
+  ],
+  "poorest": [
+    "poorer",
+    "poor"
+  ],
+  "fresher": [
+    "freshest",
+    "fresh"
+  ],
+  "itchy": [
+    "itchier",
+    "itchiest"
+  ],
+  "narrowest": [
+    "narrower",
+    "narrow"
+  ],
+  "fancier": [
+    "fanciest",
+    "fancy"
+  ],
+  "crunchy": [
+    "crunchier",
+    "crunchiest"
+  ],
+  "ripe": [
+    "riper",
+    "ripest"
+  ],
+  "skinny": [
+    "skinniest",
+    "skinnier"
+  ],
+  "broader": [
+    "broad",
+    "broadest"
+  ],
+  "coarser": [
+    "coarse",
+    "coarsest"
+  ],
+  "braver": [
+    "bravest",
+    "brave"
+  ],
+  "funny": [
+    "funnier",
+    "funniest"
+  ],
+  "latest": [
+    "later",
+    "late"
+  ],
+  "dirty": [
+    "dirtiest",
+    "dirtier"
+  ],
+  "curly": [
+    "curliest"
+  ],
+  "rarer": [
+    "rare",
+    "rarest"
+  ],
+  "silly": [
+    "silliest",
+    "sillier"
+  ],
+  "black": [
+    "blackest",
+    "blacker"
+  ],
+  "lighter": [
+    "lightest",
+    "light"
+  ],
+  "craziest": [
+    "crazy",
+    "crazier"
+  ],
+  "roomiest": [
+    "roomy",
+    "roomier"
+  ],
+  "broadest": [
+    "broad",
+    "broader"
+  ],
+  "closer": [
+    "close",
+    "closest"
+  ],
+  "calm": [
+    "calmest",
+    "calmer"
+  ],
+  "calmest": [
+    "calm",
+    "calmer"
+  ],
+  "worldly": [
+    "worldliest",
+    "worldlier"
+  ],
+  "furthest/farthest": [
+    "far",
+    "further/farther"
+  ],
+  "fitter": [
+    "fit",
+    "fittest"
+  ],
+  "sweaty": [
+    "sweatier",
+    "sweatiest"
+  ],
+  "classiest": [
+    "classier",
+    "classy"
+  ],
+  "creepier": [
+    "creepiest",
+    "creepy"
+  ],
+  "wealthy": [
+    "wealthier",
+    "wealthiest"
+  ],
+  "spiciest": [
+    "spicy",
+    "spicier"
+  ],
+  "icier": [
+    "iciest",
+    "icy"
+  ],
+  "nicer": [
+    "nicest",
+    "nice"
+  ],
+  "cloudiest": [
+    "cloudy",
+    "cloudier"
+  ],
+  "darker": [
+    "dark",
+    "darkest"
+  ],
+  "late": [
+    "later",
+    "latest"
+  ],
+  "chubbiest": [
+    "chubbier",
+    "chubby"
+  ],
+  "rarest": [
+    "rarer",
+    "rare"
+  ],
+  "greedy": [
+    "greediest",
+    "greedier"
+  ],
+  "newest": [
+    "newer",
+    "new"
+  ],
+  "purest": [
+    "purer",
+    "pure"
+  ],
+  "icy": [
+    "iciest",
+    "icier"
+  ],
+  "sunnier": [
+    "sunniest",
+    "sunny"
+  ],
+  "politer": [
+    "polite",
+    "politest"
+  ],
+  "loveliest": [
+    "lovely",
+    "lovelier"
+  ],
+  "bold": [
+    "bolder",
+    "boldest"
+  ],
+  "worse": [
+    "bad",
+    "worst"
+  ],
+  "dense": [
+    "denser",
+    "densest"
+  ],
+  "thin": [
+    "thinner",
+    "thinnest"
+  ],
+  "stingier": [
+    "stingiest",
+    "stingy"
+  ],
+  "longer": [
+    "longest",
+    "long"
+  ],
+  "warm": [
+    "warmest",
+    "warmer"
+  ],
+  "guilty": [
+    "guilter",
+    "guiltiest"
+  ],
+  "easiest": [
+    "easier",
+    "easy"
+  ],
+  "creepiest": [
+    "creepier",
+    "creepy"
+  ],
+  "worst": [
+    "bad",
+    "worse"
+  ],
+  "sorest": [
+    "sore",
+    "sorer"
+  ],
+  "full": [
+    "fullest",
+    "fuller"
+  ],
+  "hairier": [
+    "hairy",
+    "hairiest"
+  ],
+  "higher": [
+    "high",
+    "highest"
+  ],
+  "rough": [
+    "roughest",
+    "rougher"
+  ],
+  "likelier": [
+    "likely",
+    "likeliest"
+  ],
+  "crispy": [
+    "crispiest",
+    "crispier"
+  ],
+  "dustier": [
+    "dustiest",
+    "dusty"
+  ],
+  "flaky": [
+    "flakier",
+    "flakiest"
+  ],
+  "sincerer": [
+    "sincerest",
+    "sincere"
+  ],
+  "cold": [
+    "coldest",
+    "colder"
+  ],
+  "lazier": [
+    "lazy",
+    "laziest"
+  ],
+  "thicker": [
+    "thickest",
+    "thick"
+  ],
+  "pure": [
+    "purer",
+    "purest"
+  ],
+  "bitter": [
+    "bitterer",
+    "bitterest"
+  ],
+  "damp": [
+    "damper",
+    "dampest"
+  ],
+  "bluer": [
+    "blue",
+    "bluest"
+  ],
+  "maddest": [
+    "mad",
+    "madder"
+  ],
+  "slimmer": [
+    "slim",
+    "slimmest"
+  ],
+  "smarter": [
+    "smartest",
+    "smart"
+  ],
+  "grossest": [
+    "gross",
+    "grosser"
+  ],
+  "clumsier": [
+    "clumsiest",
+    "clumsy"
+  ],
+  "stronger": [
+    "strong",
+    "strongest"
+  ],
+  "bravest": [
+    "brave",
+    "braver"
+  ],
+  "littler": [
+    "littlest",
+    "little"
+  ],
+  "smokier": [
+    "smoky",
+    "smokiest"
+  ],
+  "sleepy": [
+    "sleepiest",
+    "sleepier"
+  ],
+  "early": [
+    "earlier",
+    "earliest"
+  ],
+  "worthiest": [
+    "worthier",
+    "worthy"
+  ],
+  "quieter": [
+    "quietest",
+    "quiet"
+  ],
+  "lovely": [
+    "loveliest",
+    "lovelier"
+  ],
+  "sorriest": [
+    "sorry",
+    "sorrier"
+  ],
+  "wide": [
+    "wider",
+    "widest"
+  ],
+  "brighter": [
+    "brightest",
+    "bright"
+  ],
+  "weaker": [
+    "weakest",
+    "weak"
+  ],
+  "tastier": [
+    "tasty",
+    "tastiest"
+  ],
+  "sharpest": [
+    "sharper",
+    "sharp"
+  ],
+  "earliest": [
+    "earlier",
+    "early"
+  ],
+  "oddest": [
+    "odder",
+    "odd"
+  ],
+  "politest": [
+    "polite",
+    "politer"
+  ],
+  "wiser": [
+    "wise",
+    "wisest"
+  ],
+  "shyer": [
+    "shy",
+    "shyest"
+  ],
+  "cooler": [
+    "cool",
+    "coolest"
+  ],
+  "healthy": [
+    "healthier",
+    "healthiest"
+  ],
+  "sourer": [
+    "sourest",
+    "sour"
+  ],
+  "hungriest": [
+    "hungry",
+    "hungrier"
+  ],
+  "richer": [
+    "rich",
+    "richest"
+  ],
+  "short": [
+    "shorter",
+    "shortest"
+  ],
+  "deeper": [
+    "deep",
+    "deepest"
+  ],
+  "stranger": [
+    "strangest",
+    "strange"
+  ],
+  "healthiest": [
+    "healthier",
+    "healthy"
+  ],
+  "thirstiest": [
+    "thirsty",
+    "thirstier"
+  ],
+  "clearest": [
+    "clear"
+  ],
+  "fancy": [
+    "fanciest",
+    "fancier"
+  ],
+  "hairiest": [
+    "hairy",
+    "hairier"
+  ],
+  "smoky": [
+    "smokier",
+    "smokiest"
+  ],
+  "happy": [
+    "happier",
+    "happiest"
+  ],
+  "fair": [
+    "fairer",
+    "fairest"
+  ],
+  "wisest": [
+    "wiser",
+    "wise"
+  ],
+  "dampest": [
+    "damper",
+    "damp"
+  ],
+  "far": [
+    "furthest/farthest",
+    "further/farther"
+  ],
+  "driest": [
+    "dry",
+    "drier"
+  ],
+  "broad": [
+    "broader",
+    "broadest"
+  ],
+  "fat": [
+    "fattest",
+    "fatter"
+  ],
+  "proudest": [
+    "proud",
+    "prouder"
+  ],
+  "classier": [
+    "classiest",
+    "classy"
+  ],
+  "lonely": [
+    "loneliest",
+    "lonlier"
+  ],
+  "greater": [
+    "great",
+    "greatest"
+  ],
+  "tastiest": [
+    "tasty",
+    "tastier"
+  ],
+  "neater": [
+    "neatest",
+    "neat"
+  ],
+  "smartest": [
+    "smart",
+    "smarter"
+  ],
+  "lowest": [
+    "low",
+    "lower"
+  ],
+  "angriest": [
+    "angry",
+    "angrier"
+  ],
+  "bossy": [
+    "bossiest",
+    "bossier"
+  ],
+  "light": [
+    "lightest",
+    "lighter"
+  ],
+  "tiny": [
+    "tinier",
+    "tiniest"
+  ],
+  "moister": [
+    "moistest",
+    "moist"
+  ],
+  "blander": [
+    "bland",
+    "blandest"
+  ],
+  "likeliest": [
+    "likely",
+    "likelier"
+  ],
+  "healthier": [
+    "healthy",
+    "healthiest"
+  ],
+  "steep": [
+    "steepest",
+    "steeper"
+  ],
+  "lazy": [
+    "lazier",
+    "laziest"
+  ],
+  "madder": [
+    "mad",
+    "maddest"
+  ],
+  "bright": [
+    "brighter",
+    "brightest"
+  ],
+  "harsh": [
+    "harsher",
+    "harshest"
+  ],
+  "youngest": [
+    "young",
+    "younger"
+  ],
+  "deadlier": [
+    "deadly",
+    "deadliest"
+  ],
+  "gentler": [
+    "gentlest",
+    "gentle"
+  ],
+  "boldest": [
+    "bold",
+    "bolder"
+  ],
+  "smart": [
+    "smartest",
+    "smarter"
+  ],
+  "weak": [
+    "weakest",
+    "weaker"
+  ],
+  "creamy": [
+    "creamiest",
+    "creamier"
+  ],
+  "low": [
+    "lower",
+    "lowest"
+  ],
+  "chubby": [
+    "chubbier",
+    "chubbiest"
+  ],
+  "flat": [
+    "flatter",
+    "flattest"
+  ],
+  "dark": [
+    "darker",
+    "darkest"
+  ],
+  "naughtiest": [
+    "naughtier",
+    "naughty"
+  ],
+  "firmer": [
+    "firm",
+    "firmest"
+  ],
+  "loud": [
+    "louder",
+    "loudest"
+  ],
+  "simplest": [
+    "simple",
+    "simpler"
+  ],
+  "bigger": [
+    "big",
+    "biggest"
+  ],
+  "cool": [
+    "cooler",
+    "coolest"
+  ],
+  "wet": [
+    "wetter",
+    "wettest"
+  ],
+  "rusty": [
+    "rustiest",
+    "rustier"
+  ],
+  "creamier": [
+    "creamy",
+    "creamiest"
+  ],
+  "safest": [
+    "safer",
+    "safe"
+  ],
+  "great": [
+    "greater",
+    "greatest"
+  ],
+  "nice": [
+    "nicest",
+    "nicer"
+  ],
+  "crispiest": [
+    "crispy",
+    "crispier"
+  ],
+  "duller": [
+    "dull",
+    "dullest"
+  ],
+  "juicy": [
+    "juicier",
+    "juiciest"
+  ],
+  "flattest": [
+    "flat",
+    "flatter"
+  ],
+  "hotter": [
+    "hottest",
+    "hot"
+  ],
+  "small": [
+    "smaller",
+    "smallest"
+  ],
+  "quick": [
+    "quicker",
+    "quickest"
+  ],
+  "needier": [
+    "neediest",
+    "needy"
+  ],
+  "friendly": [
+    "friendliest",
+    "friendlier"
+  ],
+  "fewer": [
+    "few",
+    "fewest"
+  ],
+  "simple": [
+    "simplest",
+    "simpler"
+  ],
+  "worldlier": [
+    "worldly",
+    "worldliest"
+  ],
+  "hip": [
+    "hippest",
+    "hipper"
+  ],
+  "lightest": [
+    "light",
+    "lighter"
+  ],
+  "sourest": [
+    "sourer",
+    "sour"
+  ],
+  "cutest": [
+    "cuter",
+    "cute"
+  ],
+  "deadliest": [
+    "deadly",
+    "deadlier"
+  ],
+  "bloodier": [
+    "bloodiest",
+    "bloody"
+  ],
+  "coarse": [
+    "coarsest",
+    "coarser"
+  ],
+  "plain": [
+    "plainest",
+    "plainer"
+  ],
+  "few": [
+    "fewer",
+    "fewest"
+  ],
+  "flakiest": [
+    "flaky",
+    "flakier"
+  ],
+  "flatter": [
+    "flat",
+    "flattest"
+  ],
+  "slimiest": [
+    "slimy",
+    "slimier"
+  ],
+  "sunny": [
+    "sunnier",
+    "sunniest"
+  ],
+  "gravest": [
+    "grave",
+    "graver"
+  ],
+  "bossiest": [
+    "bossy",
+    "bossier"
+  ],
+  "tan": [
+    "tannest",
+    "tanner"
+  ],
+  "sweeter": [
+    "sweet",
+    "sweetest"
+  ],
+  "smelly": [
+    "smellier",
+    "smelliest"
+  ],
+  "damper": [
+    "damp",
+    "dampest"
+  ],
+  "proud": [
+    "proudest",
+    "prouder"
+  ],
+  "gross": [
+    "grossest",
+    "grosser"
+  ],
+  "thinner": [
+    "thin",
+    "thinnest"
+  ],
+  "kind": [
+    "kinder",
+    "kindest"
+  ],
+  "mildest": [
+    "mild",
+    "milder"
+  ],
+  "cleaner": [
+    "cleanest",
+    "clean"
+  ],
+  "nearer": [
+    "near",
+    "nearest"
+  ],
+  "sweatiest": [
+    "sweatier",
+    "sweaty"
+  ],
+  "ugly": [
+    "ugliest",
+    "uglier"
+  ],
+  "messy": [
+    "messier",
+    "messiest"
+  ],
+  "softest": [
+    "softer",
+    "soft"
+  ],
+  "humblest": [
+    "humble",
+    "humbler"
+  ],
+  "safe": [
+    "safer",
+    "safest"
+  ],
+  "darkest": [
+    "darker",
+    "dark"
+  ],
+  "spicier": [
+    "spiciest",
+    "spicy"
+  ],
+  "largest": [
+    "larger",
+    "large"
+  ],
+  "cuter": [
+    "cutest",
+    "cute"
+  ],
+  "cleverer": [
+    "cleverest",
+    "clever"
+  ],
+  "curvier": [
+    "curviest",
+    "curvy"
+  ],
+  "fuller": [
+    "fullest",
+    "full"
+  ],
+  "stricter": [
+    "strict",
+    "strictest"
+  ],
+  "windy": [
+    "windier",
+    "windiest"
+  ],
+  "kinder": [
+    "kind",
+    "kindest"
+  ],
+  "filthy": [
+    "filthiest",
+    "filthier"
+  ],
+  "hottest": [
+    "hot",
+    "hotter"
+  ],
+  "nicest": [
+    "nicer",
+    "nice"
+  ],
+  "faintest": [
+    "fainter",
+    "faint"
+  ],
+  "sad": [
+    "sadder",
+    "saddest"
+  ],
+  "chewier": [
+    "chewiest",
+    "chewy"
+  ],
+  "wealthiest": [
+    "wealthy",
+    "wealthier"
+  ],
+  "harshest": [
+    "harsher",
+    "harsh"
+  ],
+  "sweetest": [
+    "sweeter",
+    "sweet"
+  ],
+  "greatest": [
+    "great",
+    "greater"
+  ],
+  "smooth": [
+    "smoother",
+    "smoothest"
+  ],
+  "hungrier": [
+    "hungry",
+    "hungriest"
+  ],
+  "warmest": [
+    "warm",
+    "warmer"
+  ],
+  "grave": [
+    "graver",
+    "gravest"
+  ],
+  "weakest": [
+    "weaker",
+    "weak"
+  ],
+  "clear": [
+    "clearest"
+  ],
+  "firmest": [
+    "firmer",
+    "firm"
+  ],
+  "heaviest": [
+    "heavier",
+    "heavy"
+  ],
+  "clean": [
+    "cleanest",
+    "cleaner"
+  ],
+  "cloudy": [
+    "cloudiest",
+    "cloudier"
+  ],
+  "mean": [
+    "meanest",
+    "meaner"
+  ],
+  "shiny": [
+    "shinier",
+    "shiniest"
+  ],
+  "wild": [
+    "wilder",
+    "wildest"
+  ]
+}
