@@ -22,13 +22,12 @@ public class ClassificationOptimizer {
     private static final Map<ClassifierOptions.Variable, double[]> variableValues = new HashMap<>();
     private static final LexiconCreator creator = new LexiconCreator();
     private static final Map<String, double[]> nGrams = new HashMap<>();
-    private static Map<String, String[]> synonyms;
 
-    private static final double[][] lexiconVariables = {{4, 5, 6}, //n
-            {0.000005, 0.0000075, 0.00001, 0.000025, 0.00005}, //frequencyCutoff
+    private static final double[][] lexiconVariables = {{5, 6}, //n
+            {0.000005, 0.0000075, 0.00001}, //frequencyCutoff
             {3, 3.25, 3.5, 3.75, 4}, //minPMI
             {0.075, 0.1, 0.125, 0.15}, //maxError
-            {2, 2.25, 2.5, 2.75, 3.0}}; //minSentiment
+            {1.5, 1.75, 2, 2.25, 2.5}}; //minSentiment
     private static final double[] bestValues = {lexiconVariables[0][0], lexiconVariables[1][0], lexiconVariables[2][0], lexiconVariables[3][0], lexiconVariables[4][0]};
 
 
@@ -38,8 +37,6 @@ public class ClassificationOptimizer {
                 String[] values = line.split("\t");
                 nGrams.put(values[2], new double[]{Double.parseDouble(values[0]), Double.parseDouble(values[1])});
             }
-
-            synonyms = JSONUtils.fromJSONFile(new File("res/data/synonyms.json"), new TypeToken<Map<String, String[]>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,7 +116,7 @@ public class ClassificationOptimizer {
                 .map(Map.Entry::getKey).collect(Collectors.toList());
 
         DataSetReader dataset = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
-        return creator.createLexicon(dataset, filteredNGrams, maxError, minSentiment, Main.TWEET_FILTERS, synonyms);
+        return creator.createLexicon2(dataset, filteredNGrams, maxError, minSentiment, Main.TWEET_FILTERS);
     }
 
     private static double calculateScore(Classifier classifier, List<DataSetEntry> entries) {

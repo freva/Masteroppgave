@@ -1,5 +1,6 @@
 package com.freva.masteroppgave.lexicon;
 
+import com.freva.masteroppgave.lexicon.container.Adjectives;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
@@ -14,14 +15,15 @@ import java.util.*;
 public class LexiconCreator implements Progressable {
     private DataSetReader dataSetReader;
 
-    public Map<String, Double> createLexicon(DataSetReader dataSetReader, Collection<String> nGrams, double maxErrorRate,
-                                             double sentimentValueThreshold, Filters filters, Map<String, String[]> synonyms) {
+    public Map<String, Double> createLexicon2(DataSetReader dataSetReader, Collection<String> nGrams, double maxErrorRate,
+                                             double sentimentValueThreshold, Filters filters) {
         Map<String, Double> lexicon = createLexicon(dataSetReader, nGrams, maxErrorRate, sentimentValueThreshold, filters);
         Map<String, Double> wordsToBeAdded = new HashMap<>();
+
         lexicon.keySet().stream()
-                .filter(synonyms::containsKey)
+                .filter(i -> RegexFilters.WHITESPACE.split(i).length == 1 && !ClassifierOptions.isSpecialClassWord(i))
                 .forEach(key -> {
-                    for (String relatedWord : synonyms.get(key)) {
+                    for (String relatedWord : Adjectives.getAdverbAndAdjectives(key)) {
                         if (!lexicon.containsKey(relatedWord) && !wordsToBeAdded.containsKey(relatedWord)) {
                             wordsToBeAdded.put(relatedWord, lexicon.get(key));
                         }
@@ -65,15 +67,15 @@ public class LexiconCreator implements Progressable {
         Map<String, Double> lexicon = new HashMap<>();
         Set<String> allKeys = new HashSet<>(wordsPos.keySet());
         allKeys.retainAll(wordsNeg.keySet());
-        for (String key : allKeys) {
-            if (wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0) > cutoff) {
-                int over = wordsPos.getOrDefault(key, 1);
-                int under = wordsNeg.getOrDefault(key, 1);
+        allKeys.stream()
+                .filter(key -> wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0) > cutoff)
+                .forEach(key -> {
+            int over = wordsPos.getOrDefault(key, 1);
+            int under = wordsNeg.getOrDefault(key, 1);
 
-                double sentimentValue = Math.log(ratio * over / under);
-                if (Math.abs(sentimentValue) >= sentimentValueThreshold) lexicon.put(key, sentimentValue);
-            }
-        }
+            double sentimentValue = Math.log(ratio * over / under);
+            if (Math.abs(sentimentValue) >= sentimentValueThreshold) lexicon.put(key, sentimentValue);
+        });
 
         return MapUtils.normalizeMapBetween(lexicon, -5, 5);
     }
