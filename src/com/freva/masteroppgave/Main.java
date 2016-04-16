@@ -37,8 +37,8 @@ public class Main {
 
     public static void main(String[] args) {
 //        args = new String[]{"ngrams", "tweets=res/tweets/filtered.txt", "output=res/tweets/ngrams.txt", "options=res/data/options.pmi.json", "n=6", "minRatio=0.000005", "minPMI=0"};
-//        args = new String[]{"ngrams", "tweets=res/tweets/filtered.txt", "output=res/tweets/ngrams.txt", "options=res/data/options.pmi.json", "n=6", "minRatio=0.000005", "minPMI=3.5"};
-        args = new String[]{"create", "ngrams=res/tweets/ngrams.txt", "dataset=res/tweets/classified.txt", "output=res/tweets/pmilexicon.txt", "options=res/data/options.pmi.json", "maxError=0.075", "minSentiment=2.0"};
+//        args = new String[]{"ngrams", "tweets=res/tweets/filtered.txt", "output=res/tweets/ngrams.txt", "options=res/data/options.pmi.json", "n=5", "minRatio=0.000005", "minPMI=4"};
+        args = new String[]{"create", "ngrams=res/tweets/ngrams.txt", "dataset=res/tweets/classified.txt", "output=res/data/lexicon.pmi.json", "options=res/data/options.pmi.json", "maxError=300", "minSentiment=2.0"};
         if (args.length == 0) {
             printHelp();
             return;
@@ -115,11 +115,10 @@ public class Main {
     public static void createLexicon(File nGramsFile, File dataSetFile, File lexiconFile, double maxErrorRate, double sentimentValueThreshold) throws IOException {
         Set<String> frequentNGrams = JSONUtils.fromJSONFile(nGramsFile, new TypeToken<Set<String>>(){});
         DataSetReader dataSetReader = new DataSetReader(dataSetFile, 1, 0);
-        Map<String, String[]> synonyms = JSONUtils.fromJSONFile(new File("res/data/synonyms.json"), new TypeToken<Map<String, String[]>>(){});
 
         LexiconCreator lexiconCreator = new LexiconCreator();
         ProgressBar.trackProgress(lexiconCreator, "Creating lexicon...");
-        Map<String, Double> lexicon = lexiconCreator.createLexicon(dataSetReader, frequentNGrams, maxErrorRate, sentimentValueThreshold, TWEET_FILTERS, synonyms);
+        Map<String, Double> lexicon = lexiconCreator.createLexicon(dataSetReader, frequentNGrams, maxErrorRate, sentimentValueThreshold, TWEET_FILTERS);
         JSONUtils.toJSONFile(lexiconFile, MapUtils.sortMapByValue(lexicon), true);
     }
 }

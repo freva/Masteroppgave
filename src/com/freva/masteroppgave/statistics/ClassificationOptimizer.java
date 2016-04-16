@@ -6,11 +6,9 @@ import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
-import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +22,12 @@ public class ClassificationOptimizer {
     private static final Map<String, double[]> nGrams = new HashMap<>();
 
     private static final double[][] lexiconVariables = {{5, 6}, //n
-            {0.000005, 0.0000075, 0.00001}, //frequencyCutoff
+            {0.000005, 0.0000075}, //frequencyCutoff
             {3, 3.25, 3.5, 3.75, 4}, //minPMI
-            {0.075, 0.1, 0.125, 0.15}, //maxError
-            {1.5, 1.75, 2, 2.25, 2.5}}; //minSentiment
-    private static final double[] bestValues = {lexiconVariables[0][0], lexiconVariables[1][0], lexiconVariables[2][0], lexiconVariables[3][0], lexiconVariables[4][0]};
+            {300, 250, 200, 150, 100}, //minTotalOccurrences
+            {1.75, 2, 2.25, 2.5}}; //minSentiment
+    private static final double[] bestValues = {lexiconVariables[0][0], lexiconVariables[1][0], lexiconVariables[2][0],
+            lexiconVariables[3][0], lexiconVariables[4][0]};
 
 
     static {
@@ -41,10 +40,10 @@ public class ClassificationOptimizer {
             e.printStackTrace();
         }
 
-        variableValues.put(ClassifierOptions.Variable.NEGATION_VALUE, new double[]{0.5, 0.8, 1.0, 1.2, 1.3, 1.4, 1.5});
+        variableValues.put(ClassifierOptions.Variable.NEGATION_VALUE, new double[]{1.2, 1.3, 1.4, 1.5});
         variableValues.put(ClassifierOptions.Variable.EXCLAMATION_INTENSIFIER, new double[]{2.0, 2.5, 2.75, 3.0, 3.25, 3.5});
-        variableValues.put(ClassifierOptions.Variable.QUESTION_INTENSIFIER, new double[]{0.3, 0.5, 0.7, 0.8, 0.9, 1.0});
-        variableValues.put(ClassifierOptions.Variable.NEGATION_SCOPE_LENGTH, new double[]{2, 3, 4, 5, 6});
+        variableValues.put(ClassifierOptions.Variable.QUESTION_INTENSIFIER, new double[]{0.3, 0.5, 0.7, 0.9, 1.0});
+        variableValues.put(ClassifierOptions.Variable.NEGATION_SCOPE_LENGTH, new double[]{3, 4, 5});
         variableValues.put(ClassifierOptions.Variable.AMPLIFIER_SCALAR, new double[]{2, 2.5, 3, 3.5, 4});
         variableValues.put(ClassifierOptions.Variable.DOWNTONER_SCALAR, new double[]{0.4, 0.6, 0.8, 0.9, 1, 1.1});
     }
@@ -109,14 +108,14 @@ public class ClassificationOptimizer {
         return new AbstractMap.SimpleEntry<>(bestOptions, bestScore);
     }
 
-    private static Map<String, Double> generateLexicon(int n, double frequencyCutoff, double minPMI, double maxError, double minSentiment) throws IOException {
+    private static Map<String, Double> generateLexicon(int n, double frequencyCutoff, double minPMI, double minTotalOccurrences, double minSentiment) throws IOException {
         final int nubOccurrences = (int) (103895935 * frequencyCutoff);
         List<String> filteredNGrams = nGrams.entrySet().stream()
                 .filter(e -> e.getValue()[0] >= nubOccurrences && e.getValue()[1] >= minPMI && e.getKey().split(" ").length <= n)
                 .map(Map.Entry::getKey).collect(Collectors.toList());
 
         DataSetReader dataset = new DataSetReader(new File("res/tweets/classified.txt"), 1, 0);
-        return creator.createLexicon2(dataset, filteredNGrams, maxError, minSentiment, Main.TWEET_FILTERS);
+        return creator.createLexicon(dataset, filteredNGrams, minTotalOccurrences, minSentiment, Main.TWEET_FILTERS);
     }
 
     private static double calculateScore(Classifier classifier, List<DataSetEntry> entries) {
