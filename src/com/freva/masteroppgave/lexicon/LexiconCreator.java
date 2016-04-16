@@ -15,32 +15,44 @@ import java.util.*;
 public class LexiconCreator implements Progressable {
     private DataSetReader dataSetReader;
 
-    public Map<String, Double> createLexicon2(DataSetReader dataSetReader, Collection<String> nGrams, double maxErrorRate,
+    public Map<String, Double> createLexicon(DataSetReader dataSetReader, Collection<String> nGrams, double minTotalOccurrences,
                                              double sentimentValueThreshold, Filters filters) {
-        Map<String, Double> lexicon = createLexicon(dataSetReader, nGrams, maxErrorRate, sentimentValueThreshold, filters);
-        Map<String, Double> wordsToBeAdded = new HashMap<>();
+        Map<String, Counter> counter = countNGramsByPolarity(dataSetReader, nGrams, filters);
+        Map<String, Double> lexicon = new HashMap<>();
 
-        lexicon.keySet().stream()
-                .filter(i -> RegexFilters.WHITESPACE.split(i).length == 1 && !ClassifierOptions.isSpecialClassWord(i))
-                .forEach(key -> {
-                    for (String relatedWord : Adjectives.getAdverbAndAdjectives(key)) {
-                        if (!lexicon.containsKey(relatedWord) && !wordsToBeAdded.containsKey(relatedWord)) {
-                            wordsToBeAdded.put(relatedWord, lexicon.get(key));
+        final int pos = counter.values().stream().mapToInt(i -> i.numPositive).sum();
+        final int neg = counter.values().stream().mapToInt(i -> i.numNegative).sum();
+        final double ratio = (double) neg / pos;
+
+        counter.entrySet().stream()
+                .filter(entry -> entry.getValue().getTotalOccurrences() > minTotalOccurrences)
+                .forEach(entry -> {
+                    int over = entry.getValue().numPositive;
+                    int under = entry.getValue().numNegative;
+
+                    double sentimentValue = Math.log(ratio * over / under);
+                    if (Math.abs(sentimentValue) >= sentimentValueThreshold) {
+                        lexicon.put(entry.getKey(), sentimentValue);
+
+                        if (RegexFilters.WHITESPACE.split(entry.getKey()).length == 1 && !ClassifierOptions.isSpecialClassWord(entry.getKey())) {
+                            for (String relatedWord : Adjectives.getAdverbAndAdjectives(entry.getKey())) {
+                                if (counter.containsKey(relatedWord) && !lexicon.containsKey(relatedWord)) {
+                                    lexicon.put(relatedWord, sentimentValue);
+                                }
+                            }
                         }
                     }
                 });
 
-        return MapUtils.mergeMaps(lexicon, wordsToBeAdded);
+        return MapUtils.normalizeMapBetween(lexicon, -5, 5);
     }
 
 
-    public Map<String, Double> createLexicon(DataSetReader dataSetReader, Collection<String> nGrams, double maxErrorRate,
-                                             double sentimentValueThreshold, Filters filters) {
+    private Map<String, Counter> countNGramsByPolarity(DataSetReader dataSetReader, Collection<String> nGrams, Filters filters) {
         this.dataSetReader = dataSetReader;
         TokenTrie tokenTrie = new TokenTrie(nGrams);
 
-        Map<String, Integer> wordsPos = new HashMap<>();
-        Map<String, Integer> wordsNeg = new HashMap<>();
+        Map<String, Counter> counter = new HashMap<>();
         Parallel.For(dataSetReader, entry -> {
             String tweet = filters.apply(entry.getTweet());
             List<String> tokens = tokenTrie.findOptimalTokenization(RegexFilters.WHITESPACE.split(tweet));
@@ -48,36 +60,17 @@ public class LexiconCreator implements Progressable {
             for (String nGram : tokens) {
                 String[] nGramWords = RegexFilters.WHITESPACE.split(nGram);
                 if (containsIllegalWord(nGramWords)) continue;
+                if (!counter.containsKey(nGram)) counter.put(nGram, new Counter());
 
                 if (entry.getClassification().isPositive()) {
-                    MapUtils.incrementMapByValue(wordsPos, nGram, 1);
+                    counter.get(nGram).numPositive++;
                 } else if (entry.getClassification().isNegative()) {
-                    MapUtils.incrementMapByValue(wordsNeg, nGram, 1);
+                    counter.get(nGram).numNegative++;
                 }
             }
         });
 
-        final int pos = wordsPos.values().stream().mapToInt(Integer::valueOf).sum();
-        final int neg = wordsNeg.values().stream().mapToInt(Integer::valueOf).sum();
-
-        final double ratio = (double) neg / pos;
-        final double Z = 2.5759; //Two nines
-        final double cutoff = Z * Z / 4 / maxErrorRate / maxErrorRate;
-
-        Map<String, Double> lexicon = new HashMap<>();
-        Set<String> allKeys = new HashSet<>(wordsPos.keySet());
-        allKeys.retainAll(wordsNeg.keySet());
-        allKeys.stream()
-                .filter(key -> wordsNeg.getOrDefault(key, 0) + wordsPos.getOrDefault(key, 0) > cutoff)
-                .forEach(key -> {
-            int over = wordsPos.getOrDefault(key, 1);
-            int under = wordsNeg.getOrDefault(key, 1);
-
-            double sentimentValue = Math.log(ratio * over / under);
-            if (Math.abs(sentimentValue) >= sentimentValueThreshold) lexicon.put(key, sentimentValue);
-        });
-
-        return MapUtils.normalizeMapBetween(lexicon, -5, 5);
+        return counter;
     }
 
     private static boolean containsIllegalWord(String[] nGram) {
@@ -86,5 +79,14 @@ public class LexiconCreator implements Progressable {
 
     public double getProgress() {
         return dataSetReader == null ? 0 : dataSetReader.getProgress();
+    }
+
+    private class Counter {
+        private int numPositive = 4;
+        private int numNegative = 4;
+
+        private int getTotalOccurrences() {
+            return numPositive + numNegative;
+        }
     }
 }
