@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 
-public final class ClassificationMetrics {
+public class ClassificationMetrics {
     private static final int columnWidth = 13;
     public static final String columnFormat = "%" + columnWidth + "s";
     public static final String numberFormat = "%" + columnWidth + ".4f";

@@ -35,18 +35,6 @@ public class CanonicalForm {
     }
 
 
-    public static String correctSentenceViaCanonical(String sentence) {
-        String[] words = RegexFilters.WHITESPACE.split(sentence);
-        StringBuilder out = new StringBuilder();
-
-        for(String word: words) {
-            out.append(" ").append(correctWordViaCanonical(word));
-        }
-
-        return out.toString().trim();
-    }
-
-
     public static String correctWordViaCanonical(String text) {
         String canonical = reduceToCanonicalForm(text);
 
@@ -56,7 +44,6 @@ public class CanonicalForm {
         } else if(candidates.size() == 1) {
             return candidates.iterator().next();
         }
-
 
         int closestDist = Integer.MAX_VALUE;
         String closestString = canonical;

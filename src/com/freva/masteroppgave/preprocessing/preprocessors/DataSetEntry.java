@@ -45,9 +45,9 @@ public class DataSetEntry {
         }
 
         public static Class classifyFromThresholds(double value, double lowThresh, double highThresh) {
-            if(value < lowThresh) {
+            if (value < lowThresh) {
                 return NEGATIVE;
-            } else if(value > highThresh) {
+            } else if (value > highThresh) {
                 return POSITIVE;
             } else {
                 return NEUTRAL;

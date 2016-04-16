@@ -22,10 +22,11 @@ public class TweetNGramsPMI implements Progressable {
 
     /**
      * Finds all frequent n-grams in a file, treating each new line as a new document.
-     * @param input LineReader initialized on file with documents to generate n-grams for
-     * @param n Maximum n-gram length
+     *
+     * @param input           LineReader initialized on file with documents to generate n-grams for
+     * @param n               Maximum n-gram length
      * @param frequencyCutoff Smallest required frequency to include n-gram
-     * @param filters List of filters to apply to document before generating n-grams
+     * @param filters         List of filters to apply to document before generating n-grams
      * @return Map of n-grams as key and number of occurrences as value
      */
     public final List<String> getFrequentNGrams(LineReader input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) {
@@ -41,17 +42,17 @@ public class TweetNGramsPMI implements Progressable {
             }
 
             tweet = filters.apply(tweet);
-            for(String sentence : RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
+            for (String sentence : RegexFilters.SENTENCE_END_PUNCTUATION.split(tweet)) {
                 String[] tokens = RegexFilters.WHITESPACE.split(sentence.trim());
-                if(tokens.length == 1) continue;
+                if (tokens.length == 1) continue;
 
-                for(int i=0; i<tokens.length; i++) {
-                    nGramTree.incrementNGram(Arrays.copyOfRange(tokens, i, Math.min(i+n, tokens.length)));
+                for (int i = 0; i < tokens.length; i++) {
+                    nGramTree.incrementNGram(Arrays.copyOfRange(tokens, i, Math.min(i + n, tokens.length)));
                 }
             }
         });
 
-        return nGramTree.getNGrams((int) (frequencyCutoff*lineCounter.intValue()), inclusionThreshold);
+        return nGramTree.getNGrams((int) (frequencyCutoff * lineCounter.intValue()), inclusionThreshold);
     }
 
 
@@ -68,8 +69,8 @@ public class TweetNGramsPMI implements Progressable {
             Node current = root;
             current.numOccurrences++;
 
-            for(String word: nGram) {
-                if(! current.hasChild(word)) {
+            for (String word : nGram) {
+                if (!current.hasChild(word)) {
                     current.addChild(word);
                 }
 
@@ -80,8 +81,8 @@ public class TweetNGramsPMI implements Progressable {
 
         private Node getNode(String phrase) {
             Node current = root;
-            for(String word: RegexFilters.WHITESPACE.split(phrase)) {
-                if(! current.hasChild(word)) {
+            for (String word : RegexFilters.WHITESPACE.split(phrase)) {
+                if (!current.hasChild(word)) {
                     return null;
                 }
 
@@ -97,7 +98,7 @@ public class TweetNGramsPMI implements Progressable {
         private List<String> getNGrams(int limit, double inclusionThreshold) {
             Map<String, Double> allNGrams = new HashMap<>();
 
-            for(Node child: root.children.values()) {
+            for (Node child : root.children.values()) {
                 child.addFrequentPhrases(allNGrams, limit, child.phrase);
             }
 
@@ -123,7 +124,7 @@ public class TweetNGramsPMI implements Progressable {
         private int numOccurrences;
         private double logScore = Double.NaN;
 
-        public Node(String phrase){
+        public Node(String phrase) {
             this.phrase = phrase;
         }
 
@@ -140,13 +141,13 @@ public class TweetNGramsPMI implements Progressable {
         }
 
         public double getLogScore() {
-            if(Double.isNaN(logScore)) logScore = Math.log(numOccurrences);
+            if (Double.isNaN(logScore)) logScore = Math.log(numOccurrences);
             return logScore;
         }
 
         private void pruneInfrequent(int limit) {
             Iterator<Map.Entry<String, Node>> iterator = children.entrySet().iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 Map.Entry<String, Node> child = iterator.next();
 
                 if (child.getValue().numOccurrences < limit) {
@@ -161,16 +162,16 @@ public class TweetNGramsPMI implements Progressable {
             children.values().stream()
                     .filter(child -> child.numOccurrences >= limit)
                     .forEach(child -> {
-                Node lastWord = nGramTree.getNode(child.phrase);
+                        Node lastWord = nGramTree.getNode(child.phrase);
 
-                if (lastWord != null && lastWord.numOccurrences >= limit) {
-                    double temp = nGramTree.root.getLogScore() + child.getLogScore() - getLogScore() - lastWord.getLogScore();
+                        if (lastWord != null && lastWord.numOccurrences >= limit) {
+                            double temp = nGramTree.root.getLogScore() + child.getLogScore() - getLogScore() - lastWord.getLogScore();
 
-                    String candidate = prefix + " " + child.phrase;
-                    map.put(candidate, temp);
-                    child.addFrequentPhrases(map, limit, candidate);
-                }
-            });
+                            String candidate = prefix + " " + child.phrase;
+                            map.put(candidate, temp);
+                            child.addFrequentPhrases(map, limit, candidate);
+                        }
+                    });
         }
     }
 }

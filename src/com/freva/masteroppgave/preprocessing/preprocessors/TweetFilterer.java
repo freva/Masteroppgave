@@ -18,7 +18,8 @@ public class TweetFilterer {
 
     /**
      * First stage of raw downloaded tweet filtering. Removes all tweets that cant be used by any other preprocessor.
-     * @param input_filename File path to the raw downloaded tweets
+     *
+     * @param input_filename  File path to the raw downloaded tweets
      * @param output_filename File path to write the filtered tweets
      * @throws IOException
      */
@@ -26,17 +27,17 @@ public class TweetFilterer {
         final Map<String, Integer> unique = new HashMap<>();
         int lineCounter = 0;
 
-        try(Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
+        try (Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_filename), "UTF-8"))) {
             try (BufferedReader br = new BufferedReader(new FileReader(input_filename))) {
                 for (String line; (line = br.readLine()) != null; lineCounter++) {
                     if (lineCounter % 100000 == 0) {
-                        if(lineCounter % 10000000 == 0) MapUtils.removeInfrequentItems(unique, 2);
+                        if (lineCounter % 10000000 == 0) MapUtils.removeInfrequentItems(unique, 2);
                         System.out.print("\r" + lineCounter);
                     }
-                    if (! shouldInclude(line)) continue;
+                    if (!shouldInclude(line)) continue;
 
                     String filtered = Filters.stringChain(line, filters);
-                    if(unique.containsKey(filtered)) continue;
+                    if (unique.containsKey(filtered)) continue;
 
                     MapUtils.incrementMapByValue(unique, filtered, 1);
                     output.write(line + "\n");
