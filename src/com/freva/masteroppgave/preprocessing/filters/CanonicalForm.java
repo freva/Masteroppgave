@@ -6,23 +6,16 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class CanonicalForm {
-    private static final File dictionaryFile = new File("res/tweets/canonical.txt");
-    private static Map<String, Set<String>> dictionary;
+    private static Map<String, Set<String>> dictionary = new HashMap<>();
 
-    static {
-        try {
-            dictionary = JSONUtils.fromJSON(
-                    FileUtils.readEntireFileIntoString(dictionaryFile), new TypeToken<Map<String, Set<String>>>(){});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void loadDictionary(File file) throws IOException {
+        dictionary = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Map<String, Set<String>>>(){});
     }
-
-
 
     public static String correctWordViaCanonical(String text) {
         String canonical = Filters.removeRepeatingCharacters(text);

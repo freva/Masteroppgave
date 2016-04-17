@@ -1,6 +1,9 @@
 package com.freva.masteroppgave;
 
+import com.freva.masteroppgave.classifier.Classifier;
+import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.LexiconCreator;
+import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.preprocessors.TweetNGramsPMI;
@@ -35,16 +38,25 @@ public class Main {
 
 
     public static void main(String[] args) {
-
+        try {
+            continuousClassification(new File(args[0]), new File(args[1]), new File(args[2]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static void continuousClassification(File lexicon, File options, File dictionary) throws IOException {
+        ClassifierOptions.loadOptions(options);
+        CanonicalForm.loadDictionary(dictionary);
 
-    private static void generateNGrams(File input, File output, int nGramRange, double cutoffFrequency, double PMIValueThreshold) throws IOException {
-        TweetNGramsPMI tweetNGrams = new TweetNGramsPMI();
-        ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
-        List<String> ngrams = tweetNGrams.getFrequentNGrams(new LineReader(input), nGramRange, cutoffFrequency, PMIValueThreshold, N_GRAM_FILTERS);
+        PriorPolarityLexicon priorPolarityLexicon = new PriorPolarityLexicon(lexicon);
+        Classifier classifier = new Classifier(priorPolarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
 
-        JSONUtils.toJSONFile(output, ngrams, true);
+        Scanner input = new Scanner(System.in);
+        while (input.hasNext()) {
+            String tweet = input.nextLine();
+            System.out.println(classifier.calculateSentiment(tweet));
+        }
     }
 
     public static void createLexicon(File nGramsFile, File dataSetFile, File lexiconFile, double maxErrorRate, double sentimentValueThreshold) throws IOException {
@@ -55,5 +67,13 @@ public class Main {
         ProgressBar.trackProgress(lexiconCreator, "Creating lexicon...");
         Map<String, Double> lexicon = lexiconCreator.createLexicon(dataSetReader, frequentNGrams, maxErrorRate, sentimentValueThreshold, TWEET_FILTERS);
         JSONUtils.toJSONFile(lexiconFile, MapUtils.sortMapByValue(lexicon), true);
+    }
+
+    public static void generateNGrams(File input, File output, int nGramRange, double cutoffFrequency, double PMIValueThreshold) throws IOException {
+        TweetNGramsPMI tweetNGrams = new TweetNGramsPMI();
+        ProgressBar.trackProgress(tweetNGrams, "Generating tweet n-grams...");
+        List<String> ngrams = tweetNGrams.getFrequentNGrams(new LineReader(input), nGramRange, cutoffFrequency, PMIValueThreshold, N_GRAM_FILTERS);
+
+        JSONUtils.toJSONFile(output, ngrams, true);
     }
 }

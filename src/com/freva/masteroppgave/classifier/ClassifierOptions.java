@@ -21,17 +21,14 @@ public class ClassifierOptions {
      * intensification values, negation words and stop words.
      *
      * @param file File containing the options
+     * @throws IOException
      */
-    public static void loadOptions(File file) {
-        try {
-            Settings words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Settings>() {});
-            options = words.options;
-            intensifiers = words.intensifiers;
-            negators = words.negators;
-            stopWords = words.stopWords;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void loadOptions(File file) throws IOException {
+        Settings words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Settings>() {});
+        options = words.options;
+        intensifiers = words.intensifiers;
+        negators = words.negators;
+        stopWords = words.stopWords;
     }
 
     public static boolean containsStopWord(String[] words) {
