@@ -15,8 +15,21 @@ import java.util.*;
 public class LexiconCreator implements Progressable {
     private DataSetReader dataSetReader;
 
+    /**
+     * Generates sentiment lexicon using PMI on words and classification of context they are in.
+     *
+     * @param dataSetReader       Dataset containing tweets and their sentiment classification
+     * @param nGrams              n-grams to calculate sentiment for (with n>1, singletons are calculated automatically)
+     * @param minTotalOccurrences minimum number of times n-gram must have appeared in dataset before a sentiment value
+     *                            is assigned (higher value gives more accurate sentiment value)
+     * @param minSentimentValue   minimum sentiment value required to be included in lexicon (values close to 0 are
+     *                            often words that are used equally in positive or negative context, possibly even
+     *                            different words, but with same spelling, and thus having uncertain value)
+     * @param filters             filters to apply to tweets before searching for n-grams
+     * @return map of n-grams and their sentiment values, sentiment values are in [-5, 5]
+     */
     public Map<String, Double> createLexicon(DataSetReader dataSetReader, Collection<String> nGrams, double minTotalOccurrences,
-                                             double sentimentValueThreshold, Filters filters) {
+                                             double minSentimentValue, Filters filters) {
         Map<String, Counter> counter = countNGramsByPolarity(dataSetReader, nGrams, filters);
         Map<String, Double> lexicon = new HashMap<>();
 
@@ -31,7 +44,7 @@ public class LexiconCreator implements Progressable {
                     int under = entry.getValue().numNegative;
 
                     double sentimentValue = Math.log(ratio * over / under);
-                    if (Math.abs(sentimentValue) >= sentimentValueThreshold) {
+                    if (Math.abs(sentimentValue) >= minSentimentValue) {
                         lexicon.put(entry.getKey(), sentimentValue);
 
                         if (RegexFilters.WHITESPACE.split(entry.getKey()).length == 1 && !ClassifierOptions.isSpecialClassWord(entry.getKey())) {
@@ -48,6 +61,15 @@ public class LexiconCreator implements Progressable {
     }
 
 
+    /**
+     * Returns a map of n-gram and the number of times it appeared in positive context and the number of times it
+     * appeared in negative context in dataset file.
+     *
+     * @param dataSetReader Dataset containing tweets and their classification
+     * @param nGrams        n-grams to count occurrences for
+     * @param filters       filters to apply to tweets in dataset before searching for n-grams
+     * @return Map of Counter instances for n-grams in nGrams Collection
+     */
     private Map<String, Counter> countNGramsByPolarity(DataSetReader dataSetReader, Collection<String> nGrams, Filters filters) {
         this.dataSetReader = dataSetReader;
         TokenTrie tokenTrie = new TokenTrie(nGrams);

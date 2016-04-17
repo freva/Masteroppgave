@@ -6,7 +6,7 @@ import com.freva.masteroppgave.classifier.ClassifierOptions.Variable;
 import com.freva.masteroppgave.lexicon.container.TokenTrie;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
+import com.freva.masteroppgave.utils.reader.DataSetReader.Classification;
 
 import java.util.List;
 
@@ -25,10 +25,17 @@ public class Classifier {
         this(lexicon, null);
     }
 
-    public DataSetEntry.Class classify(String tweet) {
+    /**
+     * Classifies the tweet into one of three classes (negative, neutral or positive) depending on the sentiment value
+     * of the tweet and the thresholds specified in the ClassifierOptions
+     *
+     * @param tweet String tweet to classify
+     * @return Sentiment classification (negative, neutral or positive)
+     */
+    public Classification classify(String tweet) {
         final double sentimentValue = calculateSentiment(tweet);
 
-        return DataSetEntry.Class.classifyFromThresholds(sentimentValue,
+        return Classification.classifyFromThresholds(sentimentValue,
                 ClassifierOptions.getVariable(Variable.CLASSIFICATION_THRESHOLD_LOWER),
                 ClassifierOptions.getVariable(Variable.CLASSIFICATION_THRESHOLD_HIGHER));
     }

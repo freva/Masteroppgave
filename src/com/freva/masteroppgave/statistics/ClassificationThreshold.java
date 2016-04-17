@@ -1,6 +1,6 @@
 package com.freva.masteroppgave.statistics;
 
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
+import com.freva.masteroppgave.utils.reader.DataSetReader.Classification;
 
 import java.util.*;
 
@@ -11,7 +11,7 @@ public class ClassificationThreshold {
     private double maxAccuracy;
     private boolean cacheUpToDate = false;
 
-    public synchronized void updateEvidence(DataSetEntry.Class correctClass, double predictedSentiment) {
+    public synchronized void updateEvidence(Classification correctClass, double predictedSentiment) {
         previousResults.add(new SentimentTuple(correctClass, predictedSentiment));
         cacheUpToDate = false;
     }
@@ -19,7 +19,7 @@ public class ClassificationThreshold {
 
     private void updateThresholds() {
         Collections.sort(previousResults, Collections.reverseOrder());
-        int[][] counters = new int[DataSetEntry.Class.values().length][previousResults.size()];
+        int[][] counters = new int[Classification.values().length][previousResults.size()];
 
         counters[previousResults.get(0).correct.ordinal()][0]++;
         for(int i=1; i<previousResults.size(); i++) {
@@ -73,27 +73,22 @@ public class ClassificationThreshold {
 
 
     private double getAccuracy(int[][] counters, int start, int end) {
-        int correctNegative = counters[DataSetEntry.Class.NEGATIVE.ordinal()][start-1];
-        int correctPositive = counters[DataSetEntry.Class.POSITIVE.ordinal()][previousResults.size()-1] - counters[DataSetEntry.Class.POSITIVE.ordinal()][end+1];
-        int correctNeutral = counters[DataSetEntry.Class.NEUTRAL.ordinal()][end] - counters[DataSetEntry.Class.NEUTRAL.ordinal()][start];
+        int correctNegative = counters[Classification.NEGATIVE.ordinal()][start-1];
+        int correctPositive = counters[Classification.POSITIVE.ordinal()][previousResults.size()-1] - counters[Classification.POSITIVE.ordinal()][end+1];
+        int correctNeutral = counters[Classification.NEUTRAL.ordinal()][end] - counters[Classification.NEUTRAL.ordinal()][start];
 
         return (double) (correctNegative+correctNeutral+correctPositive) / previousResults.size();
     }
 
     private class SentimentTuple implements Comparable<SentimentTuple> {
-        private DataSetEntry.Class correct;
+        private Classification correct;
         private double predicted;
 
-        SentimentTuple(DataSetEntry.Class correct, double predicted) {
+        private SentimentTuple(Classification correct, double predicted) {
             this.correct = correct;
             this.predicted = predicted;
         }
 
-        public String toString() {
-            return "[" + correct.name() + ", " + predicted + "]";
-        }
-
-        @Override
         public int compareTo(SentimentTuple o) {
             double diff = o.predicted - predicted;
             return diff != 0 ? (int) Math.signum(diff) : o.correct.compareTo(correct);

@@ -46,7 +46,8 @@ public class Filters {
     }
 
     /**
-     * Chain several filters after each other, applying filters only on non special class tokens
+     * Chain several filters after each other, applying filters only on non special class tokens as detected by
+     * {@link ClassifierOptions#isSpecialClassWord(String)}
      *
      * @param text    String to format
      * @param filters Sequence of filters to apply to tokens
@@ -79,7 +80,7 @@ public class Filters {
 
 
     /**
-     * Normalizes String to Latin characters if possible
+     * Normalizes String to Latin characters if possible. WARNING: This also applies non-ASCII filter to the entire string
      *
      * @param text String to format (f.ex. "A strîng wìth fúnny chäracters")
      * @return The formatted String (f.ex. "A string with funny characters")
@@ -99,6 +100,13 @@ public class Filters {
     }
 
 
+    /**
+     * Uses {@link EmojiParser#parseFromUnicode(String, EmojiParser.EmojiTransformer)} to parse unicode emojis to ASCII
+     * string " ||emoji_alias|| ".
+     *
+     * @param text String to format (f.ex. "Hey \uD83D\uDC66\uD83C\uDFFF!")
+     * @return The formatted String (f.ex. "Hey  ||boy|| !")
+     */
     public static String parseUnicodeEmojisToAlias(String text) {
         return EmojiParser.parseFromUnicode(text, EMOJI_ALIAS_TRANSFORMER);
     }
@@ -106,6 +114,12 @@ public class Filters {
     public static String removeUnicodeEmoticons(String text) {
         return EmojiParser.removeAllEmojis(text);
     }
+
+
+    public static String parseEmoticons(String text) {
+        return RegexFilters.replaceEmoticons(text, " ||$1|| ");
+    }
+
 
     public static String removeEmoticons(String text) {
         return RegexFilters.replaceEmoticons(text, "");
@@ -219,7 +233,13 @@ public class Filters {
     }
 
 
-    public static String replaceEmoticons(String text) {
-        return RegexFilters.replaceEmoticons(text, " ||$1|| ");
+    /**
+     * Replaces repeating characters in String
+     *
+     * @param text String to format (f.ex. "Today is a greeeeeeaaaaaaat dayy!")
+     * @return The formatted String (f.ex. "Today is a great day!")
+     */
+    public static String removeRepeatingCharacters(String text) {
+        return RegexFilters.replaceRepeatingCharacters(text, "$1");
     }
 }

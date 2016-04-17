@@ -51,6 +51,7 @@ public class LexicalParser {
                 for (LexicalToken token : tokens) {
                     token.intensifyToken(exclamationIntensifier);
                 }
+
             } else if (punctuation != null && punctuation.contains("?")) {
                 final double questionIntensifier = ClassifierOptions.getVariable(ClassifierOptions.Variable.QUESTION_INTENSIFIER);
                 for (LexicalToken token : tokens) {

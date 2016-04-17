@@ -1,6 +1,5 @@
 package com.freva.masteroppgave.preprocessing.preprocessors;
 
-import com.freva.masteroppgave.preprocessing.filters.CanonicalForm;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
 import com.freva.masteroppgave.preprocessing.filters.RegexFilters;
 import com.freva.masteroppgave.utils.JSONUtils;
@@ -44,7 +43,7 @@ public class CanonicalDictionary implements Progressable {
 
             tweet = Filters.stringChain(tweet, filters);
             for (String word : RegexFilters.WHITESPACE.split(tweet)) {
-                String reduced = CanonicalForm.reduceToCanonicalForm(word);
+                String reduced = Filters.removeRepeatingCharacters(word);
                 if (!counter.containsKey(reduced)) {
                     counter.put(reduced, new HashMap<>());
                 }

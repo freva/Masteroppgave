@@ -5,8 +5,9 @@ import com.freva.masteroppgave.Main;
 import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
+import com.freva.masteroppgave.utils.reader.DataSetReader.Classification;
+import com.freva.masteroppgave.utils.reader.DataSetReader.DataSetEntry;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
@@ -127,9 +128,9 @@ public class ClassificationOptimizer {
         ClassifierOptions.setVariable(ClassifierOptions.Variable.CLASSIFICATION_THRESHOLD_LOWER, threshold.getLowThreshold());
         ClassifierOptions.setVariable(ClassifierOptions.Variable.CLASSIFICATION_THRESHOLD_HIGHER, threshold.getHighThreshold());
 
-        ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());
+        ClassificationMetrics classificationMetrics = new ClassificationMetrics(Classification.values());
         Parallel.For(entries, entry -> {
-            DataSetEntry.Class predicted = classifier.classify(entry.getTweet());
+            Classification predicted = classifier.classify(entry.getTweet());
             classificationMetrics.updateEvidence(entry.getClassification(), predicted);
         });
 

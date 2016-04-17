@@ -9,7 +9,7 @@ public class TokenTrie {
     private Node root = new Node();
 
     /**
-     * Creates a tokenSequence tree for efficient sub-tokenSequence look up.
+     * Creates a phrase trie for efficient sub-phrase look up
      *
      * @param sentences Collection of Strings of all the phrases which are whitespace delimited n-grams
      */
@@ -112,6 +112,13 @@ public class TokenTrie {
     }
 
 
+    /**
+     * Similar to {@link #findOptimalAllocation(String[])}, but also includes the words not matching any longer n-gram
+     * in TokenTrie as singletons.
+     *
+     * @param tokens tokens to tokenize
+     * @return Optimal allocation of tokens to phrases, with non matching tokens as singletons.
+     */
     public List<String> findOptimalTokenization(String[] tokens) {
         List<TokenTrie.Token> tokenRanges = findOptimalAllocation(tokens);
         List<String> tokenizedSentence = new ArrayList<>();

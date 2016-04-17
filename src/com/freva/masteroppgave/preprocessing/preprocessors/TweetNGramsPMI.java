@@ -21,15 +21,16 @@ public class TweetNGramsPMI implements Progressable {
     private NGramTree nGramTree;
 
     /**
-     * Finds all frequent n-grams in a file, treating each new line as a new document.
+     * Finds all frequent (and meaningful) n-grams in a file, treating each new line as a new document.
      *
-     * @param input           LineReader initialized on file with documents to generate n-grams for
-     * @param n               Maximum n-gram length
-     * @param frequencyCutoff Smallest required frequency to include n-gram
-     * @param filters         List of filters to apply to document before generating n-grams
+     * @param input        LineReader initialized on file with documents to generate n-grams for
+     * @param n            Maximum n-gram length
+     * @param minFrequency Smallest required frequency to include n-gram
+     * @param minPMI       Minimum PMI value for n-gram to be included
+     * @param filters      List of filters to apply to document before generating n-grams
      * @return Map of n-grams as key and number of occurrences as value
      */
-    public final List<String> getFrequentNGrams(LineReader input, int n, double frequencyCutoff, double inclusionThreshold, Filters filters) {
+    public final List<String> getFrequentNGrams(LineReader input, int n, double minFrequency, double minPMI, Filters filters) {
         final AtomicInteger lineCounter = new AtomicInteger(0);
         tweetReader = input;
         nGramTree = new NGramTree();
@@ -37,7 +38,7 @@ public class TweetNGramsPMI implements Progressable {
         Parallel.For(tweetReader, tweet -> {
             synchronized (lineCounter) {
                 if (lineCounter.incrementAndGet() % 200000 == 0) {
-                    nGramTree.pruneInfrequent((int) Math.ceil(frequencyCutoff * lineCounter.intValue() / 2));
+                    nGramTree.pruneInfrequent((int) Math.ceil(minFrequency * lineCounter.intValue() / 2));
                 }
             }
 
@@ -52,7 +53,7 @@ public class TweetNGramsPMI implements Progressable {
             }
         });
 
-        return nGramTree.getNGrams((int) (frequencyCutoff * lineCounter.intValue()), inclusionThreshold);
+        return nGramTree.getNGrams((int) (minFrequency * lineCounter.intValue()), minPMI);
     }
 
 

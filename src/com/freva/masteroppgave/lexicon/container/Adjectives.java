@@ -5,7 +5,7 @@ public class Adjectives {
     private static final String SEPARATOR = ",";
 
     public static String[] getAdverbAndAdjectives(String word) {
-        if (!isAlpha(word)) return new String[0];
+        if (!consistsOnlyOfAlphabeticalCharacters(word)) return new String[0];
 
         String adjectives = getComparativeAndSuperlativeAdjectives(word);
         if (adjectives.isEmpty()) {
@@ -16,7 +16,15 @@ public class Adjectives {
         }
     }
 
-    //Using rules from: http://www.eflnet.com/tutorials/adjcompsup.php
+    /**
+     * Returns a comma separated string with the comparative and the superlative forms of the input adjective. F.ex.
+     * "good" => "better,best", "happy" => "happier,happiest". If the comparative and superlative forms are
+     * "more [word]" and "most [word]", empty string is returned, f.ex. "careful" => "".
+     * Forms are generated using rules from: http://www.eflnet.com/tutorials/adjcompsup.php
+     *
+     * @param word adjective
+     * @return comma separated comparative and the superlative forms of the input adjective
+     */
     private static String getComparativeAndSuperlativeAdjectives(String word) {
         switch (word) {
             case "good":
@@ -83,7 +91,13 @@ public class Adjectives {
         return sb.toString();
     }
 
-    //Using rules from: http://www.edufind.com/english-grammar/forming-adverbs-adjectives/
+    /**
+     * Forms an adverb from the input adjective, f.ex. "happy" => "happily".
+     * Adverbs are generated using rules from: http://www.edufind.com/english-grammar/forming-adverbs-adjectives/
+     *
+     * @param adjective adjective
+     * @return adverb form of the input adjective
+     */
     private static String formAdverbFromAdjective(String adjective) {
         //If the adjective ends in -able, -ible, or -le, replace the -e with -y
         if (adjective.endsWith("able") || adjective.endsWith("ible") || adjective.endsWith("le")) {
@@ -122,7 +136,7 @@ public class Adjectives {
         return VOWELS.indexOf(c) != -1;
     }
 
-    private static boolean isAlpha(String name) {
+    private static boolean consistsOnlyOfAlphabeticalCharacters(String name) {
         for (char c : name.toCharArray()) {
             if (!Character.isLetter(c)) {
                 return false;

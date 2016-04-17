@@ -34,6 +34,7 @@ public class RegexFilters {
     public static final Pattern NON_ALPHABETIC_TEXT = Pattern.compile("[^a-zA-Z ]");
     public static final Pattern NON_ASCII_CHARACTERS = Pattern.compile("[^\\p{ASCII}]");
     public static final Pattern FREE_DIGITS = Pattern.compile("([^\\w]|^)[0-9]+([^\\w]+[0-9]+)*([^\\w]|$)");
+    public static final Pattern REPEATING_CHARACTERS = Pattern.compile("(.)\\1+");
 
 
     public static String replaceEmoticons(String text, String replace) {
@@ -89,5 +90,9 @@ public class RegexFilters {
 
     public static String replaceNonASCII(String text, String replace) {
         return NON_ASCII_CHARACTERS.matcher(text).replaceAll(replace);
+    }
+
+    public static String replaceRepeatingCharacters(String text, String replace) {
+        return REPEATING_CHARACTERS.matcher(text).replaceAll(replace);
     }
 }

@@ -4,11 +4,12 @@ import com.freva.masteroppgave.classifier.Classifier;
 import com.freva.masteroppgave.classifier.ClassifierOptions;
 import com.freva.masteroppgave.lexicon.container.PriorPolarityLexicon;
 import com.freva.masteroppgave.preprocessing.filters.Filters;
-import com.freva.masteroppgave.preprocessing.preprocessors.DataSetEntry;
 import com.freva.masteroppgave.statistics.ClassificationMetrics;
 import com.freva.masteroppgave.statistics.ClassificationOptimizer;
 import com.freva.masteroppgave.utils.JSONUtils;
 import com.freva.masteroppgave.utils.reader.DataSetReader;
+import com.freva.masteroppgave.utils.reader.DataSetReader.DataSetEntry;
+import com.freva.masteroppgave.utils.reader.DataSetReader.Classification;
 import com.freva.masteroppgave.utils.reader.LineReader;
 import com.freva.masteroppgave.utils.tools.Parallel;
 
@@ -39,7 +40,7 @@ public class Test {
         final long startTime = System.currentTimeMillis();
 //        System.out.println(ClassificationOptimizer.optimizeClassifier(classifier, entries));
         ClassificationOptimizer.runOptimizer(entries);
-        System.out.println(System.currentTimeMillis()-startTime);
+        System.out.println(System.currentTimeMillis() - startTime);
 
 
 //        generateClassified();
@@ -53,11 +54,11 @@ public class Test {
         PriorPolarityLexicon polarityLexicon = new PriorPolarityLexicon(new File("res/data/lexicon.afinn.json"));
         Classifier classifier = new Classifier(polarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(new File("res/tweets/classified.txt")))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("res/tweets/classified.txt")))) {
             Parallel.For(lineReader, line -> {
                 double predictedSentiment = classifier.calculateSentiment(line);
 
-                if(predictedSentiment >= 10 || predictedSentiment <= -8) {
+                if (predictedSentiment >= 10 || predictedSentiment <= -8) {
                     try {
                         writer.write((predictedSentiment > 0 ? "positive" : "negative") + "\t" + line + "\n");
                     } catch (IOException e) {
@@ -73,12 +74,12 @@ public class Test {
         ClassifierOptions.loadOptions(new File("res/data/options.afinn.json"));
         PriorPolarityLexicon polarityLexicon = new PriorPolarityLexicon(new File("res/data/lexicon.afinn.json"));
         Classifier classifier = new Classifier(polarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
-        ClassificationMetrics classificationMetrics = new ClassificationMetrics(DataSetEntry.Class.values());
+        ClassificationMetrics classificationMetrics = new ClassificationMetrics(Classification.values());
 
         Parallel.For(new DataSetReader(new File("res/semeval/2016-4-test-gold-A.tsv"), 3, 2), entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
 
-            if(predictedSentiment >= 10 || predictedSentiment <= -8) {
+            if (predictedSentiment >= 10 || predictedSentiment <= -8) {
                 classificationMetrics.updateEvidence(entry.getClassification(), classifier.classify(entry.getTweet()));
             }
         });
@@ -93,13 +94,13 @@ public class Test {
         Classifier classifier = new Classifier(polarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
 
         HashMap<String, ArrayList<Double>> outcomes = new HashMap<>();
-        for(DataSetEntry.Class cls : DataSetEntry.Class.values()) {
+        for (Classification cls : Classification.values()) {
             outcomes.put(cls.name().toLowerCase(), new ArrayList<>());
         }
 
         Parallel.For(new DataSetReader(new File("res/semeval/2016-4-test-gold-A.tsv"), 3, 2), entry -> {
             double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
-            if(predictedSentiment == 0 && !entry.getClassification().isNeutral()) {
+            if (predictedSentiment == 0 && !entry.getClassification().isNeutral()) {
                 System.out.println(entry.getTweet());
             }
 

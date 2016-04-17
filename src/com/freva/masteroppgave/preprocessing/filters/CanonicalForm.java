@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class CanonicalForm {
-    private static final Pattern reducer = Pattern.compile("(.)\\1+");
     private static final File dictionaryFile = new File("res/tweets/canonical.txt");
     private static Map<String, Set<String>> dictionary;
 
@@ -25,18 +23,9 @@ public class CanonicalForm {
     }
 
 
-    /**
-     * Reduces the text to its canonical form (no sequentially repeating characters)
-     * @param text Text to reduce to canonical form
-     * @return Canonically reduced text
-     */
-    public static String reduceToCanonicalForm(String text) {
-        return reducer.matcher(text).replaceAll("$1");
-    }
-
 
     public static String correctWordViaCanonical(String text) {
-        String canonical = reduceToCanonicalForm(text);
+        String canonical = Filters.removeRepeatingCharacters(text);
 
         Set<String> candidates = dictionary.get(canonical);
         if(candidates == null) {

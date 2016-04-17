@@ -16,6 +16,12 @@ public class ClassifierOptions {
     private static Set<String> negators;
     private static Set<String> stopWords;
 
+    /**
+     * Loads options from a JSON file. The file should contain general classifier options, intensifier words with their
+     * intensification values, negation words and stop words.
+     *
+     * @param file File containing the options
+     */
     public static void loadOptions(File file) {
         try {
             Settings words = JSONUtils.fromJSON(FileUtils.readEntireFileIntoString(file), new TypeToken<Settings>() {});

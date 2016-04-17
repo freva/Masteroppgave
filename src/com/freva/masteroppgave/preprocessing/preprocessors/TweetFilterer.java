@@ -47,14 +47,18 @@ public class TweetFilterer {
     }
 
 
+    /**
+     * Filters away tweets that dont provide much useful information. By removing as much of spam as possible, we will
+     * get more accurate view of n-grams and the context they are used in. The most basic rules is to remove tweets
+     * containing link and re-tweets.
+     *
+     * @param text tweet
+     * @return true if the tweet provides some useful information (is not spam), false otherwise
+     */
     private static boolean shouldInclude(String text) {
         if (text.startsWith("RT @")) return false;
-        if (text.contains("https://") || text.contains("http://")) return false;
-        if (text.startsWith("Get Weather Updates from The Weather Channel")) return false;
-        if (text.toLowerCase().contains("harry_styles")) return false;
-        if (text.contains("°")) return false;
-        if (text.contains("TVPersonality2015")) return false;
-        if (endsWithNumber.matcher(text).find()) return false;
+        else if (text.contains("https://") || text.contains("http://")) return false;
+        else if (endsWithNumber.matcher(text).find()) return false;
 
         return true;
     }
