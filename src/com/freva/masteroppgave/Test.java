@@ -35,7 +35,7 @@ public class Test {
         List<DataSetEntry> entries = new ArrayList<>();
         dataSetReader.forEach(entries::add);
         entries.forEach(e -> e.applyFilters(LexicalClassifier.CLASSIFIER_FILTERS));
-//        Classifier classifier = new Classifier(new PriorPolarityLexicon(Resources.AFINN_LEXICON));
+        Classifier classifier = new Classifier(new PriorPolarityLexicon(new File("res/data/lexicon.pmi.json")));
 
         final long startTime = System.currentTimeMillis();
 //        System.out.println(ClassificationOptimizer.optimizeClassifier(classifier, entries));
@@ -89,8 +89,8 @@ public class Test {
 
 
     public static void generateClassDistribution() throws IOException {
-        ClassifierOptions.loadOptions(new File("res/data/options.pmi.json"));
-        PriorPolarityLexicon polarityLexicon = new PriorPolarityLexicon(new File("res/tweets/pmilexicon.txt"));
+        ClassifierOptions.loadOptions(new File("res/data/options.afinn.json"));
+        PriorPolarityLexicon polarityLexicon = new PriorPolarityLexicon(new File("res/data/lexicon.afinn.json"));
         Classifier classifier = new Classifier(polarityLexicon, LexicalClassifier.CLASSIFIER_FILTERS);
 
         HashMap<String, ArrayList<Double>> outcomes = new HashMap<>();
@@ -98,14 +98,15 @@ public class Test {
             outcomes.put(cls.name().toLowerCase(), new ArrayList<>());
         }
 
-        Parallel.For(new DataSetReader(new File("res/semeval/2016-4-test-gold-A.tsv"), 3, 2), entry -> {
-            double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
-            if (predictedSentiment == 0 && !entry.getClassification().isNeutral()) {
-                System.out.println(entry.getTweet());
+        for(String dataset: new String[]{"2013-2-test-gold-B", "2014-9-test-gold-B", "2015-10-test-gold-B", "2016-4-test-gold-A"}) {
+            for(DataSetEntry entry: new DataSetReader(new File("res/semeval/" + dataset + ".tsv"), 3, 2)){
+                double predictedSentiment = classifier.calculateSentiment(entry.getTweet());
+                if(Double.isNaN(predictedSentiment)) {
+                    System.out.println(entry.getTweet());
+                }
+                outcomes.get(entry.getClassification().name().toLowerCase()).add(predictedSentiment);
             }
-
-            outcomes.get(entry.getClassification().name().toLowerCase()).add(predictedSentiment);
-        });
+        }
 
         JSONUtils.toJSONFile(new File("res/tweets/distrib.txt"), outcomes, false);
     }
