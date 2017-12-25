@@ -1,0 +1,133 @@
+%!TEX root = ../report.tex
+\chapter{Related Work}
+\label{cha:related_work}
+In this chapter, an overview of the state-of-the-art within \ac{tsa} is presented, before common approaches within lexicon based \ac{sa} systems and automatic creation of sentiment lexica are described in more detail. The overview of the state-of-the-art within \ac{tsa} will act as an introduction to \ac{tsa}, introducing central aspects and concepts within the field, whereas the in-depth descriptions of the common approaches within lexicon based \ac{sa} and automatic creation of sentiment lexica forms the basis for the systems developed in the thesis. In addition the highly relevant \ac{semeval} is described, being at the forefront of research within the field of \ac{tsa}.
+
+\section{Literature Review Method}
+\label{sec:literature_review_method}
+Based on the goals presented in Section~\ref{sec:project_goals}, there were three main areas we wanted to research: state-of-the-art \ac{tsa}, lexicon based \ac{sa} and automatic creation of sentiment lexicon.\\
+
+The research conducted when constructing the state-of-the-art within \ac{tsa} was mainly based on the top performing \ac{tsa} systems participating in \ac{semeval}, over the last few years. The reason for focusing primarily on \ac{tsa} systems participating in \ac{semeval} is that it is the main arena for \ac{tsa} systems, with new and better systems developed each year. \\  
+
+Regarding the fields of lexicon based \ac{sa} and automatic creation of sentiment lexicon, which are the main focus areas of the thesis, an in depth literature review was conducted. First a series of candidate papers were collected within both fields using the search engine Google Scholar. After all candidate papers had been collected, each paper was reviewed and scored based on the relevance towards the specific field. The papers we found most relevant were then used to identify the most common approaches within each of the two fields.
+
+
+\section{The International Workshop on Semantic Evaluation}
+\label{sec:SemEval}
+The \acf{semeval} is a workshop where several computational semantic language analysis systems are developed to solve a series of shared tasks. The overall process of the workshop consists of three steps: receive relevant training data, develop the system and evaluate the system. In recent years the workshop has been hosted annually, where some of the shared tasks have carried over from one year to the next. Among these is a collection of tasks centered around \ac{tsa}. As being a part of \ac{semeval} each year since 2013, the \ac{tsa} tasks have yielded significant improvements to the state-of-the-art in the field, as will be discussed in the following section.    
+
+\section{State-of-the-Art in Sentiment Analysis}
+\label{sec:state_of_the_art}
+Based on the development in recent years within \ac{tsa}, a typical approach has been identified. The approach uses a supervised machine learning system, consisting of three main steps: preprocessing, feature extraction and classification. Preprocessing is used in order to remove noise and standardize the tweet format, by for example replacing or removing URLs. Desired features of the tweets are then extracted, such as sentiment scores using specific sentiment lexica or the occurrence of different emoticons. Finally, a classification is performed using the extracted features.
+
+\subsection{Preprocessing}
+The preprocessing of tweets in \ac{sa} commonly consists of a series of tasks in order to normalize the tweet format and prepare it for feature extraction. The main tasks in preprocessing commonly revolve around text filtering and negation detection. 
+
+\subsection*{Text Filtering}
+\label{sec:text_filtering}
+Text filtering often includes removing items providing minimal information regarding the actual classification task. Items such as user mentions and URLs are therefore often substituted with tags as done by \cite{GoSentimentAnalysis09}, where the tag ``USER'' is used for user mentions and the tag ``URL'' for URLs. Another common approach is to remove the URLs and user mentions completely.\\
+
+The use of retweets\footnote{Until early 2015 retweeting was not an official Twitter feature and users used to tweet with `RT' at the beginning of a tweet to indicate that the tweet was a re-post of someone else's content.} is also often handled as a text filtering task during preprocessing. The retweets are detected by the tag `RT', which indicates that the following segment of the tweet is a repost of someone else's tweet. This is commonly handled by simply removing the retweet tag `RT' from the tweet, because the `RT' tag by itself carries no information. A retweet can be about how someone agrees or disagrees about the original quote and analysis of the text itself is needed to determine which one it is. \\
+
+Elongated words are common in tweets. Elongated words are words spelled with extra characters, such as ``booooring'' or ``coool''. These words are often modified by reducing the surplus of equal consecutive characters. The words are then either reduced down to the actual correct spelling of the word, ``booooring'' becomes ``boring'', or down to a maximum number of consecutive equal characters. With a maximum of 2 consecutive equal characters, ``booooring'' becomes ``booring''. The reduction is done to be able to group various elongations of the same word under one entry, the aggregated approach helps determine the overall sentiment more accurately. A reason for not removing all of the extra characters is that elongation can be a form of expressing the sentiment, and can therefore be useful in the analysis. \\
+
+
+\subsection*{Negation Detection}
+Detecting negation (Section~\ref{sec:background_nlp}) in tweets has become an integral part of most \ac{tsa} systems. This is commonly done by looking for negation cues such as \textit{"not"}, \textit{"wouldn't"} and \textit{"ain't"} in the tweets, before determining the potential scope of the negation. To determine the scope, the collection of words affected by the negation cue, a simple method proposed by \cite{Das01yahoo} is often used. The simple approach consists of selecting the $n$ consecutive words appearing after the negation cue, and marking them as negated. Another common approach is to mark all consecutive words appearing after the negation cue until reaching the next punctuation mark as negated. As to how much each individual word is affected, there are two main approaches. The first approach being simply reversing the sentiment value of the word, and the other being a slight adjustment of the sentiment value of the word towards the opposite polarity. Using the second approach, the unigram \textit{"great"} with a sentiment value of 3 should in a negated context get a less positive value of, for instance, 0.5. A word with low positive initial sentiment value should with this approach end up with a negative sentiment value.
+
+
+\subsection{Feature Extraction}
+In order to predict or say anything about the overall sentiment of a tweet, the features of the tweet need to be identified and evaluated. This process is commonly called feature extraction. In our review of the participating \ac{tsa} systems in \ac{semeval} (2013-2015), a state-of-the-art feature set has been identified. The state-of-the-art feature set consist of the features most commonly used by the top ranked systems, first introduced by \cite{MohammadKZ2013} in \ac{semeval}-2013. The state-of-the-art feature set includes the following features:
+
+\begin{itemize}
+    \item \textit{Word $n$-grams}: Collecting and weighting of words or collections of consecutive words.
+    \item \textit{Char $n$-grams}: Collecting and weighting of characters or collections of consecutive characters.
+    \item \textit{Word clusters}: Determining which cluster each word in a tweet belongs to. 
+    \item \textit{Prior Polarity Sentiment Lexica}: Collecting the sentiment value of the individual words in a tweet, by looking up the words in specialized prior polarity sentiment lexica, and extracting features based on the values.
+    \item \textit{Part-of-Speech tagging}: Utilizing specialized Twitter Part-of-Speech taggers to tag each word and count the occurrences of each tag.
+    \item \textit{Punctuation}: The number of consecutive punctuation marks and whether the last character of a tweet is an exclamation mark or a question mark.
+    \item \textit{Emoticons}: The number of positive and negative emoticons.
+    \item \textit{Negation}: The marked negation scopes are utilized using prior polarity lexica able to handle words in negated contexts. The negation marking also has an effect in \textit{Word $n$-grams}, \textit{Char $n$-grams} and Prior Polarity Sentiment Lexica.
+\end{itemize}
+
+
+\subsection{Classification}
+By using the feature representation of tweets, created in the feature extraction step, a supervised machine learning algorithm called a classifier is commonly used to perform the classification task. Among the supervised machine learning algorithms, the most popular within \ac{tsa} are \ac{svm}, Logistic Regression, Stochastic Gradient Descent and Naïve Bayes. In Table~\ref{tab:semeval_2015_results} the top ten submissions of \ac{semeval}-2015 are listed together with the machine learning algorithm used. We see that the \ac{svm} is the most used algorithm, which by \cite{Svetlana14} is considered to be the state-of-the-art algorithm within \ac{tsa}. \\     
+
+\noindent\begin{table}[ht]
+    \begin{tabular}{| l | l | l |}
+        \hline
+        \textbf{Rank} & \textbf{Name} & \textbf{Classifier} \\ \hline
+        1 & Webis & Ensemble of four classifiers, averaging results \\ \hline
+        2 & unitn & Deep Convolutional neural network (CNN) \\ \hline
+        3 & lsislif & Logistic regression \\ \hline
+        4 & INESC-ID & Stochastic Gradient Descent \\ \hline
+        5 & Splusplus & Two stage classifier. SVM and CNN \\ \hline
+        6 & wxiaoac & SVM \\ \hline
+        7 & IOA & SVM with RBF kernel \\ \hline
+        8 & Swiss-Chocolate & SVM, Logistic regression and random forest \\ \hline
+        9 & CLaC-SentiPipe & Linear SVM and Logistic regression \\ \hline
+        10 & TwitterHawk & Linear SVM \\ \hline
+    \end{tabular}
+    \caption{Overview of top 10 submissions for SemEval 2015}
+    \label{tab:semeval_2015_results}
+\end{table}
+
+\subsection*{One-Step vs. Two-Step Classification}
+The most common classification approach in \ac{tsa} is a one-step process, where a single machine learning algorithm classifies the tweets into three different classes; positive, negative and neutral. Most of the top ranked submissions in \ac{semeval}-2014 and \ac{semeval}-2015 used this approach. \\
+
+There are, however, other approaches. One of these is the two-step classification approach, consisting of two consecutive steps: subjectivity classification and polarity classification. In the subjectivity classification step, tweets will either be classified as subjective or objective/neutral. The tweets classified as subjective will then proceed to the polarity classifier, where they are classified as either positive or negative. \\
+
+In \ac{semeval} 2015, the top ranked TSA system by \cite{Webis15} used yet an other approach, by utilizing an ensemble of four classifiers. In the ensemble approach, classification is commonly done through a vote among the classifiers, where each classifier votes for the class it has predicted. \citeauthor{Webis15} let each classifier present its calculated probability for each class, and the class with highest average probability is chosen.  
+
+
+\section{Automatic Creation of Sentiment Lexica}
+\label{sec:automatic_generation_of_sentiment_lexica}
+Manual annotation of large amounts of data is costly. This also applies to the task of annotating sentiment lexica, where each $n$-gram in a large collection of $n$-grams should be assigned a sentiment value. Not only should the annotator decide whether or not the $n$-gram is positive or negative, but also the sentimental strength of the $n$-gram. For example, the unigram \textit{"great"} should get a positive sentiment score that is higher than the unigram \textit{"good"}, because \textit{"great"} is more positive. To overcome these hurdles, a lot of research has been done within the field of automatic creation of sentiment lexica, where $n$-grams should both be collected and annotated automatically. As a result of the research, a series of different approaches has been proposed on the subject over the past 20 years. 
+
+
+\subsection{Collecting data}
+Before beginning the annotation process, the $n$-grams to include in the lexicon should be collected. The most common approach is to extract these from a large corpus of text documents capturing the language features the lexicon is aimed at. For example, a lexicon aimed at user reviews should probably use a large corpus of user reviews, while a lexicon aimed at tweets should probably use a large corpus of tweets. Candidate entries are commonly selected based on a frequency analysis over the complete corpus where the most frequent $n$-grams are selected. \cite{MohammadKZ2013} selected all unigrams and bigrams as candidate entries, while \cite{Velikovich2010} selected all $n$-grams up to length 10 before filtering out $n$-grams based on their frequency and mutual information. In the latter approach, only the $n$-grams are kept where the co-occurrence of the included words forms common phrases or sayings. At this stage, stopwords are often filtered out using a predefined list of stopwords. That is, the most common words in a language, e.g., \textit{the, is, at} and \textit{a} are removed. These words will appear frequently in both positive and negative contexts and should therefore on their own not be given a sentiment value.
+
+
+\subsection{Annotating candidate \textit{n}-grams}
+The common methods for annotating the selected candidate $n$-grams can be divided into two main types. One, where the documents from which the candidate $n$-grams were selected are labeled, and another where the documents are unlabeled. Labeled documents can for instance be reviews or tweets that are labeled as positive or negative.
+
+
+\subsection*{Annotating using labeled documents}
+When using a corpus of labeled documents to annotate candidate $n$-grams, the association measure \ac{pmi} is commonly used. The \ac{pmi} value for $n$-grams in a positive context and in a negative context are calculated separately and the final sentiment score of an $n$-gram is calculated by subtracting the \ac{pmi} for the $n$-gram in a negative context from the \ac{pmi} in a positive context, as described in Section~\ref{sec:pmi_lexicon}. Using the aforementioned method and two different Twitter corpora, \cite{MohammadKZ2013} created the \textit{Sentiment140} and \textit{HashtagSentiment} lexica. The labeled tweets used to create the two were collected using seed sets of positive and negative emoticons and hashtags. If a tweet contained a positive emoticon or hashtag the tweet was labeled as positive, and if a tweet contained a negative emoticon or hashtag it was labeled as negative. Both the \textit{Sentiment140} lexicon and the \textit{HashtagSentiment} lexicon are often used as lexica in the sentiment lexicon feature in machine learning \ac{tsa} systems. Examples of this are the winning \ac{tsa} system of Task 10 subtask B in \ac{semeval} 2015, \cite{Webis15}, and the fifth best system competing on the same task by \cite{Splusplus15}.
+
+
+\subsection*{Annotating using unlabeled documents}
+The \ac{pmi} measure can also be used when annotating using a corpus of unlabeled documents. \cite{turneylittman2002} proposed a method where a seed set containing positive and negative words based on opposing pairs, e.g. \textit{good/bad, excellent/poor} was used. Each candidate word got its sentiment value by subtracting the \ac{pmi} for negative context from the \ac{pmi} for positive context. A candidate word is in a negative context if one of the negative seed words is within a window of 10 words to the left or to the right of the candidate word. The same applies to the positive context. \\
+
+Another approach using unlabeled documents is the graph approach. For the graph approach two different variants have been proposed. For both variants the similarity between all candidate $n$-grams, and between the candidate $n$-grams and a seed set of positive and negative words are calculated before each $n$-gram is initialized as a node in a graph. The edges between the nodes are weighted according to the similarity between them. If the similarity is below a set threshold, the edge will not be created. Similarity can be calculated in a number of different ways: \cite{Velikovich2010} determined the edge weights by calculating the cosine similarity between constructed context vectors of the $n$-grams, while \cite{Zhu02learningfrom} sat the edge weights to be the Euclidean distance between the $n$-grams.\\  
+
+In the graph propagation variant, described in Section~\ref{sec:graph_propagation_algorithm}, proposed by \cite{Velikovich2010}, the nodes representing the seed set should be initialized with a sentiment score according to its orientation (negative or positive), before propagating their sentiment value to the nodes laying on a path of length $k$ away from them. The sentiment value of an $n$-gram is then calculated by adding the sum of negative sentiment scores to the sum of positive sentiment scores that has been propagated to the node representing the $n$-gram.\\ 
+
+The second variant proposed by \cite{Zhu02learningfrom}, the label propagation approach, is quite similar to the graph propagation approach outlined above. The main difference between the two is how the sentiment values are calculated. Where the graph propagation variant calculates the sentiment value to be the sum of the max paths from seed words to a given $n$-gram, the label propagation variant calculates the sentiment value as the weighted average of the $n$-grams neighbors. Whereas each node in the graph propagation variant only holds the max path from a seed word, the nodes in the label propagation variant can possibly hold multiple paths to a specific seed word.\\   
+
+\citeauthor{Velikovich2010} argued that with a high quality graph where each path is trustworthy the label propagation variant will work as intended. Words close to a positive seed word, for instance, will get a higher score than words further away. However, with a lower quality graph, which often may the case with Twitter data, what is called the reinforcement effect described in Section~\ref{sec:label_propagation_algorithm}, may occur, resulting in undesired behavior.
+
+
+\section{Lexicon Based Sentiment Analysis}
+\label{sec:lexion_based_sentiment_analysis}
+Lexicon based \ac{sa} is the task of performing \ac{sa} solely based on one or multiple sentiment lexica. The overall performance of a lexicon based \ac{sa} system is therefore closely related to the quality of the sentiment lexicon used, but also how the sentiment lexicon information is used. In recent years, most \ac{sa} systems use a machine learning approach, with sentiment lexica as a feature among a series of other features. The number of new lexicon based \ac{sa} systems that have appeared in recent years is therefore few. Although the task of classification differs between a lexicon based \ac{sa} system and a machine learning \ac{sa} system, the sentiment lexica features in machine learning systems are based around the same ideas used by lexicon based \ac{sa} systems. The common approach consists of two main steps: sentence analysis and sentiment calculation.
+
+
+\subsection{Sentence Analysis}
+Before the $n$-grams in a sentence are looked up in a sentiment lexicon and given a sentiment value, the sentence itself is analysed in search of specific features. These features are used to adjust the raw sentiment values collected from the sentiment lexica.
+
+
+\subsection*{Negation} 
+Similarly to the machine learning approaches to \ac{sa}, the detection of negation is also an important feature in lexicon based \ac{sa}, using the approaches described in Section~\ref{sec:state_of_the_art}.
+
+
+\subsection*{Intensification}
+In systems such as by \cite{vaderSentiment} and \cite{Taboada2011}, intensifiers are used in the classification process. In addition to detecting negation, words working as intensifiers or degree adverbs are detected. Degree adverbs are words such as \textit{"very"}, \textit{"completely"} and \textit{"hardly"}, and affect the following word by either boosting or dampening its sentiment value. The main idea is that in the sentence \textit{"that was good"}, for instance, the word \textit{"good"} should get a lower sentiment value than in the sentence \textit{"that was very good"}, because of the booster word \textit{"very"}. While in the sentence \textit{"that was kind of good"}, on the other hand, the word \textit{"good"} should get a lower sentiment value because of the dampener \textit{"kind of"}. There are two common approaches to how the intensifiers should affect the following word. \cite{Polanyi06} used a \textit{fixed intensification} method, where a fixed amount is added to or subtracted from the sentiment value of the affected word. \cite{Taboada2011} on the other hand used a \textit{percentage intensification} method, where the sentiment values of the affected words are multiplied by a value $x>1$ for boosters and $0<x<1$ for dampeners.  
+
+
+\subsection{Sentiment Calculation}
+The common approach to calculate the final sentiment value of a sentence is to sum up the sentiment values of each $n$-gram in the sentence. Depending on whether or not negation and intensification were detected during the analysis step, the sentiment values of the affected $n$-grams are adjusted accordingly. In order to classify the sentence based on its final sentiment value, thresholds for positive and negative sentiment scores must be decided upon. With a final sentiment value above the threshold for positive sentences, the sentence is classified as positive. If the value is below the threshold for negative sentences, the sentence is classified as negative. With a final sentiment value between the two thresholds the sentence is classified as neutral. 
+
+\glsresetall

@@ -1,0 +1,66 @@
+%!TEX root = ../report.tex
+\chapter{Introduction}
+\label{cha:introduction}
+As social media and the ability to express yourself and your opinions becomes a more integral part of the day to day life, vast amounts of data are created. By analysing this data, valuable information of a variety of subjects can be extracted. \\
+
+One way of analysing the data is through \ac{sa}, also known as opinion mining. When performing \ac{sa}, a text is analysed in order to classify the emotion it conveys into one of the three classes: positive, neutral or negative. As a result of the amounts of opinionated data made available by social media, the research field of \ac{sa} has had a burst of activity in recent years. The potential gains of a well performing \ac{sa} system are many, for example, the popularity of a presidential candidate or how well a newly released product is being received, can be continuously evaluated.
+
+
+\section{Twitter Sentiment Analysis}
+\label{sec:field}
+A popular social medium providing opinionated texts is the micro-blogging service Twitter. On Twitter, users can post textual entries of up to 140 characters, commonly called \textit{tweets}. Each day, approximately 500 million new tweets are posted; a fraction of those are made available through Twitter's public API. Large datasets can therefore easily be acquired, making \ac{sa} of tweets particularly popular. The popularity of \ac{sa} of tweets has paved the way for a new field of study: \ac{tsa}.\\
+
+Performing \ac{nlp} on the informal language used in tweets presents a series of new challenges. As a result of the character limit per tweet, they often contain misspellings and abbreviations in addition to the more common Internet slang. Capitalization and elongation of words is also common. In addition to the unconventional linguistics, tweets may also include a number of special features. These features are \textit{hashtags}, \textit{mentions}, \textit{retweets}, \textit{emojis} and \textit{emoticons}. \footnote{Throughout this thesis, emoticon refers to a sequence of ASCII characters that rep-resent a facial expression, while emoji refers to the modern Unicode emoticons.} Hashtags are mainly used to categorize tweets making it possible to find them through search, but they are often also used to express feelings or emotions. Hashtags are added to a tweet by prepending the desired tag with a hash mark, "\#". Mentions, a username prepended by "@", are used to tag another user in a tweet, notifying the tagged person that they are mentioned in the given tweet. Retweets are copies of previously posted tweets and are marked with "RT". 
+
+\section{Motivation and Research Focus Area}
+\label{sec:motivation}
+In the fall of 2015, as an initial experiment, a \ac{tsa} system utilizing supervised machine learning was created. The system was created for the \ac{semeval}-2016, where it ended up on 11th place out of 34 competing systems. During the development of the system two features in particular stood out: the effect of using sentiment lexica in the classification process and the run-time performance. The use of sentiment lexica proved to be the single most valuable system component in terms of the overall performance of the system. Without using sentiment lexica the performance dropped as much as $4\%$. The run-time performance of the system was bad, meaning the time it took to process each tweet was too long. Based on these discoveries, the following focus area was chosen for this Master's Thesis. \\      
+
+In this thesis we explore how a Twitter specific sentiment lexicon can be automatically created from large datasets of both labeled and unlabeled tweets, and how a lexicon based \ac{sa} system compares to machine learning approaches. Today, most Twitter specific lexica only contain unigrams and bigrams, that is, single words or two consecutive words. Throughout this thesis, both when developing a lexicon creation system and a lexicon based classifier, we explore the effect of including longer phrases in sentiment lexica, as well as utilizing the long phrases in the classification process. In addition, we strive to create a lexicon based \ac{sa} system with a run-time performance capable of handling real time applications.    
+
+\section{Project Goals}
+\label{sec:project_goals}
+\subsection*{G1: Research Automatic Creation of Sentiment Lexica}
+As sentiment lexica have become a prominent feature in \ac{sa}, a lot of research has been conducted within the field of automatic creation of sentiment lexica. That is, sentiment lexica where both the included words or phrases and their respective sentiment values are automatically identified. \\
+
+By researching the field, we will gain the knowledge required to develop an automatic lexicon creation system ourselves.
+
+\subsection*{G2: Research Lexicon Based Sentiment Analysis}
+Most \ac{sa} systems today are based around a number of machine learning approaches. The systems often achieve high accuracy, in terms of number of correctly classified examples, but their run-time performance is slow. The amount of time it takes to classify a single example is long, making the systems unable to handle large amounts of data in a short amount of time as necessary in real-time applications.  \\
+
+As the lexicon feature in most machine learning \ac{sa} systems often is the single most important feature as well as a computationally inexpensive feature, the field of lexicon based \ac{sa} will be researched. The acquired knowledge will enable us to create a lexicon based \ac{sa} system ourselves (G4).  
+
+\subsection*{G3: Create a Twitter Specific Sentiment Lexicon}
+We aim to develop a lexicon creation system capable of creating a Twitter specific lexicon. In order for the lexicon to be Twitter specific, the data used by the system in the creation process will be downloaded tweets. During development we will focus on identifying long phrases, in addition to the standard unigrams and bigrams popular in previously developed Twitter specific lexica.
+
+\subsection*{G4: Create a Lexicon Based Sentiment Analysis System}
+We also aim to develop a lexicon based \ac{sa} system, utilizing the features of the Twitter specific lexicon created (G3). When developing the system, we will specifically focus on the systems's run-time performance as well as utilizing the long phrases found in the created lexicon.  
+
+
+\section{Contributions}
+In this section we list our main contributions along with short descriptions of each. In addition we describe other smaller contributions made throughout our masters thesis work. 
+
+\subsection*{C1: A Twitter specific sentiment lexicon}
+The Twitter specific sentiment lexicon consists of approximately 3\thinspace000 entries ranging from unigrams up to $n$-grams of length 6, all with sentiment values between $-5$ and $5$. 
+
+\subsection*{C2: A lexicon based Sentiment Analysis system}
+The lexicon based \ac{sa} system created, utilizes the sentiment lexicon created (C1), and handles both negation and intensification. Best performance is achieved when using a lexicon created with our automatic lexicon generator (C3), but other lexica can also be used.
+
+\subsection*{C3: A system for automatic creation of sentiment lexica}
+ The sentiment lexicon (C1) was created by our system for automatic creation of sentiment lexica, which is based around the \acl{pmi} approach. The system utilizes a labeled dataset of 6.25 million tweets and an unlabeled dataset of 103 million tweets in the creation process.  \\
+ 
+ \subsection*{C4: An automatically annotated dataset of tweets}
+ The automatically annotated dataset of tweets was produced by our lexicon based \ac{sa} system and consists of 6.25 million tweets, of which 58.7\% are labeled as positive and the remainder as negative. The dataset was used by our lexicon creator (C4) to create the Twitter specific sentiment lexicon (C1).\\
+
+ \noindent
+ In addition to our three main contributions, we also improved the run-time performance of a publicly available emoji-parser\footnote{Emoji-Java: \url{https://github.com/vdurmont/emoji-java}} used in both our lexicon based \ac{sa} system and our automatic sentiment lexica generator. The improvement resulted in an execution time 250 times faster than the original. \\
+ 
+ \noindent
+ All main contributions listed above are available at \\
+ \noindent \url{https://github.com/freva/Masteroppgave}.
+
+
+\section{Thesis Structure}
+Chapter~\ref{cha:tools_and_methods} describes the relevant background theory, tools and external datasets used. Chapter~\ref{cha:related_work} presents our research method as well as an overview of the state-of-art in \ac{tsa}, automatic creation of sentiment lexica and lexicon based \ac{sa}. Our initial experiment, including its architecture and results, is described in Chapter~\ref{ch:initial_experiment}. In Chapter~\ref{cha:architecture}, the overall architecture of both our lexicon based \ac{sa} system and our lexicon creator system are detailed. Chapter~\ref{cha:experiments} includes the tests conducted on our created lexicon and lexicon based \ac{sa} system along with test results and discussions. Finally, in Chapter~\ref{cha:discussion} we will outline possible future work and evaluate to which degree our goals have been achieved along with any conclusions drawn.
+
+\glsresetall

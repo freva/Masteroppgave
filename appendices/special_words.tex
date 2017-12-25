@@ -1,0 +1,77 @@
+%!TEX root = ../report.tex
+\chapter{Special Words}
+\label{apx:special_words}
+
+
+\section{Stopwords}
+\begin{table}[H]
+    \begin{tabular}{| l | l | l | l | l | l | l |}
+        \hline
+        \multicolumn{7}{|c|}{\textbf{Stopwords}} \\ \hline
+        a & about & above & after & again & against & all \\ \hline
+        am & an & and & any & are & arent & as \\ \hline
+        at & be & because & been & before & being & below \\ \hline
+        between & both & but & by & cant & cannot & could \\ \hline
+        couldnt & did & didnt & do & does & doesnt & doing \\ \hline
+        dont & down & during & each & few & for & from \\ \hline
+        further & had & hadnt & has & hasnt & have & havent \\ \hline
+        having & he & hed & hell & hes & her & here \\ \hline
+        heres & hers & herself & him & himself & his & how \\ \hline
+        hows & i & id & ill & im & ive & if \\ \hline
+        in & into & is & isnt & it & its & its \\ \hline
+        itself & lets & me & more & most & mustnt & my \\ \hline
+        myself & no & nor & not & of & off & on \\ \hline
+        once & only & or & other & ought & our & ours \\ \hline
+        ourselves & out & over & own & same & shant & she \\ \hline
+        shed & shell & shes & should & shouldnt & so & some\\ \hline
+        such & than & that & thats & the & their & theirs\\ \hline
+        them & themselves & then & there & theres & these & they\\ \hline
+        theyd & theyll & theyre & theyve & this & those & through\\ \hline
+        to & too & u & under & until & up & ur\\ \hline
+        ure & very & was & wasnt & we & wed & well\\ \hline
+        were & weve & were & werent & what & whats & when\\ \hline
+        whens & where & wheres & which & while & who & whos\\ \hline
+        whom & why & whys & with & wont & would & wouldnt\\ \hline
+        you & youd & youll & youre & youve & your & yours\\ \hline
+        yourself & yourselves & \multicolumn{5}{c|}{} \\ \hline
+    \end{tabular}
+    \caption[List of all stopwords used in our lexicon based system]{List of all stopwords used in our lexicon creators and lexicon based classifier. Consists of stopwords collected from \textit{http://www.ranks.nl/stopwords}.}
+    \label{tab:master_stopwords}
+\end{table}
+
+
+\section{Negation cues}
+\begin{table}[H]
+    \begin{tabular}{| l | l | l | l | l | l | l |}
+        \hline
+        \multicolumn{7}{|c|}{\textbf{Negation Cues}} \\ \hline
+        aint & anit & cant & cannot & couldnt & didnt & dnt \\ \hline
+        doesnt & dont & dont & hadnt & hasnt & havent & havnt \\ \hline
+        isnt & lack & lacking & lacks & never & no & nor \\ \hline
+        not & shouldnt & wasnt & wont & wouldnt & \multicolumn{2}{c|}{} \\ \hline
+    \end{tabular}
+    \caption{List of all negation cues used in our lexicon based system}
+    \label{tab:master_negation_cues}
+\end{table}
+
+
+\section{Intensifiers}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{| l | l || l | l || l | l |}
+        \hline
+        \textbf{Modifier} & \textbf{Weight} & \textbf{Modifier} & \textbf{Weight} & \textbf{Modifier} & \textbf{Weight}\\ \hline
+        most & 2.00         & very & 1.25           & kinda & 0.80      \\ \hline
+        incredibly & 1.80   & completely & 1.20     & sort of & 0.80    \\ \hline
+        extremely & 1.70    & hella & 1.20          & sorta & 0.80      \\ \hline
+        absolutely & 1.50   & more & 1.20           & somewhat & 0.70   \\ \hline
+        fucking & 1.40      & particularly & 1.20   & hardly & 0.70     \\ \hline
+        totally & 1.30      & so & 1.20             & barely & 0.60     \\ \hline
+        greatly & 1.25      & quite & 1.10          & slightly & 0.50   \\ \hline
+        highly & 1.25       & pretty & 0.90         & \multicolumn{2}{c|}{} \\ \hline
+        really & 1.25       & kind of & 0.80        & \multicolumn{2}{c|}{} \\ \hline
+    \end{tabular}
+    \caption[List of all intensifiers used in our lexicon based system]{List of all intensifiers used in our lexicon creators and lexicon based classifier. Consists of a subset of intensifiers used in the \textit{VADER Sentiment} system by \cite{vaderSentiment}}
+    \label{tab:intensifiers}
+\end{table} 
+

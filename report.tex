@@ -1,0 +1,196 @@
+\documentclass[b5paper,twoside=true]{scrbook}
+\usepackage{hyperref}
+\usepackage{etex}                               % Avoid error because too many packages
+\usepackage[norsk,british]{babel}               % Correct English hyphenation
+\usepackage[utf8]{inputenc}                     % Allow for non-ASCII input
+\usepackage[T1]{fontenc}                        % Use rich fonts
+
+\usepackage[style=english]{csquotes}                % Context sensitive quotes
+\usepackage{lmodern}                            % Exploit the above
+
+% Use classic (Computer Modern) fonts for headers
+\setkomafont{disposition}{\normalfont\bfseries}
+\addtokomafont{chapterprefix}{\huge}
+\addtokomafont{chapter}{\Huge}
+
+\usepackage{geometry}                           % Better geometry
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{textcomp,gensymb}
+
+\usepackage{fontspec}
+\newfontfamily\DejaSans{DejaVu Sans}
+
+\setcounter{tocdepth}{3}
+
+\usepackage{graphicx}                           % To include graphics
+\usepackage{color}
+\usepackage{framed}
+\usepackage[table]{xcolor}
+
+\usepackage{subcaption}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{amsmath}
+
+\usepackage[linesnumbered,ruled,noend]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+% comments and notes
+\usepackage[draft]{todonotes}
+%\usepackage[disable]{todonotes}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{hhline}
+\newcommand*\rot{\rotatebox{90}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% bibliography stuff
+
+\usepackage{natbib}
+
+% uncomment if instead using biber as backend
+\begin{comment}
+\usepackage[backend=biber,
+            bibstyle=apa,
+            citestyle=authoryear,
+            natbib=true,
+            url=false,
+            doi=false,
+            hyperref=true,
+            apamaxprtauth=99,
+            maxcitenames=2,
+            language=british,
+            uniquelist=false,
+            ]{biblatex}         % Correct citations
+
+% Bibliography (+ hacks)
+\addbibresource{bib/references.bib}
+\addbibresource{bib/bibliography.bib}
+\DeclareLanguageMapping{british}{british-apa}
+\setlength\bibitemsep{2\itemsep}
+\patchcmd{\bibsetup}{\interlinepenalty=5000}{\interlinepenalty=10000}{}{}
+\let\citep\parencite
+\let\cite\textcite
+% Make the whole cite a hyperref
+\DeclareCiteCommand{\textcite}
+{\boolfalse{cbx:parens}}
+{\usebibmacro{citeindex}%
+    \printtext[bibhyperref]{\usebibmacro{textcite}}}
+{\ifbool{cbx:parens}
+    {\bibcloseparen\global\boolfalse{cbx:parens}}
+    {}%
+    \multicitedelim}
+{\usebibmacro{textcite:postnote}}
+\DeclareCiteCommand{\parencite}[\mkbibparens]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+    \printtext[bibhyperref]{\usebibmacro{cite}}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+% Use square brackets
+\makeatletter
+\newrobustcmd*{\parentexttrack}[1]{%
+    \begingroup
+    \blx@blxinit
+    \blx@setsfcodes
+    \blx@bibopenparen#1\blx@bibcloseparen
+    \endgroup}
+\AtEveryCite{%
+    \let\parentext=\parentexttrack%
+    \let\bibopenparen=\bibopenbracket%
+    \let\bibcloseparen=\bibclosebracket}
+\makeatother
+\end{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Author
+% Fill in here, and use commands in the text.
+\newcommand{\thesisAuthor}{Valerij Fredriksen \& Brage Ekroll Jahren}
+\newcommand{\thesisTitle}{Twitter Sentiment Analysis}
+\newcommand{\thesisType}{Master's Thesis}
+\newcommand{\thesisDate}{Spring 2016}
+
+% add correct hyphenations as needed
+\hyphenation{Sem-Eval}
+\hyphenation{hash-tags}
+
+% Acronym stuff
+\usepackage[xindy, shortcuts, nonumberlist]{glossaries}
+ 
+\makeglossaries
+\loadglsentries{glossary}
+
+
+\begin{document}
+
+%Title page (generated automatically from the commands above)
+\pagenumbering{alph}
+\begin{titlepage}
+\noindent {\large \textbf{\thesisAuthor}}
+\vspace{2cm}
+
+\noindent {\Huge \thesisTitle}
+\vspace{.5cm}
+
+\noindent {\Large Exploring Automatic Creation of Sentiment Lexica}
+\vspace{2cm}
+
+\noindent \thesisType, \thesisDate
+\vspace{2cm}
+
+\noindent Artificial Intelligence Group \smallskip\\ Department of Computer and Information Science \smallskip\\ Faculty of Information Technology, Mathematics and\\ Electrical Engineering
+
+\vfill
+\begin{center}
+\includegraphics[width=3cm]{figs/NTNUlogo.pdf}
+\end{center}
+\thispagestyle{empty}
+\end{titlepage}
+
+\cleardoublepage
+
+\frontmatter
+
+\include{sections/abstract}
+\include{sections/sammendrag}
+\include{sections/preface}
+\include{sections/acknowledgements}
+
+\clearpage
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+\printglossary[title={Acronyms}, type=\acronymtype]
+
+\mainmatter
+
+\include{sections/introduction}
+\include{sections/background}
+\include{sections/related_work}
+\include{sections/annotation}
+\include{sections/initial_experiment}
+\include{sections/architecture}
+\include{sections/experiments}
+\include{sections/discussion}
+
+\addcontentsline{toc}{chapter}{Bibliography}
+
+\bibliographystyle{plainnat}
+\bibliography{bib/bibliography}
+
+% alternative, if using biber as backend
+% \printbibliography
+
+\include{appendices/appendices}
+
+\end{document}
